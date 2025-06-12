@@ -1,0 +1,138 @@
+crie um site html js css arquivo unico 
+
+com o seguinte:
+
+Título em destaque:
+Ganhe um mês grátis do meu acompanhamento de Violão Depois dos 40 
+
+professor de violão: gAbriel Almeida
+imagem: "img.webp"
+
+Daí insira os detalhes
+
+Voltado para 
+
+- quem já passou dos 40 anos
+- quem quer tocar músicas populares (brega, sertanejo, católica, evangélica)
+- quem quer aprender violão como:
+ -- hobbie
+ -- terapia
+ -- pra tocar em cassa
+ -- pra tocar no churrasco em família
+ -- pra tocar na sua igreja
+
+
+
+O que você vai ter acesso:
+
+- videochamaddas semanais pra conversar e aprender comigo
+videochamadas em grupo porém ouço cada um individualmente e passo os treinos necessários pra cada um
+
+não é obrigatório participar sempre das videochamadas. o importante é você treinar sempre e me mandar o treino pra eu acompanhar
+- envie seu vídeo ou áudio pra eu analisar
+- curso de violão completo
+
+
+🔎 Sobre a oferta:
+Até quando essa promoção (1 mês grátis) estará disponível?
+promoção com 1 mês grátis por tempo limitado e vagas também limitadas
+
+Após o mês grátis, qual é o valor do acompanhamento?
+(ex: R$100/mês, com possibilidade de cancelar a qualquer momento?)
+100 reais por mes pode cancelar a qualquer momento
+
+quero que a pessoa preencha um formulário com nome e número do whastapp
+
+cta no final "Quero meu mês grátis" levando a preencher o nome completo e número do whatsapp - não sei pra onde vai esse negócio, gostaria de uma ideia pra fazer isso gratuitamente via github pages - pra eu poder ver quem preencheu mesmo
+
+porque assim eu vou saber que a pessoa chegou até o final mesmo se não tiver me mandado mensagem no WahtsApp
+
+e também quero que o botão faça a pessoa ir pro meu número do whatsapp com a mensagem: "Vi todos os detalhes e quero aproveitar o mês grátis".
+
+
+📱 Sobre funcionalidades:
+Você quer que o site funcione bem em celulares (responsivo)?
+(Ex: layout que se ajusta bem ao tamanho da tela)
+sim, pra mim o foco maior é celulares
+
+o site deve funcionar da seguinte forma (início / próximas partes)
+
+o vídeo do início vai ser mais ou menos assim "Tô fazendo algo legal pros meus futuros alunos de violão que é dando a oportunidade de participar do meu acompanhamento Violão Depois dos 40 gratuitamente...
+
+Pra ganhar esse presente, é só seguir o que eu mostrar aqui, pra ir avançando é só apertar no botão continuar. Aperta aí pra você ver os detalhes."
+
+cada parte vai ter um botão "Continuar" localizado na parte debaixo na cor laranja
+
+o site deve ter tema escuro
+
+lembrando que cada etapa a página não deve mostrar mais nada, só a sua etapa e pronto com o botão continuar
+
+o último botão da última página deve ser o botão CTA
+
+Quer adicionar um vídeo curto de apresentação?
+(Se sim, me diga o link ou nome do arquivo que será usado)
+o vídeo vai ser no início só o vídeo tamanho 16:9 - mas na tela inicial somente com um título depois o vídeo e depois o botão, de forma que tudo caiba de forma bonita
+
+vid.mp4
+
+Quer depoimentos de alunos?
+(Se sim, me envie alguns ou diga se prefere deixar para depois)
+sim, o vídeo com os depoimentos dos alunos vou deixar na segunda parte
+
+vid2.mp4
+
+🖼️ Estética e estilo:
+Quer um estilo mais leve e claro ou escuro/moderno?
+escuro modero
+
+Tem alguma paleta de cores preferida ou devo usar algo baseado na imagem img.webp?
+azul marinho escuro, cinza, branco e preto - tema escuro
+
+🧠 Extras (caso queira incluir):
+Quer uma seção de perguntas frequentes (FAQ)?
+(Ex: “Preciso ter violão?”, “Funciona para iniciantes?”, etc.)
+
+pode ser
+
+Quer incluir links para redes sociais, canal do YouTube, etc.?
+
+não
+
+___________
+sessões
+
+lembrando que o botão continuar deve ser laranja
+
+1 - início - título (que incentive a pessoa a assistir o vídeo) + vídeo + botão com delay de 20s (que aparece escurecido antes de ser liberado - e acima uma mensagem em fonte pequena cinza, "assista o vídeo para o botão ser liberado")
+
+2 - depoimentos - título (que incentive a pessoa a assistir o vídeo) + vídeo + botão
+
+3 - perguntas frequentes
+Preciso ter violão pra entrar?
+Sim. Se não tiver violão, providencie um antes de entrar.
+
+Funciona pra iniciantes?
+Sim, o acompanhamento é voltado pra iniciantes do zero ou que ainda não tocam músicas no violão com tranquilidade.
+
+Se tiver entendido, pressione continuar - aviso em fonte cinza pequena
+botão "continuar"
+
+4 - Resumo do que você vai ter acesso
+
+O que você vai ter acesso:
+
+- videochamaddas semanais pra conversar e aprender comigo
+videochamadas em grupo porém ouço cada um individualmente e passo os treinos necessários pra cada um
+
+não é obrigatório participar sempre das videochamadas. o importante é você treinar sempre e me mandar o treino pra eu acompanhar
+- envie seu vídeo ou áudio pra eu analisar
+- curso de violão completo
+
+Se tiver entendido, pressione continuar - aviso em fonte cinza pequena
+botão "continuar"
+
+5 - Finalize seu cadastro para aproveitar o mês grátis 
+
+pede nome + whatsapp
+
+aqui o botão cta fica verde

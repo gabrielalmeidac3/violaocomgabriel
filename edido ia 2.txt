@@ -1,0 +1,105 @@
+🎯 Objetivo Geral do Site
+
+quero tudo em um arquivo html, js e css
+
+Criar uma landing page interativa, escura, com foco em celulares, para oferecer 1 mês grátis do acompanhamento “Violão Depois dos 40”.
+
+
+
+Estilo: Tema escuro, moderno
+
+Paleta: Azul-marinho escuro, cinza, branco, preto
+
+Botões "Continuar": Cor laranja, com delay de 20s na primeira etapa
+
+Botão CTA final: Cor verde
+
+
+💡 Oferta
+Promoção por tempo limitado e com vagas limitadas
+
+1º mês grátis
+
+Após o mês grátis: R$100/mês, podendo cancelar a qualquer momento
+
+📦 O que está incluso no acompanhamento
+Videochamadas semanais em grupo (com atenção individual)
+
+Você envia vídeos ou áudios pra receber análise e orientação
+
+Curso completo de violão incluso
+
+Participar da videochamada não é obrigatório, o mais importante é enviar treinos regularmente
+
+🔄 Estrutura das sessões (etapas)
+
+cada etapa só exibe uma página no celular sem rolagem - o foco é pra celulares mesmo
+
+crie indicação visual no fim da página canto inferior dirieoto etapa 1 de 5... exemplo...
+
+os vídeos devem ser exibidos de forma que dê espaço pro título e pro botão sem precisar rolar a página
+
+0. introdução
+
+Imagem principal: img.webp
+Acompanhamento Violão Depois dos 40
+
+título explicando sobre ganhar o mês grátis é só seguir essa página, apertar no botãro coitniaur...
+
+Botão "Continuar" (laranja) sem delay
+
+1. Início
+
+Título chamativo incentivando a assistir
+
+Vídeo vid.mp4 16:9
+
+Mensagem: “assista o vídeo para o botão ser liberado” (texto pequeno cinza)
+
+Botão "Continuar" (laranja) com delay de 20 segundos antes de ativar 
+
+2. Depoimentos
+Título convidando a assistir os depoimentos
+
+Vídeo vid2.mp4
+
+Botão "Continuar" (laranja) com delay de 20 segundos antes de ativar 
+
+3. Perguntas Frequentes (FAQ)
+Q1: Preciso ter violão pra entrar?
+A: Sim. Se não tiver violão, providencie um antes de entrar.
+
+Q2: Funciona pra iniciantes?
+A: Sim, o acompanhamento é para iniciantes do zero ou que ainda não tocam músicas com tranquilidade.
+
+Aviso pequeno: “Se tiver entendido, pressione continuar”
+
+Botão "Continuar" (laranja)com delay de 20 segundos antes de ativar 
+
+4. Resumo dos Benefícios
+Reforça os 3 pontos:
+
+Videochamadas semanais com atenção individual
+
+Análise de vídeos ou áudios enviados
+
+Curso completo
+
+Aviso pequeno: “Se tiver entendido, pressione continuar”
+
+Botão "Continuar" (laranja)com delay de 20 segundos antes de ativar 
+
+5. Cadastro Final
+
+título que informe que é a última etapa e que a pessoa vai ganhar o mês grátis
+
+Botão CTA verde com texto: “Quero meu mês grátis”
+
+Ao clicar:
+
+Redireciona para WhatsApp com mensagem automática:
+"Vi todos os detalhes e quero aproveitar o mês grátis"
+número +5595984224764
+
+
+

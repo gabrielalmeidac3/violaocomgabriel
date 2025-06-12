@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violão Depois dos 40 - 15 dias Grátis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            position: relative;
+            overflow-y: hidden;
+        }
+
+        .step {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: calc(100vh - 80px);
+        }
+
+        .step.active {
+            display: flex;
+        }
+
+        .step-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #ccc;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #e3f2fd;
+            line-height: 1.3;
+        }
+
+        .intro-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 90vw;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        video {
+            width: 100%;
+            max-height: 50vh;
+            object-fit: contain;
+            height: auto;
+            display: block;
+        }
+
+        .video-message {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            min-width: 200px;
+        }
+
+        .btn-orange {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-green {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            font-size: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .faq {
+            font-size: 20px;
+            text-align: left;
+            max-width: 350px;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #42a5f5;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            color: #64b5f6;
+            margin-bottom: 8px;
+            
+        }
+
+        .faq-answer {
+            color: #e3f2fd;
+            line-height: 1.5;
+        }
+
+        .benefits {
+            font-size: 20px;
+            text-align: left;
+            max-width: 350px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .countdown {
+            font-size: 14px;
+            color: #ff6b35;
+            margin-top: 10px;
+        }
+
+        .intro-text {
+            font-size: 25px;
+            color: #e3f2fd;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            max-width: 350px;
+        }
+
+        .final-title {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: #4caf50;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: auto;
+            opacity: 0.7;
+            z-index: 999;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .watermark:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+
+            .intro-text, .faq, .benefits {
+                margin-bottom: 15px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="img2.png" alt="Marca d'água" class="watermark">
+        <!-- Etapa 0: Introdução -->
+        <div class="step active" id="step0">
+            <img src="img.webp" alt="Violão Depois dos 40" class="intro-image" onerror="this.style.display='none'">
+            <h1>Acompanhamento<br>Violão Depois dos 40</h1>
+            <p class="intro-text">
+                🎸 Ganhe <strong>15 dias GRÁTIS</strong> do nosso acompanhamento exclusivo!
+                <br><br>
+                É simples: aperte no botão "Continuar" em cada etapa para garantir sua vaga.
+            </p>
+            <button class="btn btn-orange" onclick="nextStep()">Continuar</button>
+        </div>
+
+        <!-- Etapa 1: Início -->
+        <div class="step" id="step1">
+            <h2>🎯 Descubra Como Tocar Violão Depois dos 40 - Assista o vídeo</h2>
+            <div class="video-container">
+                <video id="video1" controls autoplay muted>
+                    <source src="vid.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeo HTML5.
+                </video>
+            </div>
+            <p class="video-message">Assista o vídeo para o botão ser liberado</p>
+            <button class="btn btn-orange" id="btn1" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown1"></div>
+        </div>
+
+        <!-- Etapa 2: Depoimentos -->
+        <div class="step" id="step2">
+            <h2>🗣️ Veja o que nossos alunos dizem</h2>
+            <div class="video-container">
+                <video id="video2" controls autoplay muted>
+                    <source src="vid2.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeo HTML5.
+                </video>
+            </div>
+            <p class="video-message">Assista pelo menos um pouco do vídeo para liberar o botão</p>
+            <button class="btn btn-orange" id="btn2" onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown2"></div>
+        </div>
+
+        <!-- Etapa 3: FAQ -->
+        <div class="step" id="step3">
+            <h2>❓ Perguntas Frequentes</h2>
+            <div class="faq">
+                <div class="faq-item">
+                    <div class="faq-question">Preciso ter violão pra entrar?</div>
+                    <div class="faq-answer">Sim. Se não tiver violão, providencie um antes de entrar.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Funciona para iniciantes?</div>
+                    <div class="faq-answer">Sim, o acompanhamento é para iniciantes do zero ou que ainda não tocam músicas com facilidade.</div>
+                </div>
+            </div>
+            <p class="small-text">Se tiver entendido, pressione continuar</p>
+            <button class="btn btn-orange" id="btn3" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown3"></div>
+        </div>
+
+        <!-- Etapa 4: FAQ2 -->
+        <div class="step" id="step4">
+            <h2>❓ Perguntas Frequentes</h2>
+            <div class="faq">
+                <div class="faq-item">
+                    <div class="faq-question">Qual o dia e horário das videochamadas?</div>
+                    <div class="faq-answer">Toda segunda-feira 20h.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">É obrigatório participar da videochamada?</div>
+                    <div class="faq-answer">Não!<br><br>Eu consigo acompanhar você no grupo e tirar tuas dúvidas. E existe o curso gravado também.</div>
+                </div>
+            </div>
+            <p class="small-text">Se tiver entendido, pressione continuar</p>
+            <button class="btn btn-orange" id="btn4" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown4"></div>
+        </div>
+
+        <!-- Etapa 5: Benefícios -->
+        <div class="step" id="step5">
+            <h2 style="font-size: 28px;">✨ Resumo dos Benefícios</h2>
+            <div class="benefits">
+                <div class="benefit-item">
+                    <div class="benefit-icon">📹</div>
+                    <div>Videochamadas semanais com atenção individual</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🎯</div>
+                    <div>Análise de vídeos ou áudios enviados pelo aluno</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📚</div>
+                    <div>Curso completo de violão incluso</div>
+                </div>
+            </div>
+            <p class="small-text">Se tiver entendido, pressione continuar</p>
+            <button class="btn btn-orange" id="btn5" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown5"></div>
+        </div>
+
+        <!-- Etapa 6: Cadastro Final -->
+        <div class="step" id="step6">
+            <h1 class="final-title">🎉 Última Etapa!</h1>
+            <h2>Você vai ganhar seus 15 dias grátis agora!</h2>
+            <p class="intro-text">
+            Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br><br>
+                Pode cancelar quando quiser.<br>
+            </p>
+            <a href="https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis" 
+               class="btn btn-green" target="_blank">
+                🎸 Quero meus 15 dias grátis
+            </a>
+        </div>
+
+        <!-- Indicador de etapa -->
+        <div class="step-indicator" id="stepIndicator">
+            Etapa 1 de 7
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 7;
+        
+        function updateStepIndicator() {
+            document.getElementById('stepIndicator').textContent = `Etapa ${currentStep + 1} de ${totalSteps}`;
+        }
+        
+        function getStepFromURL() {
+            const step = parseInt(window.location.hash.replace('#', '')) || 0;
+            if (step >= 0 && step <= 7) {
+                currentStep = step;
+                document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateStepIndicator();
+            }
+        }
+
+        function nextStep() {
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+            // Esconder etapa atual
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Próxima etapa
+            currentStep++;
+            
+            // Mostrar próxima etapa
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            // Atualizar indicador
+            updateStepIndicator();
+            
+            // Configurar delays específicos
+            if (currentStep === 1) {
+                setupVideoDelay();
+            } else if (currentStep === 2) {
+                setupVideoDelay2();
+            } else if (currentStep === 3) {
+                setupDelay('btn3', 'countdown3', 5);
+            } else if (currentStep === 4) {
+                setupDelay('btn4', 'countdown4', 5);
+            } else if (currentStep === 5) {
+                setupDelay('btn5', 'countdown5', 5);
+            }
+            setTimeout(() => {
+                const activeVideo = document.querySelector('.step.active video');
+                if (activeVideo) activeVideo.play();
+            }, 100); 
+        }
+
+        function setupVideoDelay() {
+            const btn = document.getElementById('btn1');
+            const countdown = document.getElementById('countdown1');
+            const video = document.getElementById('video1');
+            
+            let timeLeft = 1;
+            btn.disabled = true;
+            
+            const timer = setInterval(() => {
+                countdown.textContent = `Botão liberado em ${timeLeft}s`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+            }, 1000);
+
+            // Opcional: acelerar se o vídeo for assistido
+            video.addEventListener('ended', () => {
+                if (timeLeft > 5) {
+                    timeLeft = 5;
+                }
+            });
+        }
+
+        function setupVideoDelay2() {
+            const btn = document.getElementById('btn2');
+            const countdown = document.getElementById('countdown2');
+            const video = document.getElementById('video2');
+            
+            let timeLeft = 1;
+            btn.disabled = true;
+            
+            const timer = setInterval(() => {
+                countdown.textContent = `Botão liberado em ${timeLeft}s`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+            }, 1000);
+
+            // Opcional: acelerar se o vídeo for assistido
+            video.addEventListener('ended', () => {
+                if (timeLeft > 5) {
+                    timeLeft = 5;
+                }
+            });
+        }
+
+        function setupDelay(buttonId, countdownId, seconds) {
+            const btn = document.getElementById(buttonId);
+            const countdown = document.getElementById(countdownId);
+            
+            let timeLeft = seconds;
+            btn.disabled = true;
+            
+            const timer = setInterval(() => {
+                countdown.textContent = `Botão liberado em ${timeLeft}s`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+            }, 1000);
+        }
+
+        // Inicializar
+        updateStepIndicator();
+        
+        // Prevenir scroll horizontal
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Scroll suave entre seções
+        window.addEventListener('beforeunload', function() {
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('video1').addEventListener('play', function() {
+            this.muted = false;
+        });
+
+        document.getElementById('video2').addEventListener('play', function() {
+            this.muted = false;
+        });
+
+        getStepFromURL();
+        window.addEventListener('hashchange', getStepFromURL);
+
+    </script>
+</body>
+</html>
