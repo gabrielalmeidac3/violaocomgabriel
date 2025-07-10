@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aulas de Violão com Gabriel Almeida</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      border: 2px solid #059de3;
+    }
+  </style>
+</head>
+<body class="bg-black text-white px-4 py-6">
+
+  <header class="text-center border-b border-[#059de3] pb-4 mb-6">
+    <h1 class="text-3xl font-bold text-[#059de3]">Aulas para Iniciantes do Zero no Violão</h1>
+    <p class="mt-1 text-white text-lg">Por Gabriel Almeida</p>
+  </header>
+
+
+
+  <main class="space-y-10">
+
+    <!-- Aula 0 -->
+    <section id="aula0">
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 0 - A primeira coisa que você deve aprender no violão</h2>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/o0O-R8AkYf8" title="Aula 0" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Imagens -->
+    <section class="space-y-6">
+      <img src="ACORDES.jpg" alt="Acordes" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+      <img src="Diagrama-de-Acordes.png" alt="Diagrama de Acordes" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+      
+      <div>
+        <img src="A.png" alt="Acorde A" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+        <p style="font-size: 20px; font-weight: bold;" class="mt-2 text-center text-sm text-gray-300">Como se lê esse acorde: Lá maior</p>
+      </div>
+
+      <div>
+        <img src="E.png" alt="Acorde E" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+        <p style="font-size: 20px; font-weight: bold;" class="mt-2 text-center text-sm text-gray-300">Como se lê esse acorde: Mi maior</p>
+      </div>
+
+      <div>
+        <img src="D.png" alt="Acorde D" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+        <p style="font-size: 20px; font-weight: bold;" class="mt-2 text-center text-sm text-gray-300">Como se lê esse acorde: Ré maior</p>
+      </div>
+    </section>
+
+    <!-- Como segurar -->
+    <section id="segurar">
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Como segurar o violão?</h2>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/ePa5F8LhqfQ" title="Como segurar o violão" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Como escolher -->
+    <section id="escolher">
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Ainda não tem um violão?</h2>
+      <p class="mb-2">Veja como escolher um violão ideal para iniciantes:</p>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/unHdc8Hw4j0" title="Como escolher um violão" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Rodapé com imagem pequena -->
+    <footer class="mt-12 border-t border-[#059de3] pt-4 text-center">
+      <img src="img2.png" alt="Gabriel Almeida" class="mx-auto w-20 h-20 rounded-full border-2 border-[#059de3] mb-2">
+      <p class="text-white text-lg">Gabriel Almeida</p>
+    </footer>
+  </main>
+</body>
+</html>
