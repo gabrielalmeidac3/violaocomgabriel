@@ -192,6 +192,18 @@
                     <label for="email">E-mail:</label>
                     <input type="email" id="email" name="email" required>
                 </div>
+                <div class="form-group">
+                    <label for="telefone">Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" required>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" id="cidade" name="cidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="idade">Idade:</label>
+                    <input type="text" id="idade" name="idade" required>
+                </div>
                 <button type="submit">Adicionar Inscrição</button>
             </form>
             <div id="addStatus" class="status"></div>
@@ -221,6 +233,9 @@
             
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const cidade = document.getElementById('cidade').value;
+            const idade = document.getElementById('idade').value;
             const statusDiv = document.getElementById('addStatus');
 
             try {
@@ -229,7 +244,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ nome, email })
+                    body: JSON.stringify({ nome, email, telefone, cidade, idade })
                 });
 
                 const result = await response.json();
@@ -277,8 +292,11 @@
             listDiv.innerHTML = inscricoes.map(inscricao => `
                 <div class="inscricao-item">
                     <div class="inscricao-info">
-                        <div><strong>Nome:</strong> ${inscricao.nome}</div>
-                        <div><strong>E-mail:</strong> ${inscricao.email}</div>
+                        <div><strong>Nome:</strong> ${inscricao.nome || 'N/A'}</div>
+                        <div><strong>E-mail:</strong> ${inscricao.email || 'N/A'}</div>
+                        <div><strong>Telefone:</strong> ${inscricao.telefone || 'N/A'}</div>
+                        <div><strong>Cidade:</strong> ${inscricao.cidade || 'N/A'}</div>
+                        <div><strong>Idade:</strong> ${inscricao.idade || 'N/A'}</div>
                         <div class="inscricao-date">
                             <strong>Criado em:</strong> ${formatDate(inscricao.createdAt)}
                         </div>
