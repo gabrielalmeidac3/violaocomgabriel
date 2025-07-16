@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Firebase - Inscrições</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a9eff;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .section {
+            background-color: #2d2d2d;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            color: #4a9eff;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        button {
+            background-color: #4a9eff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        button.danger {
+            background-color: #ff4757;
+        }
+
+        button.danger:hover {
+            background-color: #e03946;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .status.success {
+            background-color: #2ed573;
+            color: white;
+        }
+
+        .status.error {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        .inscricoes-list {
+            margin-top: 20px;
+        }
+
+        .inscricao-item {
+            background-color: #404040;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inscricao-info {
+            flex: 1;
+        }
+
+        .inscricao-info strong {
+            color: #4a9eff;
+        }
+
+        .inscricao-date {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .inscricao-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .inscricao-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .inscricao-actions {
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            .inscricao-actions button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Firebase - Inscrições</h1>
+
+        <!-- Seção de Adicionar -->
+        <div class="section">
+            <h2>Adicionar Inscrição</h2>
+            <form id="addForm">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="submit">Adicionar Inscrição</button>
+            </form>
+            <div id="addStatus" class="status"></div>
+        </div>
+
+        <!-- Seção de Listar -->
+        <div class="section">
+            <h2>Inscrições Cadastradas</h2>
+            <button onclick="loadInscricoes()">Recarregar Lista</button>
+            <div id="inscricoesList" class="inscricoes-list">
+                <div class="loading">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes';
+
+        // Carregar inscrições ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInscricoes();
+        });
+
+        // Adicionar inscrição
+        document.getElementById('addForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const statusDiv = document.getElementById('addStatus');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome, email })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('addStatus', 'Inscrição adicionada com sucesso!', 'success');
+                    document.getElementById('addForm').reset();
+                    loadInscricoes(); // Recarregar lista
+                } else {
+                    showStatus('addStatus', 'Erro: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('addStatus', 'Erro de conexão: ' + error.message, 'error');
+            }
+        });
+
+        // Carregar inscrições
+        async function loadInscricoes() {
+            const listDiv = document.getElementById('inscricoesList');
+            listDiv.innerHTML = '<div class="loading">Carregando...</div>';
+
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+
+                if (result.success) {
+                    displayInscricoes(result.data);
+                } else {
+                    listDiv.innerHTML = '<div class="error">Erro ao carregar: ' + result.error + '</div>';
+                }
+            } catch (error) {
+                listDiv.innerHTML = '<div class="error">Erro de conexão: ' + error.message + '</div>';
+            }
+        }
+
+        // Exibir inscrições
+        function displayInscricoes(inscricoes) {
+            const listDiv = document.getElementById('inscricoesList');
+            
+            if (inscricoes.length === 0) {
+                listDiv.innerHTML = '<div class="empty">Nenhuma inscrição encontrada.</div>';
+                return;
+            }
+
+            listDiv.innerHTML = inscricoes.map(inscricao => `
+                <div class="inscricao-item">
+                    <div class="inscricao-info">
+                        <div><strong>Nome:</strong> ${inscricao.nome}</div>
+                        <div><strong>E-mail:</strong> ${inscricao.email}</div>
+                        <div class="inscricao-date">
+                            <strong>Criado em:</strong> ${formatDate(inscricao.createdAt)}
+                        </div>
+                    </div>
+                    <div class="inscricao-actions">
+                        <button class="danger" onclick="deleteInscricao('${inscricao.id}')">
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Excluir inscrição (simulado - você precisa implementar DELETE na API)
+        async function deleteInscricao(id) {
+            if (!confirm('Tem certeza que deseja excluir esta inscrição?')) {
+                return;
+            }
+
+            alert('Funcionalidade de exclusão não implementada na API ainda.\nID para exclusão: ' + id);
+            
+            // Quando implementar DELETE na API, use:
+            /*
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadInscricoes(); // Recarregar lista
+                } else {
+                    alert('Erro ao excluir: ' + result.error);
+                }
+            } catch (error) {
+                alert('Erro de conexão: ' + error.message);
+            }
+            */
+        }
+
+        // Mostrar status
+        function showStatus(elementId, message, type) {
+            const statusDiv = document.getElementById(elementId);
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Formatar data
+        function formatDate(dateString) {
+            if (!dateString) return 'Data não disponível';
+            
+            const date = new Date(dateString);
+            return date.toLocaleString('pt-BR');
+        }
+    </script>
+</body>
+</html>
