@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respostas - Violão Depois dos 40</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        #searchInput {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+            background: #4a4a4a;
+            color: #fff;
+        }
+        #searchInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+            #searchInput {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Respostas dos Inscritos</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar por nome ou WhatsApp">
+        </div>
+        <table id="responsesTable">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>WhatsApp</th>
+                    <th>Idade</th>
+                    <th>Nível no Violão</th>
+                    <th>Tipo de Música</th>
+                    <th>Informações Adicionais</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div class="pagination">
+            <button id="prevPage" disabled>Anterior</button>
+            <button id="nextPage">Próximo</button>
+        </div>
+    </div>
+
+    <script>
+    const API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes';
+    const itemsPerPage = 10;
+    let currentPage = 1;
+    let allData = [];
+
+    async function loadData() {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+        allData = result.success ? result.data : [];
+        displayData();
+    }
+
+    function displayData() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filteredData = allData.filter(item => 
+            item.dados_pessoais?.name.toLowerCase().includes(searchTerm) ||
+            item.dados_pessoais?.whatsapp.toLowerCase().includes(searchTerm)
+        );
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedData = filteredData.slice(start, end);
+
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = paginatedData.map(item => `
+            <tr>
+                <td>${item.dados_pessoais?.name || '-'}</td>
+                <td>${item.dados_pessoais?.whatsapp || '-'}</td>
+                <td>${item.dados_pessoais?.age || '-'}</td>
+                <td>${item.nivel_violao?.level || '-'}${item.nivel_violao?.customLevel ? `: ${item.nivel_violao.customLevel}` : ''}</td>
+                <td>${item.tipo_musica?.music || '-'}${item.tipo_musica?.otherMusic ? `: ${item.tipo_musica.otherMusic}` : ''}</td>
+                <td>${item.mais_info?.extra || '-'}${item.mais_info?.extraText ? `: ${item.mais_info.extraText}` : ''}</td>
+                <td>${new Date(item.createdAt).toLocaleDateString('pt-BR')}</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = end >= filteredData.length;
+    }
+
+    document.getElementById('searchInput').addEventListener('input', () => {
+        currentPage = 1;
+        displayData();
+    });
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayData();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        currentPage++;
+        displayData();
+    });
+
+    loadData();
+    </script>
+</body>
+</html>
