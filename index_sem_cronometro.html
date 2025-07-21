@@ -557,11 +557,11 @@
                 } else if (currentStep === 7) {
                     setupExtraForm();
                 } else if (currentStep === 8) {
-                    setupDelay('btn8', 'countdown8', 5);
+                    setupDelay('btn8', 'countdown8', 0);
                 } else if (currentStep === 9) {
-                    setupDelay('btn9', 'countdown9', 5);
+                    setupDelay('btn9', 'countdown9', 0);
                 } else if (currentStep === 10) {
-                    setupDelay('btn10', 'countdown10', 5);
+                    setupDelay('btn10', 'countdown10', 0);
                 }
             }
         }
@@ -606,11 +606,11 @@
             } else if (currentStep === 7) {
                 setupExtraForm();
             } else if (currentStep === 8) {
-                setupDelay('btn8', 'countdown8', 5);
+                setupDelay('btn8', 'countdown8', 0);
             } else if (currentStep === 9) {
-                setupDelay('btn9', 'countdown9', 5);
+                setupDelay('btn9', 'countdown9', 0);
             } else if (currentStep === 10) {
-                setupDelay('btn10', 'countdown10', 5);
+                setupDelay('btn10', 'countdown10', 0);
             }
 
             // Reproduzir vídeo da etapa ativa, se houver
@@ -625,7 +625,7 @@
             const countdown = document.getElementById('countdown2');
             const video = document.getElementById('video1');
             
-            let timeLeft = 80;
+            let timeLeft = 0;
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -653,7 +653,7 @@
             const countdown = document.getElementById('countdown_new');
             const video = document.getElementById('video_new');
             
-            let timeLeft = 20;
+            let timeLeft = 0;
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -684,7 +684,7 @@
             const countdown = document.getElementById('countdown3');
             const video = document.getElementById('video2');
             
-            let timeLeft = 60;
+            let timeLeft = 0;
             btn.disabled = true;
             
             const timer = setInterval(() => {
