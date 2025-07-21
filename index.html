@@ -206,19 +206,30 @@
             border-radius: 10px;
         }
 
+        .benefit-item div:not(.benefit-icon) {
+            z-index: 3;
+        }
+
         .benefit-icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
-            border-radius: 50%;
+            font-size: 20px;
             margin-right: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            background-color: #4caf50;
+            border-radius: 50%;
             color: white;
-            font-size: 14px;
+            flex-shrink: 0;
         }
+
+
+
+
+        
+
+
 
         .small-text {
             font-size: 12px;
@@ -248,6 +259,20 @@
             text-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
             background: none;
             -webkit-text-fill-color: initial;
+        }
+
+        input, textarea {
+            background-color: #4a4a4a; /* Fundo cinza */
+            color: #fff; /* Texto branco */
+        }
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5); /* Placeholder opaco */
+            opacity: 1; /* Garante visibilidade */
+        }
+
+        label {
+            margin-bottom: 10px; /* Aumenta a margem entre o título e o campo */
+            display: block; /* Garante que o label ocupe a linha inteira */
         }
 
         .watermark {
@@ -310,8 +335,22 @@
             <button class="btn btn-orange" onclick="nextStep()">Continuar</button>
         </div>
 
-        <!-- Etapa 1: Início -->
+        <!-- Etapa 1: Explicação do acompanhamento e 15 dias grátis -->
         <div class="step" id="step1">
+            <h2>Como funciona o acompanhamento e os 15 dias grátis?</h2>
+            <div class="video-container">
+                <video id="video_new" controls autoplay muted>
+                    <source src="video1.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeo HTML5.
+                </video>
+            </div>
+            <p class="video-message">Assista o vídeo para o botão ser liberado</p>
+            <button class="btn btn-orange" id="btn_new" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown_new"></div>
+        </div>
+
+        <!-- Etapa 2: Vídeo inicial (Descubra Como Tocar Violão) -->
+        <div class="step" id="step2">
             <h2>🎯 Descubra Como Tocar Violão Depois dos 40 - Assista o vídeo</h2>
             <div class="video-container">
                 <video id="video1" controls autoplay muted>
@@ -320,12 +359,12 @@
                 </video>
             </div>
             <p class="video-message">Assista o vídeo para o botão ser liberado</p>
-            <button class="btn btn-orange" id="btn1" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown1"></div>
+            <button class="btn btn-orange" id="btn2" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown2"></div>
         </div>
 
-        <!-- Etapa 2: Depoimentos -->
-        <div class="step" id="step2">
+        <!-- Etapa 3: Depoimentos dos alunos -->
+        <div class="step" id="step3">
             <h2>🗣️ Veja o que nossos alunos dizem</h2>
             <div class="video-container">
                 <video id="video2" controls autoplay muted>
@@ -334,12 +373,82 @@
                 </video>
             </div>
             <p class="video-message">Assista pelo menos um pouco do vídeo para liberar o botão</p>
-            <button class="btn btn-orange" id="btn2" onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown2"></div>
+            <button class="btn btn-orange" id="btn3" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown3"></div>
         </div>
 
-        <!-- Etapa 3: FAQ -->
-        <div class="step" id="step3">
+        <!-- Etapa 4: Formulário de dados pessoais (Nome, WhatsApp, Idade) -->
+        <div class="step" id="step4">
+            <h2>Preencha seus dados</h2>
+            <form id="userForm4" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <div>
+                    <label for="nome">Nome e sobrenome:</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Insira seu nome e sobrenome" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+                </div>
+                <div>
+                    <label for="whatsapp">WhatsApp com DDD sem o zero:</label>
+                    <input type="number" id="whatsapp" name="whatsapp" required placeholder="Insira seu WhatsApp com DDD sem o zero" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+                </div>
+                <div>
+                    <label for="idade">Qual a sua idade?</label>
+                    <input type="number" id="idade" name="idade" required placeholder="Insira sua idade" min="40" max="99" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+                </div>
+                <p class="small-text">Preencha todos os campos para continuar</p>
+                <button type="submit" class="btn btn-orange" id="btn4" disabled>Continuar</button>
+            </form>
+            <div class="countdown" id="countdown4"></div>
+        </div>
+        
+        <!-- Etapa 5: Seleção do nível no violão -->
+        <div class="step" id="step5">
+            <h2>Qual o seu nível no violão?</h2>
+            <form id="levelForm5" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="nivel" value="zero" required> Estou começando do zero (não sei nada)</label>
+                <label><input type="radio" name="nivel" value="iniciante"> Já sei alguma coisinha mas ainda não toco nenhuma música inteira com segurança</label>
+                <label><input type="radio" name="nivel" value="intermediario"> Já toco pelo menos uma música inteira com segurança</label>
+                <label><input type="radio" name="nivel" value="personalizado" id="nivelPersonalizado"> Prefiro escrever e explicar qual o meu nível no violão</label>
+                <textarea id="textoNivelPersonalizado" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira seu nível no violão"></textarea>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" id="btn5" disabled>Continuar</button>
+
+            </form>
+            <div class="countdown" id="countdown5"></div>
+        </div>
+
+        <!-- Etapa 6: Seleção do tipo de música -->
+        <div class="step" id="step6">
+            <h2>Que tipo de música você pretende aprender a tocar no violão?</h2>
+            <form id="musicForm6" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="musica" value="sertaneja" required> Sertaneja</label>
+                <label><input type="radio" name="musica" value="brega"> Brega</label>
+                <label><input type="radio" name="musica" value="catolica"> Católica</label>
+                <label><input type="radio" name="musica" value="evangelica"> Evangélica</label>
+                <label><input type="radio" name="musica" value="outro" id="outraMusica"> Outro</label>
+                <input type="text" id="textoOutraMusica" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none;" placeholder="Insira o tipo de música"></input>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" id="btn6" disabled>Continuar</button>
+
+            </form>
+            <div class="countdown" id="countdown6"></div>
+        </div>
+
+        <!-- Etapa 7: Informações adicionais antes da inscrição -->
+        <div class="step" id="step7">
+            <h2>Quer me informar mais alguma coisa antes de se inscrever?</h2>
+            <form id="extraForm7" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="extra" value="nao" required> Não</label>
+                <label><input type="radio" name="extra" value="sim" id="extraSim"> Sim</label>
+                <textarea id="textoExtra" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira informações adicionais"></textarea>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" id="btn7" disabled>Continuar</button>
+            </form>
+            <div class="countdown" id="countdown7"></div>
+        </div>
+
+        
+
+        <!-- Etapa 8: Perguntas Frequentes (Parte 1) -->
+        <div class="step" id="step8">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -352,12 +461,12 @@
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn3" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown3"></div>
+            <button class="btn btn-orange" id="btn8" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown8"></div>
         </div>
 
-        <!-- Etapa 4: FAQ2 -->
-        <div class="step" id="step4">
+        <!-- Etapa 9: Perguntas Frequentes (Parte 2) -->
+        <div class="step" id="step9">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -370,111 +479,153 @@
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn4" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown4"></div>
+            <button class="btn btn-orange" id="btn9" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown9"></div>
         </div>
 
-        <!-- Etapa 5: Benefícios -->
-        <div class="step" id="step5">
+        <!-- Etapa 10: Resumo dos Benefícios -->
+        <div class="step" id="step10">
             <h2 style="font-size: 28px;">✨ Resumo dos Benefícios</h2>
             <div class="benefits">
                 <div class="benefit-item">
                     <div class="benefit-icon">📹</div>
-                    <div>Videochamadas semanais com atenção individual</div>
+                    <div>Você vai aprender a tocar as músicas que você gosta</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">🎯</div>
-                    <div>Análise de vídeos ou áudios enviados pelo aluno</div>
+                    <div>Aprendizado na prática sem ficar enrolando com teoria</div>
                 </div>
                 <div class="benefit-item">
                     <div class="benefit-icon">📚</div>
-                    <div>Curso completo de violão incluso</div>
+                    <div>Você escolhe seu treino e aprende no seu tempo</div>
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn5" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown5"></div>
+            <button class="btn btn-orange" id="btn10" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" id="countdown10"></div>
         </div>
 
-        <!-- Etapa 6: Cadastro Final -->
-        <div class="step" id="step6">
+        <!-- Etapa 11: Cadastro Final (15 dias grátis) -->
+        <div class="step" id="step11">
             <h1 class="final-title">🎉 Última Etapa!</h1>
             <h2>Você vai ganhar seus 15 dias grátis agora!</h2>
             <p class="intro-text">
             Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br><br>
                 Pode cancelar quando quiser.<br>
             </p>
-            <a href="https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis" 
-               class="btn btn-green" target="_blank">
+            <button class="btn btn-green" onclick="sendToFirebase(); window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank')">
                 🎸 Quero meus 15 dias grátis
-            </a>
+            </button>
         </div>
 
         <!-- Indicador de etapa -->
         <div class="step-indicator" id="stepIndicator">
-            Etapa 1 de 7
+            Etapa 0 de 11
         </div>
     </div>
 
     <script>
         let currentStep = 0;
-        const totalSteps = 7;
+        const totalSteps = 12;
         
         function updateStepIndicator() {
-            document.getElementById('stepIndicator').textContent = `Etapa ${currentStep + 1} de ${totalSteps}`;
+            const visibleTotal = totalSteps - 1;
+            document.getElementById('stepIndicator').textContent = `Etapa ${currentStep} de ${visibleTotal}`;
         }
+
         
         function getStepFromURL() {
             const step = parseInt(window.location.hash.replace('#', '')) || 0;
-            if (step >= 0 && step <= 7) {
-                currentStep = step;
+            if (step >= 0 && step < totalSteps) {
+                currentStep = step; // Respeita a etapa da URL
                 document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
                 document.getElementById(`step${currentStep}`).classList.add('active');
                 updateStepIndicator();
+                // Inicializar validações para a etapa atual
+                if (currentStep === 1) {
+                    setupVideoDelayNew();
+                } else if (currentStep === 2) {
+                    setupVideoDelay();
+                } else if (currentStep === 3) {
+                    setupVideoDelay2();
+                } else if (currentStep === 4) {
+                    setupFormDelay();
+                } else if (currentStep === 5) {
+                    setupLevelForm();
+                } else if (currentStep === 6) {
+                    setupMusicForm();
+                } else if (currentStep === 7) {
+                    setupExtraForm();
+                } else if (currentStep === 8) {
+                    setupDelay('btn8', 'countdown8', 0);
+                } else if (currentStep === 9) {
+                    setupDelay('btn9', 'countdown9', 0);
+                } else if (currentStep === 10) {
+                    setupDelay('btn10', 'countdown10', 0);
+                }
             }
         }
 
         function nextStep() {
+            // Pausar vídeos da etapa atual
             document.querySelectorAll('video').forEach(video => {
                 video.pause();
                 video.currentTime = 0;
             });
+
             // Esconder etapa atual
             document.getElementById(`step${currentStep}`).classList.remove('active');
-            
-            // Próxima etapa
+
+            // Incrementar etapa
             currentStep++;
-            
+
+            // Garantir que não pule etapas
+            if (currentStep >= totalSteps) {
+                currentStep = totalSteps - 1; // Impede ultrapassar a última etapa
+            }
+
             // Mostrar próxima etapa
             document.getElementById(`step${currentStep}`).classList.add('active');
-            
+
             // Atualizar indicador
             updateStepIndicator();
-            
-            // Configurar delays específicos
+
+            // Configurar validações para a etapa atual
             if (currentStep === 1) {
-                setupVideoDelay();
+                setupVideoDelayNew();
             } else if (currentStep === 2) {
-                setupVideoDelay2();
+                setupVideoDelay();
             } else if (currentStep === 3) {
-                setupDelay('btn3', 'countdown3', 5);
+                setupVideoDelay2();
             } else if (currentStep === 4) {
-                setupDelay('btn4', 'countdown4', 5);
+                setupFormDelay();
             } else if (currentStep === 5) {
-                setupDelay('btn5', 'countdown5', 5);
+                setupLevelForm();
+            } else if (currentStep === 6) {
+                setupMusicForm();
+            } else if (currentStep === 7) {
+                setupExtraForm();
+            } else if (currentStep === 8) {
+                setupDelay('btn8', 'countdown8', 0);
+            } else if (currentStep === 9) {
+                setupDelay('btn9', 'countdown9', 0);
+            } else if (currentStep === 10) {
+                setupDelay('btn10', 'countdown10', 0);
             }
+
+            // Reproduzir vídeo da etapa ativa, se houver
             setTimeout(() => {
                 const activeVideo = document.querySelector('.step.active video');
                 if (activeVideo) activeVideo.play();
-            }, 100); 
+            }, 100);
         }
 
         function setupVideoDelay() {
-            const btn = document.getElementById('btn1');
-            const countdown = document.getElementById('countdown1');
+            const btn = document.getElementById('btn2');
+            const countdown = document.getElementById('countdown2');
             const video = document.getElementById('video1');
             
-            let timeLeft = 70;
+            let timeLeft = 0;
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -497,12 +648,43 @@
             });
         }
 
+        function setupVideoDelayNew() {
+            const btn = document.getElementById('btn_new');
+            const countdown = document.getElementById('countdown_new');
+            const video = document.getElementById('video_new');
+            
+            let timeLeft = 0;
+            btn.disabled = true;
+            
+            const timer = setInterval(() => {
+                countdown.textContent = `Botão liberado em ${timeLeft}s`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+            }, 1000);
+            
+            video.addEventListener('ended', () => {
+                if (timeLeft > 5) {
+                    timeLeft = 5;
+                }
+            });
+            
+            video.addEventListener('play', function() {
+                this.muted = false;
+            });
+        }
+
         function setupVideoDelay2() {
-            const btn = document.getElementById('btn2');
-            const countdown = document.getElementById('countdown2');
+            const btn = document.getElementById('btn3');
+            const countdown = document.getElementById('countdown3');
             const video = document.getElementById('video2');
             
-            let timeLeft = 30;
+            let timeLeft = 0;
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -560,6 +742,10 @@
             window.scrollTo(0, 0);
         });
 
+        document.getElementById('video_new').addEventListener('play', function() {
+            this.muted = false;
+        });
+
         document.getElementById('video1').addEventListener('play', function() {
             this.muted = false;
         });
@@ -571,6 +757,289 @@
         getStepFromURL();
         window.addEventListener('hashchange', getStepFromURL);
 
+
+        function setupFormDelay() {
+            const btn = document.getElementById('btn4');
+            const countdown = document.getElementById('countdown4');
+            const form = document.getElementById('userForm4');
+            const inputs = form.querySelectorAll('input');
+            
+            btn.disabled = true;
+            
+            function validateForm() {
+                const name = document.getElementById('nome').value.trim();
+                const whatsapp = document.getElementById('whatsapp').value.trim();
+                const age = document.getElementById('idade').value.trim();
+                
+                const nameRegex = /^[A-Za-zÀ-ÿ\s]{3,}$/;
+                const whatsappRegex = /^\d{10,11}$/;
+                
+                let showError = false;
+                
+                // Verifica se há números no nome (quando o campo não está vazio)
+                if (name && !nameRegex.test(name)) {
+                    showError = true;
+                }
+                
+                // Verifica se o WhatsApp é inválido (quando o campo não está vazio)
+                if (whatsapp && !whatsappRegex.test(whatsapp)) {
+                    showError = true;
+                }
+                
+                // Verifica se a idade é menor que 40 ou tem 3 dígitos (quando o campo não está vazio)
+                if (age && (parseInt(age) < 40 || parseInt(age) > 99)) {
+                    showError = true;
+                }
+                
+                const isValid = nameRegex.test(name) && whatsappRegex.test(whatsapp) && age >= 40;
+                
+                btn.disabled = !isValid;
+                countdown.textContent = showError ? 'Preencha com dados válidos (nome e sobrenome: apenas letras, WhatsApp: 10-11 dígitos, idade: ≥40)' : '';
+                
+                if (isValid) {
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+            }
+            
+            inputs.forEach(input => input.addEventListener('input', validateForm));
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = {
+                    nome: document.getElementById('nome').value,
+                    whatsapp: document.getElementById('whatsapp').value,
+                    idade: document.getElementById('idade').value
+                };
+                saveToSession('dados_pessoais', formData);
+                nextStep();
+            });
+        }
+
+        function setupLevelForm() {
+            const btn = document.getElementById('btn5');
+            const countdown = document.getElementById('countdown5');
+            const form = document.getElementById('levelForm5');
+            const customLevel = document.getElementById('nivelPersonalizado');
+            const customLevelText = document.getElementById('textoNivelPersonalizado');
+            const radios = form.querySelectorAll('input[name="nivel"]');
+            
+            btn.disabled = true;
+            
+            function checkForm() {
+                const isSelected = Array.from(radios).some(radio => radio.checked);
+                const isCustomValid = !customLevel.checked || (customLevel.checked && customLevelText.value.trim() !== '');
+                if (isSelected && isCustomValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = customLevel.checked ? 'Descreva seu nível' : 'Selecione uma opção';
+                }
+            }
+            
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                customLevelText.style.display = radio.value === 'personalizado' ? 'block' : 'none';
+                checkForm();
+            }));
+            
+            customLevelText.addEventListener('input', () => {
+                customLevelText.style.height = 'auto';
+                customLevelText.style.height = `${customLevelText.scrollHeight}px`;
+                checkForm();
+            });
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const levelData = {
+                    nivel: form.querySelector('input[name="nivel"]:checked').value,
+                    nivel_personalizado: customLevel.checked ? sanitizeInput(customLevelText.value) : ''
+                };
+                saveToSession('nivel_violao', levelData);
+                nextStep();
+            });
+        }
+
+        function setupMusicForm() {
+            const btn = document.getElementById('btn6');
+            const countdown = document.getElementById('countdown6');
+            const form = document.getElementById('musicForm6');
+            const radios = form.querySelectorAll('input[name="musica"]');
+            const otherMusic = document.getElementById('outraMusica');
+            const otherMusicText = document.getElementById('textoOutraMusica');
+            
+            btn.disabled = true;
+            
+            function checkForm() {
+                const isSelected = Array.from(radios).some(radio => radio.checked);
+                const isOtherValid = !otherMusic.checked || (otherMusic.checked && otherMusicText.value.trim() !== '');
+                if (isSelected && isOtherValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = otherMusic.checked ? 'Especifique o tipo de música' : 'Selecione uma opção';
+                }
+            }
+            
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                otherMusicText.style.display = radio.value === 'outro' ? 'block' : 'none';
+                checkForm();
+            }));
+            
+            otherMusicText.addEventListener('input', checkForm);
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const musicData = {
+                    musica: form.querySelector('input[name="musica"]:checked').value,
+                    musica_personalizada: otherMusic.checked ? sanitizeInput(otherMusicText.value) : ''
+                };
+                saveToSession('tipo_musica', musicData);
+                nextStep();
+            });
+        }
+
+        function setupExtraForm() {
+            const btn = document.getElementById('btn7');
+            const countdown = document.getElementById('countdown7');
+            const form = document.getElementById('extraForm7');
+            const radios = form.querySelectorAll('input[name="extra"]');
+            const extraYes = document.getElementById('extraSim');
+            const extraText = document.getElementById('textoExtra');
+            
+            btn.disabled = true;
+            
+            function checkForm() {
+                const isSelected = Array.from(radios).some(radio => radio.checked);
+                const isYesValid = !extraYes.checked || (extraYes.checked && extraText.value.trim() !== '');
+                if (isSelected && isYesValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = extraYes.checked ? 'Escreva sua informação' : 'Selecione uma opção';
+                }
+            }
+            
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                extraText.style.display = radio.value === 'sim' ? 'block' : 'none';
+                checkForm();
+            }));
+            
+            extraText.addEventListener('input', () => {
+                extraText.style.height = 'auto';
+                extraText.style.height = `${extraText.scrollHeight}px`;
+                checkForm();
+            });
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const extraData = {
+                    resposta: form.querySelector('input[name="extra"]:checked').value,
+                    texto_extra: extraYes.checked ? sanitizeInput(extraText.value) : ''
+                };
+                saveToSession('informacoes_extras', extraData);
+                nextStep();
+            });
+        }
+
     </script>
+
+    <script>
+        const API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes';
+
+        // Inicializar sessionStorage
+        function initSession() {
+            if (!sessionStorage.getItem('formData')) {
+                sessionStorage.setItem('formData', JSON.stringify({}));
+            }
+        }
+        
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        // Salvar dados na sessionStorage
+        function saveToSession(key, value) {
+            let formData = JSON.parse(sessionStorage.getItem('formData'));
+            formData[key] = value;
+            sessionStorage.setItem('formData', JSON.stringify(formData));
+        }
+
+        // Obter o próximo contador do Firebase
+        async function getNextCounter() {
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const counters = result.data
+                        .filter(doc => doc.documentId && doc.documentId.startsWith('15diasgratis_'))
+                        .map(doc => parseInt(doc.documentId.replace('15diasgratis_', '')))
+                        .filter(n => !isNaN(n));
+                    return counters.length > 0 ? Math.max(...counters) + 1 : 1;
+                }
+                return 1;
+            } catch (error) {
+                console.error('Erro ao obter contador:', error);
+                return 1;
+            }
+        }
+
+        // Enviar dados ao Firebase
+        let isSubmitting = false;
+        async function sendToFirebase() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            let formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
+            if (Object.keys(formData).length === 0) {
+                console.log('Nenhum dado para enviar');
+                isSubmitting = false;
+                return;
+            }
+            try {
+                const counter = await getNextCounter();
+                const documentId = `15diasgratis_${counter}`;
+                const dataToSend = {
+                    documentId: documentId,
+                    numero_inscricao: counter.toString(),
+                    nome: formData.dados_pessoais?.nome || '',
+                    whatsapp: formData.dados_pessoais?.whatsapp || '',
+                    idade: formData.dados_pessoais?.idade || '',
+                    nivel_violao: formData.nivel_violao?.nivel || '',
+                    nivel_personalizado: formData.nivel_violao?.nivel_personalizado || '',
+                    tipo_musica: formData.tipo_musica?.musica || '',
+                    musica_personalizada: formData.tipo_musica?.musica_personalizada || '',
+                    mais_informacoes: formData.informacoes_extras?.resposta || '',
+                    texto_extra: formData.informacoes_extras?.texto_extra || '',
+                    data_inscricao: new Date().toISOString(),
+                    tipo: "inscricao"
+                };
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataToSend)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    sessionStorage.removeItem('formData');
+                } else {
+                    console.error('Erro ao enviar:', result.error);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar:', error);
+            } finally {
+                isSubmitting = false;
+            }
+        }
+
+        // Iniciar sessionStorage
+        initSession();
+    </script>
+
 </body>
 </html>
