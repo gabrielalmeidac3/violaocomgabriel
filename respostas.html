@@ -295,6 +295,22 @@
             <button id="nextPage">Próximo</button>
         </div>
         <div class="error-message" id="errorMessage"></div>
+
+        <div class="levels-container" style="display: flex; justify-content: center; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+            <div class="level-card" style="background: linear-gradient(135deg, rgba(100, 181, 246, 0.2), rgba(100, 181, 246, 0.1)); border-radius: 10px; padding: 15px; text-align: center; min-width: 200px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;">
+                <p style="color: #2196f3; font-size: 18px; margin: 0 0 5px 0; font-weight: bold;">Zero</p>
+                <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Não sabe nada</p>
+            </div>
+            <div class="level-card" style="background: linear-gradient(135deg, rgba(100, 181, 246, 0.2), rgba(100, 181, 246, 0.1)); border-radius: 10px; padding: 15px; text-align: center; min-width: 200px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;">
+                <p style="color: #2196f3; font-size: 18px; margin: 0 0 5px 0; font-weight: bold;">Iniciante</p>
+                <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Sabe algo, mas não toca música inteira com segurança</p>
+            </div>
+            <div class="level-card" style="background: linear-gradient(135deg, rgba(100, 181, 246, 0.2), rgba(100, 181, 246, 0.1)); border-radius: 10px; padding: 15px; text-align: center; min-width: 200px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;">
+                <p style="color: #2196f3; font-size: 18px; margin: 0 0 5px 0; font-weight: bold;">Intermediário</p>
+                <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Toca pelo menos uma música inteira com segurança</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -383,9 +399,13 @@
                 if (!number) return '';
                 let cleanNumber = number.replace(/\D/g, '');
                 if (cleanNumber.length === 10) {
+                    cleanNumber = `${cleanNumber.slice(0, 2)}9${cleanNumber.slice(2)}`;
+                }
+                if (cleanNumber.length === 11) {
                     const ddd = cleanNumber.slice(0, 2);
-                    const rest = cleanNumber.slice(2);
-                    cleanNumber = `${ddd}9${rest}`;
+                    const firstPart = cleanNumber.slice(2, 7);
+                    const secondPart = cleanNumber.slice(7);
+                    return `+55 (${ddd}) ${firstPart}-${secondPart}`;
                 }
                 return cleanNumber;
             };
@@ -405,7 +425,7 @@
             return `
                 <tr style="animation: fadeIn 0.5s ease-in;">
                     <td><strong>${isInvalid ? '-' : (item.nome || '-')}</strong></td>
-                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${formatWhatsApp(item.whatsapp)}" target="_self">${item.whatsapp}</a>` : '-')}</td>
+                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${item.whatsapp.replace(/\D/g, '')}" style="color: #64b5f6; text-decoration: none;" target="_self">${formatWhatsApp(item.whatsapp)}</a>` : '-')}</td>
                     <td>${isInvalid ? '-' : (item.idade || '-')} anos</td>
                     <td>${levelText}${customLevel}</td>
                     <td>${musicText}${otherMusic}</td>
