@@ -191,6 +191,20 @@
             background: linear-gradient(45deg, #ff9800, #ffb74d);
         }
 
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #64b5f6;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+            vertical-align: middle;
+            transition: transform 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.2);
+        }
+
         @media (max-width: 768px) {
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
@@ -284,6 +298,7 @@
                         <th>Tipo de Música</th>
                         <th>Informações Adicionais</th>
                         <th>Data</th>
+                        <th>Término dos 15 dias</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -425,12 +440,13 @@
             return `
                 <tr style="animation: fadeIn 0.5s ease-in;">
                     <td><strong>${isInvalid ? '-' : (item.nome || '-')}</strong></td>
-                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${item.whatsapp.replace(/\D/g, '')}" style="color: #64b5f6; text-decoration: none;" target="_self">${formatWhatsApp(item.whatsapp)}</a>` : '-')}</td>
+                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${item.whatsapp.replace(/\D/g, '')}" style="color: #64b5f6; text-decoration: none;" target="_self">${formatWhatsApp(item.whatsapp)}</a><button class="copy-btn" onclick="copyToClipboard('+55${item.whatsapp.replace(/\D/g, '')}')">📋</button>` : '-')}</td>
                     <td>${isInvalid ? '-' : (item.idade || '-')} anos</td>
                     <td>${levelText}${customLevel}</td>
                     <td>${musicText}${otherMusic}</td>
                     <td style="max-width: 200px; word-wrap: break-word;">${isInvalid ? '-' : (item.mais_informacoes ? extraMap[item.mais_informacoes] || item.mais_informacoes.charAt(0).toUpperCase() + item.mais_informacoes.slice(1) : '-')}${item.texto_extra ? `<br><small style="color: #64b5f6;">${item.texto_extra.charAt(0).toUpperCase() + item.texto_extra.slice(1)}</small>` : ''}</td>
                     <td>${item.data_inscricao ? new Date(item.data_inscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td>
+                    <td>${item.data_inscricao ? `${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}<button class="copy-btn" onclick="copyToClipboard('${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}')">📋</button>` : '-'}</td>
                     <td><button class="delete-btn" onclick="deleteResponse('${item.id}')">🗑️ Excluir</button></td>
                 </tr>
             `;
@@ -475,6 +491,18 @@
         currentPage++;
         displayData();
     });
+
+    function add15Days(dateStr) {
+        const date = new Date(dateStr);
+        date.setDate(date.getDate() + 15);
+        return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '');
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).catch(err => {
+            console.error('Erro ao copiar:', err);
+        });
+    }
 
     loadData();
     </script>
