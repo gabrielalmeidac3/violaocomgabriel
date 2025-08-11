@@ -17,18 +17,19 @@
             color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
             max-width: 400px;
             margin: 0 auto;
-            min-height: 100vh;
+            min-height: calc(100vh - 80px);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding: 20px;
             position: relative;
-            overflow-y: hidden;
         }
 
         .step {
@@ -37,11 +38,44 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            height: calc(100vh - 80px);
+            min-height: calc(100vh - 80px);
+            padding: 20px 0;
         }
+
+      
 
         .step.active {
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 20px 0;
+        }
+
+        form {
+            gap: 8px !important; /* Reduz espaço entre caixinhas */
+        }
+
+        .step label:has(input[type="radio"], input[type="checkbox"]) {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            line-height: 1.8;
+        }
+        .step label:has(input[type="radio"]) input[type="radio"],
+        .step label:has(input[type="checkbox"]) input[type="checkbox"] {
+            margin-right: 15px;
+        }
+        .step label:has(input[type="checkbox"]) > span {
+            flex-grow: 1;
+            text-align: left;
+        }
+        .step label:has(input[type="checkbox"]) > button {
+            margin-left: auto;
         }
 
         .step-indicator {
@@ -54,8 +88,17 @@
             font-size: 12px;
             color: #ccc;
             backdrop-filter: blur(10px);
-            z-index: 1000;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
+       
+        .static {
+        position: static !important;
+        }
+
 
         h1 {
             font-size: 28px;
@@ -77,6 +120,16 @@
         .intro-image {
             width: 100%;
             max-width: 300px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .smaller-image {
+            width: 100%;
+            max-width: 200px;
             height: auto;
             object-fit: contain;
             border-radius: 15px;
@@ -144,6 +197,42 @@
         .btn-green:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-blue {
+            background: linear-gradient(45deg, #42a5f5, #64b5f6);
+            color: white;
+            box-shadow: 0 5px 15px rgba(66, 165, 245, 0.3);
+        }
+
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(66, 165, 245, 0.4);
+        }
+
+        .triangle {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 5px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+        }
+
+        .triangle-down {
+            border-top: 6px solid white;
+        }
+
+        .triangle-up {
+            border-bottom: 6px solid white;
+        }
+
+        
+        
+
+        .step#step9 h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
         }
 
         .btn:disabled {
@@ -282,17 +371,25 @@
             width: 60px;
             height: auto;
             opacity: 0.7;
-            z-index: 999;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
+            z-index: 999;
+            object-fit: contain;
         }
+        
 
-        .watermark:hover {
-            opacity: 1;
-            transform: scale(1.1);
+        .footer {
+            width: 100%;
+            min-height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: transparent;
+            position: relative;
+            margin-top: auto;
         }
 
         @media (max-width: 480px) {
@@ -322,10 +419,10 @@
 </head>
 <body>
     <div class="container">
-        <img src="img2.png" alt="Marca d'água" class="watermark">
+        
         <!-- Etapa 0: Introdução -->
-        <div class="step active" id="step0">
-            <img src="img.webp" alt="Violão Depois dos 40" class="intro-image" onerror="this.style.display='none'">
+        <div class="step active" data-name="inicio" data-delay="0">
+            <img src="images/img.webp" alt="Violão Depois dos 40" class="intro-image" onerror="this.style.display='none'">
             <h1>Acompanhamento<br>Violão Depois dos 40</h1>
             <p class="intro-text">
                 🎸 Ganhe <strong>15 dias GRÁTIS</strong> do nosso acompanhamento exclusivo!
@@ -333,54 +430,55 @@
                 É simples: aperte no botão "Continuar" em cada etapa para garantir sua vaga.
             </p>
             <button class="btn btn-orange" onclick="nextStep()">Continuar</button>
+            
         </div>
 
         <!-- Etapa 1: Explicação do acompanhamento e 15 dias grátis -->
-        <div class="step" id="step1">
+        <div class="step" data-name="video_explicacao" data-delay="20">
             <h2>Como funciona o acompanhamento e os 15 dias grátis?</h2>
             <div class="video-container">
-                <video id="video_new" controls autoplay muted>
+                <video data-video="video_explicacao" controls autoplay muted>
                     <source src="video1.mp4" type="video/mp4">
                     Seu navegador não suporta vídeo HTML5.
                 </video>
             </div>
             <p class="video-message">Assista o vídeo para o botão ser liberado</p>
-            <button class="btn btn-orange" id="btn_new" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown_new"></div>
+            <button class="btn btn-orange" data-btn="video_explicacao" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="video_explicacao"></div>
         </div>
 
         <!-- Etapa 2: Vídeo inicial (Descubra Como Tocar Violão) -->
-        <div class="step" id="step2">
+        <div class="step" data-name="video_inicial" data-delay="80">
             <h2>🎯 Descubra Como Tocar Violão Depois dos 40 - Assista o vídeo</h2>
             <div class="video-container">
-                <video id="video1" controls autoplay muted>
+                <video data-video="video_inicial" controls autoplay muted>
                     <source src="vid.mp4" type="video/mp4">
                     Seu navegador não suporta vídeo HTML5.
                 </video>
             </div>
             <p class="video-message">Assista o vídeo para o botão ser liberado</p>
-            <button class="btn btn-orange" id="btn2" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown2"></div>
+            <button class="btn btn-orange" data-btn="video_inicial" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="video_inicial"></div>
         </div>
 
         <!-- Etapa 3: Depoimentos dos alunos -->
-        <div class="step" id="step3">
+        <div class="step" data-name="depoimentos" data-delay="60">
             <h2>🗣️ Veja o que nossos alunos dizem</h2>
             <div class="video-container">
-                <video id="video2" controls autoplay muted>
+                <video data-video="depoimentos" controls autoplay muted>
                     <source src="vid2.mp4" type="video/mp4">
                     Seu navegador não suporta vídeo HTML5.
                 </video>
             </div>
             <p class="video-message">Assista pelo menos um pouco do vídeo para liberar o botão</p>
-            <button class="btn btn-orange" id="btn3" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown3"></div>
+            <button class="btn btn-orange" data-btn="depoimentos" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="depoimentos"></div>
         </div>
 
         <!-- Etapa 4: Formulário de dados pessoais (Nome, WhatsApp, Idade) -->
-        <div class="step" id="step4">
+        <div class="step" data-name="dados_pessoais" data-delay="0">
             <h2>Preencha seus dados</h2>
-            <form id="userForm4" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <form data-form="dados_pessoais" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
                 <div>
                     <label for="nome">Nome e sobrenome:</label>
                     <input type="text" id="nome" name="nome" required placeholder="Insira seu nome e sobrenome" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
@@ -394,61 +492,247 @@
                     <input type="number" id="idade" name="idade" required placeholder="Insira sua idade" min="40" max="99" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
                 </div>
                 <p class="small-text">Preencha todos os campos para continuar</p>
-                <button type="submit" class="btn btn-orange" id="btn4" disabled>Continuar</button>
+                <button type="submit" class="btn btn-orange" data-btn="dados_pessoais" disabled>Continuar</button>
             </form>
-            <div class="countdown" id="countdown4"></div>
+            <div class="countdown" data-countdown="dados_pessoais"></div>
         </div>
         
         <!-- Etapa 5: Seleção do nível no violão -->
-        <div class="step" id="step5">
+        <div class="step" data-name="nivel_violao" data-delay="0">
             <h2>Qual o seu nível no violão?</h2>
-            <form id="levelForm5" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <img style="margin-bottom: 30px" src="images/nivel.png" alt="Nível no violão" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="nivel_violao" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
                 <label><input type="radio" name="nivel" value="zero" required> Estou começando do zero (não sei nada)</label>
                 <label><input type="radio" name="nivel" value="iniciante"> Já sei alguma coisinha mas ainda não toco nenhuma música inteira com segurança</label>
                 <label><input type="radio" name="nivel" value="intermediario"> Já toco pelo menos uma música inteira com segurança</label>
                 <label><input type="radio" name="nivel" value="personalizado" id="nivelPersonalizado"> Prefiro escrever e explicar qual o meu nível no violão</label>
                 <textarea id="textoNivelPersonalizado" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira seu nível no violão"></textarea>
                 <p class="small-text">Selecione uma opção para continuar</p>
-                <button type="submit" class="btn btn-orange" id="btn5" disabled>Continuar</button>
+                <button type="submit" class="btn btn-orange" data-btn="nivel_violao" disabled>Continuar</button>
 
             </form>
-            <div class="countdown" id="countdown5"></div>
+            <div class="countdown" data-countdown="nivel_violao"></div>
         </div>
 
         <!-- Etapa 6: Seleção do tipo de música -->
-        <div class="step" id="step6">
+        <div class="step" data-name="tipo_musica" data-delay="0">
             <h2>Que tipo de música você pretende aprender a tocar no violão?</h2>
-            <form id="musicForm6" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <img style="margin-bottom: 30px" src="images/tipo.jpg" alt="Tipo de música" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="tipo_musica" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
                 <label><input type="radio" name="musica" value="sertaneja" required> Sertaneja</label>
                 <label><input type="radio" name="musica" value="brega"> Brega</label>
                 <label><input type="radio" name="musica" value="catolica"> Católica</label>
                 <label><input type="radio" name="musica" value="evangelica"> Evangélica</label>
                 <label><input type="radio" name="musica" value="outro" id="outraMusica"> Outro</label>
-                <input type="text" id="textoOutraMusica" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none;" placeholder="Insira o tipo de música"></input>
+                <textarea id="textoOutraMusica" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira o tipo de música"></textarea>
                 <p class="small-text">Selecione uma opção para continuar</p>
-                <button type="submit" class="btn btn-orange" id="btn6" disabled>Continuar</button>
+                <button type="submit" class="btn btn-orange" data-btn="tipo_musica" disabled>Continuar</button>
 
             </form>
-            <div class="countdown" id="countdown6"></div>
+            <div class="countdown" data-countdown="tipo_musica"></div>
+        </div>
+
+        <!-- Etapa 7: Você já sabe algum acorde? -->
+        <div class="step" data-name="sabe_acorde" data-delay="0">
+            <h2>Você já sabe algum acorde? (Que alguns chamam de posição ou nota)</h2>
+            <p style="margin-bottom: 20px;">Como: A (Lá maior), E (Mi maior), D (Ré maior)</p>
+            <img style="margin-bottom: 30px" src="images/acorde.png" alt="Exemplo de acorde" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="sabe_acorde" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="sabeAcorde" value="nao" required> Não</label>
+                <label><input type="radio" name="sabeAcorde" value="sim" id="sabeAcordeSim"> Sim</label>
+                <div id="acordesOptions" style="display: none;">
+                    <p style="margin-bottom: 20px; color: rgb(182, 182, 182)">Marque abaixo o que você já sabe:</p>
+                    <label><input type="radio" name="tipoAcorde" value="simples"> Acordes simples como A (Lá maior), E (Mi maior), D (Ré maior)</label>
+                    <label><input type="radio" name="tipoAcorde" value="pestana"> Acordes com pestana como F ou Bm</label>
+                    <label><input type="radio" name="tipoAcorde" value="personalizado" id="acordePersonalizado"> Vou escrever quais acordes eu já faço</label>
+                    <textarea id="textoAcordePersonalizado" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira os acordes que você já faz"></textarea>
+                </div>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="sabe_acorde" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="sabe_acorde"></div>
+        </div>
+
+        <!-- Etapa 8: Você já sabe afinar o violão? -->
+        <div class="step" data-name="sabe_afinar" data-delay="0">
+            <h2>Você já sabe afinar o violão?</h2>
+            <img style="margin-bottom: 30px" src="images/afinar.jpg" alt="Afinação do violão" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="sabe_afinar" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="sabeAfinar" value="sim" required> Sim</label>
+                <label><input type="radio" name="sabeAfinar" value="nao"> Não</label>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="sabe_afinar" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="sabe_afinar"></div>
+        </div>
+
+        <!-- Etapa 9: Você já sabe algum ritmo? -->
+        <div class="step" data-name="sabe_ritmo" data-delay="0">
+            <h2>Você já sabe algum ritmo?</h2>
+            <img style="margin-bottom: 30px" src="images/ritmo.jpg" alt="Ritmo no violão" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="sabe_ritmo" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="sabeRitmo" value="nao" required> Não</label>
+                <label><input type="radio" name="sabeRitmo" value="sim" id="sabeRitmoSim"> Sim</label>
+                <div id="ritmosOptions" style="display: none;">
+                    <p style="margin-bottom: 20px; color: rgb(182, 182, 182)">Marque abaixo o que você já sabe, se não souber por nome aperte em ver ritmo.<br><br>Pode marcar mais de um.</p>
+                    <label>
+                        <input type="checkbox" name="ritmo" value="guarania"> Guarânia
+                        <button type="button" class="btn btn-blue" style="padding: 5px 10px; font-size: 14px; min-width: auto;" onclick="toggleVideo('videoGuarania')">
+                            Ver ritmo <span class="triangle triangle-down"></span>
+                        </button>
+                    </label>
+                    <div data-video="videoGuarania" style="display: none;">
+                        <h3>Dê o play pra ver se você já conhece esse ritmo</h3>
+                        <div class="video-container">
+                            <video controls loop>
+                                <source src="Exemplo Ritmo Guarânia.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeo HTML5.
+                            </video>
+                        </div>
+                    </div>
+                    <label>
+                        <input type="checkbox" name="ritmo" value="rock"> Rock
+                        <button type="button" class="btn btn-blue" style="padding: 5px 10px; font-size: 14px; min-width: auto;" onclick="toggleVideo('videoRock')">
+                            Ver ritmo <span class="triangle triangle-down"></span>
+                        </button>
+                    </label>
+                    <div data-video="videoRock" style="display: none;">
+                        <h3>Dê o play pra ver se você já conhece esse ritmo</h3>
+                        <div class="video-container">
+                            <video controls loop>
+                                <source src="Exemplo Ritmo Rock.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeo HTML5.
+                            </video>
+                        </div>
+                    </div>
+                    <label>
+                        <input type="checkbox" name="ritmo" value="poprock"> Pop Rock
+                        <button type="button" class="btn btn-blue" style="padding: 5px 10px; font-size: 14px; min-width: auto;" onclick="toggleVideo('videoPopRock')">
+                            Ver ritmo <span class="triangle triangle-down"></span>
+                        </button>
+                    </label>
+                    <div data-video="videoPopRock" style="display: none;">
+                        <h3>Dê o play pra ver se você já conhece esse ritmo</h3>
+                        <div class="video-container">
+                            <video controls loop>
+                                <source src="Exemplo de Pop Rock.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeo HTML5.
+                            </video>
+                        </div>
+                    </div>
+                    <label>
+                        <input type="checkbox" name="ritmo" value="dedilhado"> Dedilhado
+                    </label>
+                    <label>
+                        <input type="radio" name="ritmoPersonalizado" value="personalizado" id="ritmoPersonalizado"> Vou escrever quais ritmos eu já faço
+                    </label>
+                    <textarea id="textoRitmoPersonalizado" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira os ritmos que você já faz"></textarea>
+                </div>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="sabe_ritmo" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="sabe_ritmo"></div>
+        </div>
+
+        <!-- Etapa 10: Você já sabe tocar alguma música inteira com segurança? -->
+        <div class="step" data-name="sabe_musica" data-delay="0">
+            <h2>Você já sabe tocar alguma música inteira com segurança?</h2>
+            <img style="margin-bottom: 30px" src="images/musica_inteira.png" alt="Música inteira" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="sabe_musica" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="sabeMusica" value="sim" required> Sim</label>
+                <textarea id="textoMusica" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Qual ou quais músicas você já toca?"></textarea>
+                <label><input type="radio" name="sabeMusica" value="nao"> Não</label>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="sabe_musica" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="sabe_musica"></div>
+        </div>
+
+        <!-- Etapa 11: Qual o seu objetivo com o violão? -->
+        <div class="step" data-name="objetivo_violao" data-delay="0">
+            <h2>Qual o seu objetivo principal com o violão?</h2>
+            <img style="margin-bottom: 30px" src="images/objetivo.png" alt="Objetivo com o violão" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="objetivo_violao" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="objetivo" value="hobbie" required> Hobbie</label>
+                <label><input type="radio" name="objetivo" value="amigos"> Tocar em rodas de amigos</label>
+                <label><input type="radio" name="objetivo" value="igreja"> Tocar na igreja</label>
+                <label><input type="radio" name="objetivo" value="sonho"> É um sonho de muito tempo</label>
+                <label><input type="radio" name="objetivo" value="outro" id="objetivoOutro"> Outro</label>
+                <textarea id="textoObjetivo" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Escreva qual o seu objetivo"></textarea>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="objetivo_violao" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="objetivo_violao"></div>
+        </div>
+
+        <!-- Etapa 12: Qual a sua maior dificuldade hoje no violão? -->
+        <div class="step" data-name="dificuldade_violao" data-delay="0">
+            <h2>Qual a sua maior dificuldade hoje no violão?</h2>
+            <img style="margin-bottom: 30px" src="images/dificuldade.png" alt="Dificuldade no violão" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="dificuldade_violao" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <textarea id="textoDificuldade" style="width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 100px;" placeholder="Escreva sua maior dificuldade"></textarea>
+                <p class="small-text">Escreva sua dificuldade para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="dificuldade_violao" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="dificuldade_violao"></div>
+        </div>
+
+        <!-- Etapa 13: Participação na videochamada -->
+        <div class="step" data-name="videochamada" data-delay="0">
+            <h2>Você vai poder participar da videochamada segunda 20h?</h2>
+            <img style="margin-bottom: 30px" src="images/videochamada20h.jpg" alt="Videochamada" class="intro-image" onerror="this.style.display='none'">
+            <form data-form="videochamada" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="videochamada" value="sim" required> Posso participar segunda 20h da videochamada</label>
+                <label><input type="radio" name="videochamada" value="nao"> Não posso no horário, então vou mandar minha dúvida ou progresso no grupo</label>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="videochamada" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="videochamada"></div>
+        </div>
+
+        <!-- Etapa 14: Disponibilidade para treinar -->
+        <div class="step" data-name="disponibilidade_treino" data-delay="0">
+            <h2>Pra aprender violão é necessário tempo.<br><br>Você tem como treinar pelo menos 3 dias na semana por 30 minutos?</h2>
+            <img style="margin-bottom: 30px" src="images/tempo.png" alt="Disponibilidade para treino" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="disponibilidade_treino" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="disponibilidade" value="sim" required> Sim</label>
+                <label><input type="radio" name="disponibilidade" value="nao"> Não</label>
+                <p class="small-text">Selecione uma opção para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="disponibilidade_treino" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="disponibilidade_treino"></div>
+        </div>
+
+        <!-- Etapa 14: Objetivo da semana -->
+        <div class="step" data-name="objetivo_semana" data-delay="0">
+            <h2>Qual objetivo você espera alcançar já nessa semana com o violão?</h2>
+            <img style="margin-bottom: 30px" src="images/objetivosemana.png" alt="Objetivo da semana" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="objetivo_semana" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <textarea id="textoObjetivoSemana" style="width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 100px;" placeholder="Escreva seu objetivo para essa semana"></textarea>
+                <p class="small-text">Escreva seu objetivo para continuar</p>
+                <button type="submit" class="btn btn-orange" data-btn="objetivo_semana" disabled>Continuar</button>
+            </form>
+            <div class="countdown" data-countdown="objetivo_semana"></div>
         </div>
 
         <!-- Etapa 7: Informações adicionais antes da inscrição -->
-        <div class="step" id="step7">
+        <div class="step" data-name="informacoes_extras" data-delay="0">
             <h2>Quer me informar mais alguma coisa antes de se inscrever?</h2>
-            <form id="extraForm7" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <img style="margin-bottom: 30px" src="images/informar.png" alt="Informações adicionais" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="informacoes_extras" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
                 <label><input type="radio" name="extra" value="nao" required> Não</label>
                 <label><input type="radio" name="extra" value="sim" id="extraSim"> Sim</label>
                 <textarea id="textoExtra" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira informações adicionais"></textarea>
                 <p class="small-text">Selecione uma opção para continuar</p>
-                <button type="submit" class="btn btn-orange" id="btn7" disabled>Continuar</button>
+                <button type="submit" class="btn btn-orange" data-btn="informacoes_extras" disabled>Continuar</button>
             </form>
-            <div class="countdown" id="countdown7"></div>
+            <div class="countdown" data-countdown="informacoes_extras"></div>
         </div>
 
         
 
         <!-- Etapa 8: Perguntas Frequentes (Parte 1) -->
-        <div class="step" id="step8">
+        <div class="step" data-name="faq_parte1" data-delay="5">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -461,12 +745,12 @@
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn8" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown8"></div>
+            <button class="btn btn-orange" data-btn="faq_parte1" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="faq_parte1"></div>
         </div>
 
         <!-- Etapa 9: Perguntas Frequentes (Parte 2) -->
-        <div class="step" id="step9">
+        <div class="step" data-name="faq_parte2" data-delay="5">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -479,12 +763,12 @@
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn9" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown9"></div>
+            <button class="btn btn-orange" data-btn="faq_parte2" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="faq_parte2"></div>
         </div>
 
         <!-- Etapa 10: Resumo dos Benefícios -->
-        <div class="step" id="step10">
+        <div class="step" data-name="resumo_beneficios" data-delay="5">
             <h2 style="font-size: 28px;">✨ Resumo dos Benefícios</h2>
             <div class="benefits">
                 <div class="benefit-item">
@@ -501,131 +785,405 @@
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" id="btn10" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" id="countdown10"></div>
+            <button class="btn btn-orange" data-btn="resumo_beneficios" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="resumo_beneficios"></div>
         </div>
 
         <!-- Etapa 11: Cadastro Final (15 dias grátis) -->
-        <div class="step" id="step11">
+        <div class="step" data-name="cadastro_final" data-delay="5">
             <h1 class="final-title">🎉 Última Etapa!</h1>
             <h2>Você vai ganhar seus 15 dias grátis agora!</h2>
             <p class="intro-text">
             Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br><br>
                 Pode cancelar quando quiser.<br>
             </p>
-            <button class="btn btn-green" onclick="sendToFirebase(); window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank')">
+            <button class="btn btn-green" data-btn="cadastro_final" onclick="captureStep19Time(); saveStepTimes(); sendToFirebase(); window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank')">
                 🎸 Quero meus 15 dias grátis
             </button>
-        </div>
+            <div class="countdown" data-countdown="cadastro_final"></div>
+        
+    </div>
 
-        <!-- Indicador de etapa -->
+    <div class="footer">
+        <img src="images/img2.png" alt="Marca d'água" class="watermark">
         <div class="step-indicator" id="stepIndicator">
-            Etapa 0 de 11
+            Etapa 0 de 20
         </div>
     </div>
 
     <script>
-        let currentStep = 0;
-        const totalSteps = 12;
+        const ENABLE_DELAY = 0; // 1 = delay ativado, 0 = delay desativado
+        
+        const steps = Array.from(document.querySelectorAll('.step')).map(step => step.dataset.name);
+        const stepNames = steps; // Alias para compatibilidade
+        let currentStep = steps[0]; // Inicia com o data-name da primeira etapa
+        let stepTimes = {};
+        steps.forEach(name => {
+            stepTimes[`tempo_${name}`] = 0;
+        });
+        let stepStartTime = Date.now();
+        
+        const USE_MILLISECONDS = 1; // 1 = milissegundos, 0 = segundos
+
+        const DELAY_FAQ = 5; // Delay para FAQs e etapas finais (etapas 16-19)
+        const DELAY_VIDEO_EXPLICACAO = 20; // Etapa 1
+        const DELAY_VIDEO_INICIAL = 80; // Etapa 2
+        const DELAY_DEPOIMENTOS = 60; // Etapa 3
+
+        function formatTimeSpent(startTime, endTime) {
+            const timeDiff = endTime - startTime;
+            return USE_MILLISECONDS ? timeDiff : Math.round(timeDiff / 1000);
+        }
+
+        function captureStep19Time() {
+            if (stepStartTime && currentStep === 'cadastro_final') {
+                const endTime = Date.now();
+                const timeSpent = formatTimeSpent(stepStartTime, endTime);
+                stepTimes[`tempo_${currentStep}`] = timeSpent;
+                sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+                console.log(`Tempo Etapa cadastro_final capturado: ${timeSpent}ms`);
+            } else {
+                console.error('Erro: stepStartTime ou currentStep inválido na Etapa cadastro_final');
+            }
+        }
+
+        const AUTO_TEST = 0; // 1 para ativar o teste automático, 0 para desativar
+        
+
+        // Inicializa stepTimes com valores padrão
+        stepNames.forEach(name => {
+            stepTimes[`tempo_${name}`] = 0;
+        });
+
+        // Carrega dados do sessionStorage, se existirem, e mescla com valores padrão
+        if (sessionStorage.getItem('stepTimes')) {
+            const savedTimes = JSON.parse(sessionStorage.getItem('stepTimes'));
+            stepTimes = { ...stepTimes, ...savedTimes };
+        } else {
+            sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+        }
+
+        function autoTest() {
+            if (!AUTO_TEST) return;
+
+            console.log('Iniciando teste automático');
+
+            function fillStep(stepIndex) {
+                console.log(`Iniciando preenchimento da etapa ${stepIndex}`);
+                if (stepIndex === 0) {
+                    console.log('Etapa 0: Aguardando clique manual');
+                    return;
+                }
+
+                const stepName = stepNames[stepIndex];
+                const stepElement = document.querySelector(`.step[data-name="${stepName}"]`);
+                const btn = document.querySelector(`[data-btn="${stepName}"]`);
+                const delay = parseInt(stepElement.dataset.delay) || DELAY_FAQ;
+
+                if (stepName === 'video_explicacao') {
+                    console.log('Clicando no botão da etapa video_explicacao');
+                    setTimeout(() => document.querySelector('[data-btn="video_explicacao"]').click(), delay * 1000);
+                } else if (stepName === 'video_inicial') {
+                    console.log('Clicando no botão da etapa video_inicial');
+                    setTimeout(() => document.querySelector('[data-btn="video_inicial"]').click(), delay * 1000);
+                } else if (stepName === 'depoimentos') {
+                    console.log('Clicando no botão da etapa depoimentos');
+                    setTimeout(() => document.querySelector('[data-btn="depoimentos"]').click(), delay * 1000);
+                } else if (stepIndex === 4) {
+                    console.log('Preenchendo formulário da etapa 4: nome, whatsapp, idade');
+                    document.getElementById('nome').value = 'Teste Auto';
+                    document.getElementById('whatsapp').value = '11987654321';
+                    document.getElementById('idade').value = '40';
+                    document.getElementById('nome').dispatchEvent(new Event('input', { bubbles: true }));
+                    document.getElementById('whatsapp').dispatchEvent(new Event('input', { bubbles: true }));
+                    document.getElementById('idade').dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 4');
+                    setTimeout(() => document.querySelector('[data-btn="dados_pessoais"]').click(), 100);
+                } else if (stepIndex === 5) {
+                    console.log('Preenchendo formulário da etapa 5: nível zero');
+                    document.querySelector('[data-form="nivel_violao"] input[value="zero"]').checked = true;
+                    document.querySelector('[data-form="nivel_violao"] input[value="zero"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 5');
+                    setTimeout(() => document.querySelector('[data-btn="nivel_violao"]').click(), 100);
+                } else if (stepIndex === 6) {
+                    console.log('Preenchendo formulário da etapa 6: música sertaneja');
+                    document.querySelector('[data-form="tipo_musica"] input[value="sertaneja"]').checked = true;
+                    document.querySelector('[data-form="tipo_musica"] input[value="sertaneja"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 6');
+                    setTimeout(() => document.querySelector('[data-btn="tipo_musica"]').click(), 100);
+                } else if (stepIndex === 7) {
+                    console.log('Preenchendo formulário da etapa 7: não sabe acorde');
+                    document.querySelector('[data-form="sabe_acorde"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="sabe_acorde"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 7');
+                    setTimeout(() => document.querySelector('[data-btn="sabe_acorde"]').click(), 100);
+                } else if (stepIndex === 8) {
+                    console.log('Preenchendo formulário da etapa 8: não sabe afinar');
+                    document.querySelector('[data-form="sabe_afinar"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="sabe_afinar"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 8');
+                    setTimeout(() => document.querySelector('[data-btn="sabe_afinar"]').click(), 100);
+                } else if (stepIndex === 9) {
+                    console.log('Preenchendo formulário da etapa 9: não sabe ritmo');
+                    document.querySelector('[data-form="sabe_ritmo"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="sabe_ritmo"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 9');
+                    setTimeout(() => document.querySelector('[data-btn="sabe_ritmo"]').click(), 100);
+                } else if (stepIndex === 10) {
+                    console.log('Preenchendo formulário da etapa 10: não sabe tocar música');
+                    document.querySelector('[data-form="sabe_musica"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="sabe_musica"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 10');
+                    setTimeout(() => document.querySelector('[data-btn="sabe_musica"]').click(), 100);
+                } else if (stepIndex === 11) {
+                    console.log('Preenchendo formulário da etapa 11: objetivo hobbie');
+                    document.querySelector('[data-form="objetivo_violao"] input[value="hobbie"]').checked = true;
+                    document.querySelector('[data-form="objetivo_violao"] input[value="hobbie"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 11');
+                    setTimeout(() => document.querySelector('[data-btn="objetivo_violao"]').click(), 100);
+                } else if (stepIndex === 12) {
+                    console.log('Preenchendo formulário da etapa 12: dificuldade');
+                    document.getElementById('textoDificuldade').value = 'Teste dificuldade';
+                    document.getElementById('textoDificuldade').dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 12');
+                    setTimeout(() => document.querySelector('[data-btn="dificuldade_violao"]').click(), 100);
+                } else if (stepIndex === 13) {
+                    console.log('Preenchendo formulário da etapa 13: não quer videochamada');
+                    document.querySelector('[data-form="videochamada"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="videochamada"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 13');
+                    setTimeout(() => document.querySelector('[data-btn="videochamada"]').click(), 100);
+                } else if (stepIndex === 14) {
+                    console.log('Preenchendo formulário da etapa 14: objetivo semana');
+                    document.getElementById('textoObjetivoSemana').value = 'Teste objetivo semana';
+                    document.getElementById('textoObjetivoSemana').dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 14');
+                    setTimeout(() => document.querySelector('[data-btn="objetivo_semana"]').click(), 100);
+                } else if (stepIndex === 15) {
+                    console.log('Preenchendo formulário da etapa 15: sem informações extras');
+                    document.querySelector('[data-form="informacoes_extras"] input[value="nao"]').checked = true;
+                    document.querySelector('[data-form="informacoes_extras"] input[value="nao"]').dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Clicando no botão da etapa 15');
+                    setTimeout(() => document.querySelector('[data-btn="informacoes_extras"]').click(), 100);
+                } else if (stepIndex >= 16 && stepIndex < totalSteps - 1) {
+                    console.log(`Clicando no botão da etapa ${stepIndex}`);
+                    setTimeout(() => {
+                        const btn = document.querySelector(`[data-btn="${stepNames[stepIndex]}"]`);
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                            btn.click();
+                            console.log(`Botão da etapa ${stepNames[stepIndex]} clicado`);
+                        } else {
+                            console.error(`Erro: Botão btn${stepNames[stepIndex]} não encontrado`);console.error(`Erro: Botão btn${step} não encontrado`);
+                        }
+                    }, delay * 1000);
+                } else if (stepIndex === totalSteps - 1) {
+                    console.log(`Aguardando ativação da etapa ${stepIndex}`);
+                    setTimeout(() => {
+                        const btn = document.querySelector(`[data-btn="${stepNames[stepIndex]}"]`);
+                        const stepElement = document.querySelector(`.step[data-name="${stepNames[stepIndex]}"]`);
+                        if (btn && stepElement && stepElement.classList.contains('active')) {
+                            btn.disabled = false;
+                            btn.click();
+                            console.log(`Botão da etapa ${step} clicado com sucesso`);
+                        } else {
+                            console.error(`Erro: Botão btn${stepNames[stepIndex]} ou etapa step${stepNames[stepIndex]} não encontrado ou não ativo`);console.error(`Erro: Botão btn${step} ou etapa step${step} não encontrado ou não ativo`);
+                            setTimeout(() => fillStep(stepIndex), 500);
+                        }
+                    }, delay * 1000);
+                }
+            }
+        }
+        
+        
+        const totalSteps = steps.length;
         
         function updateStepIndicator() {
-            const visibleTotal = totalSteps - 1;
-            document.getElementById('stepIndicator').textContent = `Etapa ${currentStep} de ${visibleTotal}`;
+            const visibleTotal = steps.length - 1;
+            const currentIndex = steps.indexOf(currentStep);
+            document.getElementById('stepIndicator').textContent = `Etapa ${currentIndex} de ${visibleTotal}`;
         }
 
         
         function getStepFromURL() {
-            const step = parseInt(window.location.hash.replace('#', '')) || 0;
-            if (step >= 0 && step < totalSteps) {
-                currentStep = step; // Respeita a etapa da URL
+            if (!steps || steps.length === 0) {
+                console.error('Erro: steps não inicializado');
+                return;
+            }
+            const stepIndex = parseInt(window.location.hash.replace('#', '')) || 0;
+            if (stepIndex >= 0 && stepIndex < totalSteps) {
+                currentStep = stepNames[stepIndex];
                 document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
                 updateStepIndicator();
-                // Inicializar validações para a etapa atual
-                if (currentStep === 1) {
-                    setupVideoDelayNew();
-                } else if (currentStep === 2) {
-                    setupVideoDelay();
-                } else if (currentStep === 3) {
-                    setupVideoDelay2();
-                } else if (currentStep === 4) {
-                    setupFormDelay();
-                } else if (currentStep === 5) {
-                    setupLevelForm();
-                } else if (currentStep === 6) {
-                    setupMusicForm();
-                } else if (currentStep === 7) {
-                    setupExtraForm();
-                } else if (currentStep === 8) {
-                    setupDelay('btn8', 'countdown8', 5);
-                } else if (currentStep === 9) {
-                    setupDelay('btn9', 'countdown9', 5);
-                } else if (currentStep === 10) {
-                    setupDelay('btn10', 'countdown10', 5);
+                stepStartTime = Date.now();
+                const setupFunctions = {
+                    'video_explicacao': setupVideoDelayNew,
+                    'video_inicial': setupVideoDelay,
+                    'depoimentos': setupVideoDelay2,
+                    'dados_pessoais': setupFormDelay,
+                    'nivel_violao': setupLevelForm,
+                    'tipo_musica': setupMusicForm,
+                    'sabe_acorde': setupChordForm,
+                    'sabe_afinar': setupTuneForm,
+                    'sabe_ritmo': setupRhythmForm,
+                    'sabe_musica': setupSongForm,
+                    'objetivo_violao': setupGoalForm,
+                    'dificuldade_violao': setupDifficultyForm,
+                    'videochamada': setupCallForm,
+                    'disponibilidade_treino': setupTrainingForm,
+                    'objetivo_semana': setupWeeklyGoalForm,
+                    'informacoes_extras': setupExtraForm15
+                };
+                if (setupFunctions[currentStep]) {
+                    setupFunctions[currentStep]();
+                } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
+                    setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
+                } else if (currentStep === 'cadastro_final') {
+                    const btn = document.querySelector(`[data-btn="${currentStep}"]`);
+                    if (btn) btn.disabled = false;
                 }
             }
         }
 
         function nextStep() {
-            // Pausar vídeos da etapa atual
             document.querySelectorAll('video').forEach(video => {
                 video.pause();
                 video.currentTime = 0;
             });
 
-            // Esconder etapa atual
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-
-            // Incrementar etapa
-            currentStep++;
-
-            // Garantir que não pule etapas
-            if (currentStep >= totalSteps) {
-                currentStep = totalSteps - 1; // Impede ultrapassar a última etapa
+            document.querySelector(`.step[data-name="${currentStep}"]`).classList.remove('active');
+            
+            if (stepStartTime && stepNames.includes(currentStep)) {
+                const endTime = Date.now();
+                const timeSpent = formatTimeSpent(stepStartTime, endTime);
+                stepTimes[`tempo_${currentStep}`] = timeSpent;
+                stepStartTime = Date.now();
             }
 
-            // Mostrar próxima etapa
-            document.getElementById(`step${currentStep}`).classList.add('active');
+            let nextStepIndex = stepNames.indexOf(currentStep) + 1;
+            if (stepNames[nextStepIndex] === 'sabe_musica') {
+                const formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
+                const sabeAcorde = formData.sabe_acorde?.sabeAcorde || 'nao';
+                const sabeRitmo = formData.sabe_ritmo?.sabeRitmo || 'nao';
+                if (sabeAcorde !== 'sim' || sabeRitmo !== 'sim') {
+                    nextStepIndex = steps.indexOf('objetivo_violao');
+                }
+            }
+            if (nextStepIndex >= totalSteps) {
+                nextStepIndex = totalSteps - 1;
+            }
+            currentStep = stepNames[nextStepIndex];
 
-            // Atualizar indicador
+            document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
             updateStepIndicator();
 
-            // Configurar validações para a etapa atual
-            if (currentStep === 1) {
-                setupVideoDelayNew();
-            } else if (currentStep === 2) {
-                setupVideoDelay();
-            } else if (currentStep === 3) {
-                setupVideoDelay2();
-            } else if (currentStep === 4) {
-                setupFormDelay();
-            } else if (currentStep === 5) {
-                setupLevelForm();
-            } else if (currentStep === 6) {
-                setupMusicForm();
-            } else if (currentStep === 7) {
-                setupExtraForm();
-            } else if (currentStep === 8) {
-                setupDelay('btn8', 'countdown8', 5);
-            } else if (currentStep === 9) {
-                setupDelay('btn9', 'countdown9', 5);
-            } else if (currentStep === 10) {
-                setupDelay('btn10', 'countdown10', 5);
+            const setupFunctions = {
+                'video_explicacao': setupVideoDelayNew,
+                'video_inicial': setupVideoDelay,
+                'depoimentos': setupVideoDelay2,
+                'dados_pessoais': setupFormDelay,
+                'nivel_violao': setupLevelForm,
+                'tipo_musica': setupMusicForm,
+                'sabe_acorde': setupChordForm,
+                'sabe_afinar': setupTuneForm,
+                'sabe_ritmo': setupRhythmForm,
+                'sabe_musica': setupSongForm,
+                'objetivo_violao': setupGoalForm,
+                'dificuldade_violao': setupDifficultyForm,
+                'videochamada': setupCallForm,
+                'disponibilidade_treino': setupTrainingForm,
+                'objetivo_semana': setupWeeklyGoalForm,
+                'informacoes_extras': setupExtraForm15
+            };
+            if (setupFunctions[currentStep]) {
+                setupFunctions[currentStep]();
+            } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
+                setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
+            } else if (currentStep === 'cadastro_final') {
+                const btn = document.querySelector(`[data-btn="${currentStep}"]`);
+                if (btn) {
+                    btn.disabled = false;
+                    stepStartTime = Date.now();
+                    if (AUTO_TEST) {
+                        btn.click();
+                        console.log(`Botão da etapa ${currentStep} clicado automaticamente`);
+                    }
+                } else {
+                    console.error(`Erro: Botão btn_${currentStep} não encontrado`);
+                }
             }
 
-            // Reproduzir vídeo da etapa ativa, se houver
             setTimeout(() => {
                 const activeVideo = document.querySelector('.step.active video');
                 if (activeVideo) activeVideo.play();
             }, 100);
         }
+        
+
+        
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        
+
+
+        
+
+        function scrollTextareaToTop(textarea) {
+            textarea.addEventListener('input', () => {
+                const cursorPosition = textarea.selectionStart;
+                const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+                const tempDiv = document.createElement('div');
+                tempDiv.style.cssText = `
+                    position: absolute;
+                    visibility: hidden;
+                    width: ${textarea.offsetWidth}px;
+                    font: ${getComputedStyle(textarea).font};
+                    padding: ${getComputedStyle(textarea).padding};
+                    white-space: pre-wrap;
+                    line-height: ${getComputedStyle(textarea).lineHeight};
+                    border: ${getComputedStyle(textarea).border};
+                `;
+                tempDiv.textContent = textBeforeCursor + '\n';
+                document.body.appendChild(tempDiv);
+                const cursorY = tempDiv.getBoundingClientRect().height;
+                document.body.removeChild(tempDiv);
+                const textareaRect = textarea.getBoundingClientRect();
+                const offsetFromTop = textareaRect.top + window.scrollY;
+                window.scrollTo({
+                    top: offsetFromTop + cursorY - 50, // Mantém o cursor ~50px abaixo do topo
+                    behavior: 'smooth'
+                });
+            });
+        }
 
         function setupVideoDelay() {
-            const btn = document.getElementById('btn2');
-            const countdown = document.getElementById('countdown2');
-            const video = document.getElementById('video1');
+            const btn = document.querySelector('[data-btn="video_inicial"]');
+            const countdown = document.querySelector('[data-countdown="video_inicial"]');
+            const video = document.querySelector('[data-video="video_inicial"]');
+            const step = document.querySelector('.step[data-name="video_inicial"]');
+            const timeLeft = parseInt(step.dataset.delay) || DELAY_VIDEO_INICIAL;
             
-            let timeLeft = 80;
+            if (!ENABLE_DELAY) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
+            
+            
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -649,11 +1207,20 @@
         }
 
         function setupVideoDelayNew() {
-            const btn = document.getElementById('btn_new');
-            const countdown = document.getElementById('countdown_new');
-            const video = document.getElementById('video_new');
+            const btn = document.querySelector('[data-btn="video_explicacao"]');
+            const countdown = document.querySelector('[data-countdown="video_explicacao"]');
+            const video = document.querySelector('.step[data-name="video_explicacao"] video');
+            const step = document.querySelector('.step[data-name="video_explicacao"]');
+            const timeLeft = parseInt(step.dataset.delay) || DELAY_VIDEO_EXPLICACAO;
             
-            let timeLeft = 20;
+            if (!ENABLE_DELAY) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
+            
+            
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -679,12 +1246,22 @@
             });
         }
 
+        
         function setupVideoDelay2() {
-            const btn = document.getElementById('btn3');
-            const countdown = document.getElementById('countdown3');
-            const video = document.getElementById('video2');
+            const btn = document.querySelector('[data-btn="depoimentos"]');
+            const countdown = document.querySelector('[data-countdown="depoimentos"]');
+            const video = document.querySelector('[data-video="depoimentos"]');
+            const step = document.querySelector('.step[data-name="depoimentos"]');
+            const timeLeft = parseInt(step.dataset.delay) || DELAY_DEPOIMENTOS;
             
-            let timeLeft = 60;
+            if (!ENABLE_DELAY) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
+
+            
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -707,11 +1284,27 @@
             });
         }
 
-        function setupDelay(buttonId, countdownId, seconds) {
-            const btn = document.getElementById(buttonId);
-            const countdown = document.getElementById(countdownId);
+        function setupDelay(buttonId, countdownId, stepName) {
+            const btn = document.querySelector(`[data-btn="${stepName}"]`);
+            const countdown = document.querySelector(`[data-countdown="${stepName}"]`);
+            const step = document.querySelector(`.step[data-name="${stepName}"]`);
+            if (!btn) {
+                console.error(`Erro: Botão ${buttonId} não encontrado`);
+                return;
+            }
+            if (!countdown) {
+                console.error(`Erro: Elemento ${countdownId} não encontrado`);
+                return;
+            }
             
-            let timeLeft = seconds;
+            const timeLeft = parseInt(step.dataset.delay) || DELAY_FAQ;
+            
+            if (!ENABLE_DELAY) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
             btn.disabled = true;
             
             const timer = setInterval(() => {
@@ -742,26 +1335,53 @@
             window.scrollTo(0, 0);
         });
 
-        document.getElementById('video_new').addEventListener('play', function() {
+        function toggleScroll() {
+            const body = document.body;
+            const container = document.querySelector('.container');
+            const footer = document.querySelector('.footer');
+            const contentHeight = container.offsetHeight + footer.offsetHeight;
+            const windowHeight = window.innerHeight;
+
+            if (contentHeight <= windowHeight) {
+                body.style.overflowY = 'hidden';
+            } else {
+                body.style.overflowY = 'auto';
+            }
+        }
+
+        window.addEventListener('load', toggleScroll);
+        window.addEventListener('resize', toggleScroll);
+
+        function updateFooterPosition() {
+            const container = document.querySelector('.container');
+            const footer = document.querySelector('.footer');
+            container.style.minHeight = `calc(100vh - ${footer.offsetHeight}px)`;
+        }
+
+        window.addEventListener('load', updateFooterPosition);
+        window.addEventListener('resize', updateFooterPosition);
+
+        document.querySelector('[data-video="video_explicacao"]').addEventListener('play', function() {
             this.muted = false;
         });
 
-        document.getElementById('video1').addEventListener('play', function() {
+        document.querySelector('[data-video="video_inicial"]').addEventListener('play', function() {
             this.muted = false;
         });
 
-        document.getElementById('video2').addEventListener('play', function() {
+        document.querySelector('[data-video="depoimentos"]').addEventListener('play', function() {
             this.muted = false;
         });
 
         getStepFromURL();
         window.addEventListener('hashchange', getStepFromURL);
+        window.addEventListener('load', autoTest);
 
 
         function setupFormDelay() {
-            const btn = document.getElementById('btn4');
-            const countdown = document.getElementById('countdown4');
-            const form = document.getElementById('userForm4');
+            const btn = document.querySelector('[data-btn="dados_pessoais"]');
+            const countdown = document.querySelector('[data-countdown="dados_pessoais"]');
+            const form = document.querySelector('[data-form="dados_pessoais"]');
             const inputs = form.querySelectorAll('input');
             
             btn.disabled = true;
@@ -802,6 +1422,7 @@
             }
             
             inputs.forEach(input => input.addEventListener('input', validateForm));
+            validateForm(); // Chama a validação inicial
             
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -816,9 +1437,9 @@
         }
 
         function setupLevelForm() {
-            const btn = document.getElementById('btn5');
-            const countdown = document.getElementById('countdown5');
-            const form = document.getElementById('levelForm5');
+            const btn = document.querySelector('[data-btn="nivel_violao"]');
+            const countdown = document.querySelector('[data-countdown="nivel_violao"]');
+            const form = document.querySelector('[data-form="nivel_violao"]');
             const customLevel = document.getElementById('nivelPersonalizado');
             const customLevelText = document.getElementById('textoNivelPersonalizado');
             const radios = form.querySelectorAll('input[name="nivel"]');
@@ -848,6 +1469,8 @@
                 customLevelText.style.height = `${customLevelText.scrollHeight}px`;
                 checkForm();
             });
+
+            scrollTextareaToTop(customLevelText);
             
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -861,9 +1484,9 @@
         }
 
         function setupMusicForm() {
-            const btn = document.getElementById('btn6');
-            const countdown = document.getElementById('countdown6');
-            const form = document.getElementById('musicForm6');
+            const btn = document.querySelector('[data-btn="tipo_musica"]');
+            const countdown = document.querySelector('[data-countdown="tipo_musica"]');
+            const form = document.querySelector('[data-form="tipo_musica"]');
             const radios = form.querySelectorAll('input[name="musica"]');
             const otherMusic = document.getElementById('outraMusica');
             const otherMusicText = document.getElementById('textoOutraMusica');
@@ -889,7 +1512,12 @@
             }));
             
             otherMusicText.addEventListener('input', checkForm);
-            
+
+            otherMusicText.addEventListener('input', () => {
+                otherMusicText.style.height = 'auto';
+                otherMusicText.style.height = `${otherMusicText.scrollHeight}px`;
+            });
+            scrollTextareaToTop(otherMusicText);
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const musicData = {
@@ -901,10 +1529,46 @@
             });
         }
 
-        function setupExtraForm() {
-            const btn = document.getElementById('btn7');
-            const countdown = document.getElementById('countdown7');
-            const form = document.getElementById('extraForm7');
+        function toggleVideo(videoName) {
+            const videoContainer = document.querySelector(`[data-video="${videoName}"]`);
+            if (!videoContainer) {
+                console.error(`Erro: Contêiner de vídeo ${videoName} não encontrado`);
+                return;
+            }
+            const label = Array.from(document.querySelectorAll('label')).find(l => 
+                l.querySelector(`button[onclick="toggleVideo('${videoName}')"]`)
+            );
+            if (!label || !label.querySelector('button')) {
+                console.error(`Erro: Label ou botão para o vídeo ${videoName} não encontrado`);
+                return;
+            }
+            const button = label.querySelector('button');
+            const triangle = button.querySelector('.triangle');
+            const video = videoContainer.querySelector('video');
+            if (!video) {
+                console.error(`Erro: Vídeo ${videoName} não encontrado no contêiner`);
+                return;
+            }
+            videoContainer.style.display = videoContainer.style.display === 'none' ? 'block' : 'none';
+            if (videoContainer.style.display === 'none') {
+                video.pause();
+                video.currentTime = 0;
+            }
+            if (triangle) {
+                triangle.className = videoContainer.style.display === 'block' ? 'triangle triangle-up' : 'triangle triangle-down';
+            }
+            button.textContent = videoContainer.style.display === 'block' ? 'Fechar vídeo ' : 'Ver ritmo ';
+            if (triangle) {
+                const newTriangle = document.createElement('span');
+                newTriangle.className = videoContainer.style.display === 'block' ? 'triangle triangle-up' : 'triangle triangle-down';
+                button.appendChild(newTriangle);
+            }
+        }
+
+        function setupExtraForm15() {
+            const btn = document.querySelector('[data-btn="informacoes_extras"]');
+            const countdown = document.querySelector('[data-countdown="informacoes_extras"]');
+            const form = document.querySelector('[data-form="informacoes_extras"]');
             const radios = form.querySelectorAll('input[name="extra"]');
             const extraYes = document.getElementById('extraSim');
             const extraText = document.getElementById('textoExtra');
@@ -934,7 +1598,7 @@
                 extraText.style.height = `${extraText.scrollHeight}px`;
                 checkForm();
             });
-            
+            scrollTextareaToTop(extraText);
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const extraData = {
@@ -942,6 +1606,381 @@
                     texto_extra: extraYes.checked ? sanitizeInput(extraText.value) : ''
                 };
                 saveToSession('informacoes_extras', extraData);
+                nextStep();
+            });
+        }
+
+        function setupChordForm() {
+            const btn = document.querySelector('[data-btn="sabe_acorde"]');
+            const countdown = document.querySelector('[data-countdown="sabe_acorde"]');
+            const form = document.querySelector('[data-form="sabe_acorde"]');
+            const sabeAcordeSim = document.getElementById('sabeAcordeSim');
+            const acordesOptions = document.getElementById('acordesOptions');
+            const acordePersonalizado = document.getElementById('acordePersonalizado');
+            const textoAcordePersonalizado = document.getElementById('textoAcordePersonalizado');
+            const radios = form.querySelectorAll('input[name="sabeAcorde"]');
+            const tipoAcordeRadios = form.querySelectorAll('input[name="tipoAcorde"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                const isSabeAcordeSelected = Array.from(radios).some(radio => radio.checked);
+                const isTipoAcordeValid = !sabeAcordeSim.checked || Array.from(tipoAcordeRadios).some(radio => radio.checked);
+                const isCustomValid = !acordePersonalizado.checked || (acordePersonalizado.checked && textoAcordePersonalizado.value.trim() !== '');
+                if (isSabeAcordeSelected && (!sabeAcordeSim.checked || (isTipoAcordeValid && isCustomValid))) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = sabeAcordeSim.checked ? (acordePersonalizado.checked ? 'Descreva os acordes' : 'Selecione uma opção de acorde') : 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                acordesOptions.style.display = radio.value === 'sim' ? 'block' : 'none';
+                checkForm();
+            }));
+
+            tipoAcordeRadios.forEach(radio => radio.addEventListener('change', () => {
+                textoAcordePersonalizado.style.display = radio.value === 'personalizado' ? 'block' : 'none';
+                checkForm();
+            }));
+
+            textoAcordePersonalizado.addEventListener('input', () => {
+                textoAcordePersonalizado.style.height = 'auto';
+                textoAcordePersonalizado.style.height = `${textoAcordePersonalizado.scrollHeight}px`;
+                checkForm();
+            });
+            scrollTextareaToTop(textoAcordePersonalizado);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const chordData = {
+                    sabeAcorde: form.querySelector('input[name="sabeAcorde"]:checked').value,
+                    tipoAcorde: sabeAcordeSim.checked ? form.querySelector('input[name="tipoAcorde"]:checked')?.value || '' : '',
+                    acordePersonalizado: acordePersonalizado.checked ? sanitizeInput(textoAcordePersonalizado.value) : ''
+                };
+                saveToSession('sabe_acorde', chordData);
+                nextStep();
+            });
+        }
+
+        function setupTuneForm() {
+            const btn = document.querySelector('[data-btn="sabe_afinar"]');
+            const countdown = document.querySelector('[data-countdown="sabe_afinar"]');
+            const form = document.querySelector('[data-form="sabe_afinar"]');
+            const radios = form.querySelectorAll('input[name="sabeAfinar"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                if (Array.from(radios).some(radio => radio.checked)) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', checkForm));
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const tuneData = {
+                    sabeAfinar: form.querySelector('input[name="sabeAfinar"]:checked').value
+                };
+                saveToSession('sabe_afinar', tuneData);
+                nextStep();
+            });
+        }
+
+        function setupRhythmForm() {
+            const btn = document.querySelector('[data-btn="sabe_ritmo"]');
+            const countdown = document.querySelector('[data-countdown="sabe_ritmo"]');
+            const form = document.querySelector('[data-form="sabe_ritmo"]');
+            const sabeRitmoSim = document.getElementById('sabeRitmoSim');
+            const ritmosOptions = document.getElementById('ritmosOptions');
+            const ritmoPersonalizado = document.getElementById('ritmoPersonalizado');
+            const textoRitmoPersonalizado = document.getElementById('textoRitmoPersonalizado');
+            const radios = form.querySelectorAll('input[name="sabeRitmo"]');
+            const checkboxes = form.querySelectorAll('input[name="ritmo"]');
+            const ritmoPersonalizadoRadio = form.querySelector('input[name="ritmoPersonalizado"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                const isSabeRitmoSelected = Array.from(radios).some(radio => radio.checked);
+                let isValid = isSabeRitmoSelected;
+                if (sabeRitmoSim.checked) {
+                    const isRitmoChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    const isCustomValid = !ritmoPersonalizado.checked || (ritmoPersonalizado.checked && textoRitmoPersonalizado.value.trim() !== '');
+                    isValid = isRitmoChecked || (ritmoPersonalizado.checked && isCustomValid);
+                }
+                if (isValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = sabeRitmoSim.checked ? (ritmoPersonalizado.checked ? 'Descreva os ritmos' : 'Selecione pelo menos um ritmo ou escreva') : 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                ritmosOptions.style.display = radio.value === 'sim' ? 'block' : 'none';
+                textoRitmoPersonalizado.style.display = 'none';
+                ritmoPersonalizado.checked = false; // Desmarcar rádio personalizado ao mudar sabeRitmo
+                checkForm();
+            }));
+
+            checkboxes.forEach(cb => cb.addEventListener('change', checkForm));
+
+            ritmoPersonalizadoRadio.addEventListener('change', () => {
+                textoRitmoPersonalizado.style.display = ritmoPersonalizado.checked ? 'block' : 'none';
+                checkForm();
+            });
+
+            textoRitmoPersonalizado.addEventListener('input', () => {
+                textoRitmoPersonalizado.style.height = 'auto';
+                textoRitmoPersonalizado.style.height = `${textoRitmoPersonalizado.scrollHeight}px`;
+                checkForm();
+            });
+
+            scrollTextareaToTop(textoRitmoPersonalizado);
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const ritmos = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                const rhythmData = {
+                    sabeRitmo: form.querySelector('input[name="sabeRitmo"]:checked').value,
+                    ritmos: ritmos,
+                    ritmoPersonalizado: ritmoPersonalizado.checked ? sanitizeInput(textoRitmoPersonalizado.value) : ''
+                };
+                saveToSession('sabe_ritmo', rhythmData);
+                nextStep();
+            });
+        }
+
+        function setupSongForm() {
+            const btn = document.querySelector('[data-btn="sabe_musica"]');
+            const countdown = document.querySelector('[data-countdown="sabe_musica"]');
+            const form = document.querySelector('[data-form="sabe_musica"]');
+            const sabeMusicaSim = form.querySelector('input[value="sim"]');
+            const textoMusica = document.getElementById('textoMusica');
+            const radios = form.querySelectorAll('input[name="sabeMusica"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                const isSelected = Array.from(radios).some(radio => radio.checked);
+                const isTextValid = !sabeMusicaSim.checked || (sabeMusicaSim.checked && textoMusica.value.trim() !== '');
+                if (isSelected && isTextValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = sabeMusicaSim.checked ? 'Descreva as músicas' : 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                textoMusica.style.display = radio.value === 'sim' ? 'block' : 'none';
+                checkForm();
+            }));
+
+            textoMusica.addEventListener('input', () => {
+                textoMusica.style.height = 'auto';
+                textoMusica.style.height = `${textoMusica.scrollHeight}px`;
+                checkForm();
+            });
+            scrollTextareaToTop(textoMusica);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const songData = {
+                    sabeMusica: form.querySelector('input[name="sabeMusica"]:checked').value,
+                    musicas: sabeMusicaSim.checked ? sanitizeInput(textoMusica.value) : ''
+                };
+                saveToSession('sabe_musica', songData);
+                nextStep();
+            });
+        }
+
+        function setupGoalForm() {
+            const btn = document.querySelector('[data-btn="objetivo_violao"]');
+            const countdown = document.querySelector('[data-countdown="objetivo_violao"]');
+            const form = document.querySelector('[data-form="objetivo_violao"]');
+            const objetivoOutro = document.getElementById('objetivoOutro');
+            const textoObjetivo = document.getElementById('textoObjetivo');
+            const radios = form.querySelectorAll('input[name="objetivo"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                const isSelected = Array.from(radios).some(radio => radio.checked);
+                const isCustomValid = !objetivoOutro.checked || (objetivoOutro.checked && textoObjetivo.value.trim() !== '');
+                if (isSelected && isCustomValid) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = objetivoOutro.checked ? 'Descreva seu objetivo' : 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', () => {
+                textoObjetivo.style.display = radio.value === 'outro' ? 'block' : 'none';
+                checkForm();
+            }));
+
+            textoObjetivo.addEventListener('input', () => {
+                textoObjetivo.style.height = 'auto';
+                textoObjetivo.style.height = `${textoObjetivo.scrollHeight}px`;
+                checkForm();
+            });
+            scrollTextareaToTop(textoObjetivo);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const goalData = {
+                    objetivo: form.querySelector('input[name="objetivo"]:checked').value,
+                    objetivoPersonalizado: objetivoOutro.checked ? sanitizeInput(textoObjetivo.value) : ''
+                };
+                saveToSession('objetivo_violao', goalData);
+                nextStep();
+            });
+        }
+
+        function setupDifficultyForm() {
+            const btn = document.querySelector('[data-btn="dificuldade_violao"]');
+            const countdown = document.querySelector('[data-countdown="dificuldade_violao"]');
+            const form = document.querySelector('[data-form="dificuldade_violao"]');
+            const textoDificuldade = document.getElementById('textoDificuldade');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                if (textoDificuldade.value.trim() !== '') {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = 'Escreva sua dificuldade';
+                }
+            }
+
+            textoDificuldade.addEventListener('input', () => {
+                textoDificuldade.style.height = 'auto';
+                textoDificuldade.style.height = `${textoDificuldade.scrollHeight}px`;
+                checkForm();
+            });
+            scrollTextareaToTop(textoDificuldade);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const difficultyData = {
+                    dificuldade: sanitizeInput(textoDificuldade.value)
+                };
+                saveToSession('dificuldade_violao', difficultyData);
+                nextStep();
+            });
+        }
+
+        function setupCallForm() {
+            const btn = document.querySelector('[data-btn="videochamada"]');
+            const countdown = document.querySelector('[data-countdown="videochamada"]');
+            const form = document.querySelector('[data-form="videochamada"]');
+            const radios = form.querySelectorAll('input[name="videochamada"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                if (Array.from(radios).some(radio => radio.checked)) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', checkForm));
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const callData = {
+                    videochamada: form.querySelector('input[name="videochamada"]:checked').value
+                };
+                saveToSession('videochamada', callData);
+                nextStep();
+            });
+        }
+
+        function setupTrainingForm() {
+            const btn = document.querySelector('[data-btn="disponibilidade_treino"]');
+            const countdown = document.querySelector('[data-countdown="disponibilidade_treino"]');
+            const form = document.querySelector('[data-form="disponibilidade_treino"]');
+            const radios = form.querySelectorAll('input[name="disponibilidade"]');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                if (Array.from(radios).some(radio => radio.checked)) {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = 'Selecione uma opção';
+                }
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', checkForm));
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const trainingData = {
+                    disponibilidade: form.querySelector('input[name="disponibilidade"]:checked').value
+                };
+                saveToSession('disponibilidade_treino', trainingData);
+                nextStep();
+            });
+        }
+
+        function setupWeeklyGoalForm() {
+            const btn = document.querySelector('[data-btn="objetivo_semana"]');
+            const countdown = document.querySelector('[data-countdown="objetivo_semana"]');
+            const form = document.querySelector('[data-form="objetivo_semana"]');
+            const textoObjetivoSemana = document.getElementById('textoObjetivoSemana');
+
+            btn.disabled = true;
+
+            function checkForm() {
+                if (textoObjetivoSemana.value.trim() !== '') {
+                    btn.disabled = false;
+                    countdown.textContent = '';
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                } else {
+                    btn.disabled = true;
+                    countdown.textContent = 'Escreva seu objetivo';
+                }
+            }
+
+            textoObjetivoSemana.addEventListener('input', () => {
+                textoObjetivoSemana.style.height = 'auto';
+                textoObjetivoSemana.style.height = `${textoObjetivoSemana.scrollHeight}px`;
+                checkForm();
+            });
+            scrollTextareaToTop(textoObjetivoSemana);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const weeklyGoalData = {
+                    objetivoSemana: sanitizeInput(textoObjetivoSemana.value)
+                };
+                saveToSession('objetivo_semana', weeklyGoalData);
                 nextStep();
             });
         }
@@ -995,17 +2034,20 @@
         async function sendToFirebase() {
             if (isSubmitting) return;
             isSubmitting = true;
+            
             let formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
             if (Object.keys(formData).length === 0) {
                 console.log('Nenhum dado para enviar');
                 isSubmitting = false;
                 return;
             }
+
             try {
                 const counter = await getNextCounter();
                 const documentId = `15diasgratis_${counter}`;
                 const dataToSend = {
                     documentId: documentId,
+                    step_times: JSON.stringify(stepTimes),
                     numero_inscricao: counter.toString(),
                     nome: formData.dados_pessoais?.nome || '',
                     whatsapp: formData.dados_pessoais?.whatsapp || '',
@@ -1014,19 +2056,37 @@
                     nivel_personalizado: formData.nivel_violao?.nivel_personalizado || '',
                     tipo_musica: formData.tipo_musica?.musica || '',
                     musica_personalizada: formData.tipo_musica?.musica_personalizada || '',
+                    sabe_acorde: formData.sabe_acorde?.sabeAcorde || '',
+                    tipo_acorde: formData.sabe_acorde?.tipoAcorde || '',
+                    acorde_personalizado: formData.sabe_acorde?.acordePersonalizado || '',
+                    sabe_afinar: formData.sabe_afinar?.sabeAfinar || '',
+                    sabe_ritmo: formData.sabe_ritmo?.sabeRitmo || '',
+                    ritmos: formData.sabe_ritmo?.ritmos || [],
+                    ritmo_personalizado: formData.sabe_ritmo?.ritmoPersonalizado || '',
+                    sabe_musica: formData.sabe_musica?.sabeMusica || '',
+                    musicas: formData.sabe_musica?.musicas || '',
+                    objetivo_violao: formData.objetivo_violao?.objetivo || '',
+                    objetivo_personalizado: formData.objetivo_violao?.objetivoPersonalizado || '',
+                    dificuldade_violao: formData.dificuldade_violao?.dificuldade || '',
+                    videochamada: formData.videochamada?.videochamada || '',
+                    objetivo_semana: formData.objetivo_semana?.objetivoSemana || '',
+                    disponibilidade_treino: formData.disponibilidade_treino?.disponibilidade || '',
                     mais_informacoes: formData.informacoes_extras?.resposta || '',
                     texto_extra: formData.informacoes_extras?.texto_extra || '',
                     data_inscricao: new Date().toISOString(),
                     tipo: "inscricao"
                 };
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataToSend)
+                    body: JSON.stringify(dataToSend, null, 2)
                 });
                 const result = await response.json();
                 if (result.success) {
                     sessionStorage.removeItem('formData');
+                    console.log('Dados enviados com sucesso:', dataToSend);
+                    console.log('Salvando tempos:', JSON.stringify(stepTimes, null, 2));
                 } else {
                     console.error('Erro ao enviar:', result.error);
                 }
@@ -1035,6 +2095,12 @@
             } finally {
                 isSubmitting = false;
             }
+        }
+
+        // Salvar tempos na sessionStorage
+        function saveStepTimes() {
+            console.log('Salvando tempos:', JSON.stringify(stepTimes, null, 2));
+            sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
         }
 
         // Iniciar sessionStorage
