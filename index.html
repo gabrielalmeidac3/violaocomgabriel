@@ -434,7 +434,7 @@
         </div>
 
         <!-- Etapa 1: Explicação do acompanhamento e 15 dias grátis -->
-        <div class="step" data-name="video_explicacao" data-delay="20">
+        <div class="step" data-name="video_explicacao">
             <h2>Como funciona o acompanhamento e os 15 dias grátis?</h2>
             <div class="video-container">
                 <video data-video="video_explicacao" controls autoplay muted>
@@ -448,7 +448,7 @@
         </div>
 
         <!-- Etapa 2: Vídeo inicial (Descubra Como Tocar Violão) -->
-        <div class="step" data-name="video_inicial" data-delay="80">
+        <div class="step" data-name="video_inicial">
             <h2>🎯 Descubra Como Tocar Violão Depois dos 40 - Assista o vídeo</h2>
             <div class="video-container">
                 <video data-video="video_inicial" controls autoplay muted>
@@ -462,7 +462,7 @@
         </div>
 
         <!-- Etapa 3: Depoimentos dos alunos -->
-        <div class="step" data-name="depoimentos" data-delay="60">
+        <div class="step" data-name="depoimentos">
             <h2>🗣️ Veja o que nossos alunos dizem</h2>
             <div class="video-container">
                 <video data-video="depoimentos" controls autoplay muted>
@@ -732,7 +732,7 @@
         
 
         <!-- Etapa 8: Perguntas Frequentes (Parte 1) -->
-        <div class="step" data-name="faq_parte1" data-delay="5">
+        <div class="step" data-name="faq_parte1">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -750,7 +750,7 @@
         </div>
 
         <!-- Etapa 9: Perguntas Frequentes (Parte 2) -->
-        <div class="step" data-name="faq_parte2" data-delay="5">
+        <div class="step" data-name="faq_parte2">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
                 <div class="faq-item">
@@ -768,7 +768,7 @@
         </div>
 
         <!-- Etapa 10: Resumo dos Benefícios -->
-        <div class="step" data-name="resumo_beneficios" data-delay="5">
+        <div class="step" data-name="resumo_beneficios">
             <h2 style="font-size: 28px;">✨ Resumo dos Benefícios</h2>
             <div class="benefits">
                 <div class="benefit-item">
@@ -790,7 +790,7 @@
         </div>
 
         <!-- Etapa 11: Cadastro Final (15 dias grátis) -->
-        <div class="step" data-name="cadastro_final" data-delay="5">
+        <div class="step" data-name="cadastro_final">
             <h1 class="final-title">🎉 Última Etapa!</h1>
             <h2>Você vai ganhar seus 15 dias grátis agora!</h2>
             <p class="intro-text">
@@ -812,7 +812,7 @@
     </div>
 
     <script>
-        const ENABLE_DELAY = 0; // 1 = delay ativado, 0 = delay desativado
+        const ENABLE_DELAY = 1; // 1 = delay ativado, 0 = delay desativado
         
         const steps = Array.from(document.querySelectorAll('.step')).map(step => step.dataset.name);
         const stepNames = steps; // Alias para compatibilidade
@@ -825,9 +825,9 @@
         
         const USE_MILLISECONDS = 1; // 1 = milissegundos, 0 = segundos
 
-        const DELAY_FAQ = 5; // Delay para FAQs e etapas finais (etapas 16-19)
-        const DELAY_VIDEO_EXPLICACAO = 20; // Etapa 1
-        const DELAY_VIDEO_INICIAL = 80; // Etapa 2
+        const DELAY_FAQ = 3; // Delay para FAQs e etapas finais (etapas 16-19)
+        const DELAY_VIDEO_EXPLICACAO = 78; // Etapa 1
+        const DELAY_VIDEO_INICIAL = 18; // Etapa 2
         const DELAY_DEPOIMENTOS = 60; // Etapa 3
 
         function formatTimeSpent(startTime, endTime) {
@@ -1174,7 +1174,7 @@
             const countdown = document.querySelector('[data-countdown="video_inicial"]');
             const video = document.querySelector('[data-video="video_inicial"]');
             const step = document.querySelector('.step[data-name="video_inicial"]');
-            const timeLeft = parseInt(step.dataset.delay) || DELAY_VIDEO_INICIAL;
+            let timeLeft = DELAY_VIDEO_INICIAL;
             
             if (!ENABLE_DELAY) {
                 btn.disabled = false;
@@ -1211,7 +1211,7 @@
             const countdown = document.querySelector('[data-countdown="video_explicacao"]');
             const video = document.querySelector('.step[data-name="video_explicacao"] video');
             const step = document.querySelector('.step[data-name="video_explicacao"]');
-            const timeLeft = parseInt(step.dataset.delay) || DELAY_VIDEO_EXPLICACAO;
+            let timeLeft = DELAY_VIDEO_EXPLICACAO;
             
             if (!ENABLE_DELAY) {
                 btn.disabled = false;
@@ -1252,7 +1252,7 @@
             const countdown = document.querySelector('[data-countdown="depoimentos"]');
             const video = document.querySelector('[data-video="depoimentos"]');
             const step = document.querySelector('.step[data-name="depoimentos"]');
-            const timeLeft = parseInt(step.dataset.delay) || DELAY_DEPOIMENTOS;
+            let timeLeft = DELAY_DEPOIMENTOS;
             
             if (!ENABLE_DELAY) {
                 btn.disabled = false;
@@ -1297,7 +1297,7 @@
                 return;
             }
             
-            const timeLeft = parseInt(step.dataset.delay) || DELAY_FAQ;
+            let timeLeft = DELAY_FAQ;
             
             if (!ENABLE_DELAY) {
                 btn.disabled = false;
@@ -2086,7 +2086,7 @@
                 if (result.success) {
                     sessionStorage.removeItem('formData');
                     console.log('Dados enviados com sucesso:', dataToSend);
-                    console.log('Salvando tempos:', JSON.stringify(stepTimes, null, 2));
+                    sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
                 } else {
                     console.error('Erro ao enviar:', result.error);
                 }
