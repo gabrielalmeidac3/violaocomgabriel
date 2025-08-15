@@ -62,6 +62,8 @@
             text-shadow: 0 2px 10px rgba(100, 181, 246, 0.3);
         }
         .table-container {
+            display: block;
+            position: relative;
             background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             border-radius: 15px;
             padding: 10px;
@@ -69,48 +71,87 @@
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             box-sizing: border-box;
-            overflow-x: auto;
             width: 100%;
             margin: 0;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
+            height: 600px;
+            max-height: 600px;
+            overflow: auto;
+
         }
+        table::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        table::-webkit-scrollbar-thumb {
+            background: rgba(100, 181, 246, 0.5);
+            border-radius: 4px;
+        }
+        table::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 181, 246, 0.7);
+        }
+        table::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
         .table-container::-webkit-scrollbar {
             height: 8px;
+            width: 8px;
         }
         .table-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(100, 181, 246, 0.5);
             border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 181, 246, 0.7);
         }
         .table-container::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
         table {
             width: 100%;
-            max-width: 100%;
-            margin: 0;
             border-collapse: separate;
             border-spacing: 0;
             background: transparent;
             border-radius: 10px;
-            overflow: hidden;
             table-layout: auto;
             box-sizing: border-box;
         }
+
+
         th, td {
             padding: 15px 12px;
             text-align: left;
             vertical-align: top;
         }
+        th:first-child { border-top-left-radius: 10px; }
+        th:last-child { border-top-right-radius: 10px; }
+
         th:first-child, td:first-child {
             border-top-left-radius: 10px;
         }
         th:last-child, td:last-child {
             border-top-right-radius: 10px;
         }
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(45deg, #4caf50, #66bb6a) !important;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 101;
+        }
+
+        thead th {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #4caf50, #66bb6a) !important;
+        }
+
         th {
             background: linear-gradient(45deg, #4caf50, #66bb6a);
             color: white;
@@ -119,7 +160,19 @@
             overflow-wrap: normal;
             hyphens: none;
             padding-right: 17px; /* 12px + 5px margem */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
         }
+        
+        #responsesTable th,
+        #responsesTable td {
+            width: 10%; /* Distribuição uniforme para 10 colunas */
+        }
+        #responsesTable th:nth-child(7),
+        #responsesTable td:nth-child(7) {
+            width: 15%; /* Mais espaço para a coluna "Mais Informações" */
+        }
+
         td {
             background: rgba(255,255,255,0.02);
             transition: all 0.3s ease;
@@ -132,6 +185,10 @@
 
         
        
+        tbody.student-group:hover .student-row td {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         tr:hover td {
             background: rgba(255, 255, 255, 0.1);
         }
@@ -187,33 +244,68 @@
         .ver-mais:hover {
             background: rgba(255,255,255,0.1);
         }
+        /* ===== TABELA DE DETALHES ===== */
         .details-row {
             display: none;
         }
+
+        .details-row td {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 15px !important;
+        }
+        .details-row td > .details-table {
+            padding: 0 !important;
+        }
         .details-table {
-            width: 100%;
-            max-width: 100%;
-            margin: 0;
+            width: 100% !important;
+            margin: 0 !important;
+            table-layout: fixed !important;
             box-sizing: border-box;
+            border: 2px solid rgb(41, 152, 255);
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        table, .details-table {
-            table-layout: auto;
-        }
-        .details-table th, .details-table td {
-            padding: 8px;
-            font-size: 12px;
+        .details-table th,
+        .details-table td {
+            width: 12.5% !important;
+            min-width: 12.5% !important;
+            max-width: 12.5% !important;
+            padding: 15px 12px;
+            font-size: inherit;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             box-sizing: border-box;
+            text-align: left;
+            vertical-align: top;
         }
+
         .details-table th {
             white-space: normal;
             word-break: keep-all;
             overflow-wrap: normal;
             hyphens: none;
-            padding-right: 13px; /* 8px + 5px margem */
+            padding: 15px 12px;
             background: linear-gradient(45deg, #1565c0, #1976d2);
+            box-sizing: border-box;
         }
+
+        .details-table thead {
+            position: static !important;
+            top: auto !important;
+            z-index: auto !important;
+        }
+
+        .details-table thead th {
+            position: static !important;
+            top: auto !important;
+            z-index: auto !important;
+            background: linear-gradient(45deg, #1565c0, #1976d2) !important;
+        }
+
+        
+        /* ===== FIM DA TABELA DE DETALHES ===== */
+        
         .ver-tempos {
             background: rgba(255,255,255,0.05);
             cursor: pointer;
@@ -228,7 +320,6 @@
         .ver-tempos:hover {
             background: rgba(255,255,255,0.1);
         }
-        
         
         .tempos-container {
             display: none;
@@ -417,15 +508,33 @@
             border-bottom: none !important;
         }
 
-        .spacer-row {
-            height: 15px;
-        }
-        .spacer-row td {
-            border: none !important;
-            background: transparent !important;
-            padding: 0 !important;
+        /* Grupos de alunos usando tbody */
+        tbody.student-group {
+            display: table-row-group;
         }
 
+        tbody.student-group:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Espaçamento entre grupos usando pseudo-elemento */
+        tbody.student-group:not(:first-of-type)::before {
+            content: '';
+            display: table-row;
+            height: 20px;
+        }
+
+        tbody.student-group:not(:first-of-type)::before td {
+            height: 20px;
+            border: none;
+            background: transparent;
+        }
+
+
+     
+      
+
+     
     </style>
 </head>
 <body>
@@ -474,7 +583,8 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="responsesTableBody">
+                </tbody>
             </table>
 
             
@@ -564,6 +674,73 @@
         return `${totalSeconds.toFixed(2)}s`;
     }
 
+    function formatSabeRitmo(sabeRitmo, ritmos, ritmoPersonalizado) {
+        if (!sabeRitmo || sabeRitmo.toLowerCase() === 'nao' || sabeRitmo.toLowerCase() === 'não') {
+            return 'Não';
+        }
+        
+        if (sabeRitmo.toLowerCase() === 'sim') {
+            let resultado = '';
+            
+            // Processar ritmos marcados
+            if (ritmos) {
+                const ritmosArray = ritmos.split(',').map(r => r.trim());
+                const ritmoMap = {
+                    'rock': 'Rock',
+                    'poprock': 'Pop Rock', 
+                    'pop rock': 'Pop Rock',
+                    'dedilhado': 'Dedilhado',
+                    'guarania': 'Guarânia',
+                    'brega': 'Brega',
+                    'sertanejo': 'Sertanejo',
+                    'valsa': 'Valsa',
+                    'balada': 'Balada'
+                };
+                
+                const ritmosFormatados = ritmosArray.map(ritmo => 
+                    ritmoMap[ritmo.toLowerCase()] || ritmo.charAt(0).toUpperCase() + ritmo.slice(1)
+                );
+                
+                resultado = ritmosFormatados.join('<br>');
+            }
+            
+            // Adicionar ritmo personalizado se existir
+            if (ritmoPersonalizado) {
+                if (resultado) resultado += '<br>';
+                resultado += `<br><span style="color: #888; font-size: inherit;">Ritmo personalizado:</span><br><span style="color: #64b5f6;">${ritmoPersonalizado.charAt(0).toUpperCase() + ritmoPersonalizado.slice(1)}</span>`;
+            }
+            
+            return resultado || 'Sim';
+        }
+        
+        return formatSimNao(sabeRitmo);
+    }
+
+    function formatObjetivo(objetivoViolao, objetivoPersonalizado) {
+        if (!objetivoViolao) return '-';
+        
+        if (objetivoViolao === 'outro' && objetivoPersonalizado) {
+            return `<span style="color: #888; font-size: inherit;">Personalizado:</span><br><span style="color: #64b5f6;">${objetivoPersonalizado.charAt(0).toUpperCase() + objetivoPersonalizado.slice(1)}</span>`;
+        }
+        
+        // Mapear valores para exibição
+        const objetivoMap = {
+            'hobbie': 'Hobbie',
+            'amigos': 'Tocar em rodas de amigos',
+            'igreja': 'Tocar na igreja',
+            'sonho': 'É um sonho de muito tempo'
+        };
+        
+        return objetivoMap[objetivoViolao.toLowerCase()] || objetivoViolao.charAt(0).toUpperCase() + objetivoViolao.slice(1);
+    }
+
+    function formatSimNao(valor) {
+        if (!valor) return '-';
+        if (valor.toLowerCase() === 'sim') return 'Sim';
+        if (valor.toLowerCase() === 'nao' || valor.toLowerCase() === 'não') return 'Não';
+        return valor.charAt(0).toUpperCase() + valor.slice(1);
+    }
+
     function formatWhatsApp(number) {
         if (!number) return '';
         let cleanNumber = number.replace(/\D/g, '');
@@ -581,27 +758,49 @@
 
     function toggleDetails(rowId) {
         const detailsRow = document.getElementById(`details-${rowId}`);
-        const verMais = detailsRow.previousElementSibling.previousElementSibling;
+        if (!detailsRow) return;
+        
+        const spacingRow = detailsRow.previousElementSibling;
+        const verMaisRow = spacingRow.previousElementSibling;
+        if (!verMaisRow) return;
+        
+        const verMais = verMaisRow.querySelector('.ver-mais');
+        if (!verMais) return;
         
         // Fechar a linha aberta anteriormente, se houver
         if (openRow && openRow !== detailsRow) {
             openRow.style.display = 'none';
+            const prevSpacingRow = openRow.previousElementSibling;
+            if (prevSpacingRow && prevSpacingRow.classList.contains('spacing-row')) {
+                prevSpacingRow.style.display = 'none';
+            }
             const tempos = openRow.querySelector('.tempos-container');
             if (tempos) {
                 tempos.style.display = 'none';
                 const verTempos = tempos.previousElementSibling;
-                verTempos.textContent = 'Ver Tempos';
-                verTempos.classList.remove('active');
+                if (verTempos) {
+                    verTempos.textContent = 'Ver Tempos';
+                    verTempos.classList.remove('active');
+                }
             }
-            openRow.previousElementSibling.querySelector('.ver-mais').textContent = 'Ver Mais';
-            openRow.previousElementSibling.querySelector('.ver-mais').classList.remove('active');
+            const prevSpacingRowForVerMais = openRow.previousElementSibling;
+            const prevVerMaisRow = prevSpacingRowForVerMais ? prevSpacingRowForVerMais.previousElementSibling : null;
+            if (prevVerMaisRow) {
+                const prevVerMais = prevVerMaisRow.querySelector('.ver-mais');
+                if (prevVerMais) {
+                    prevVerMais.textContent = 'Ver Mais Informações';
+                    prevVerMaisRow.classList.remove('active');
+                }
+            }
         }
 
         // Alternar o estado da linha atual
+        // Alternar o estado da linha atual
         const isHidden = detailsRow.style.display === 'none' || detailsRow.style.display === '';
         detailsRow.style.display = isHidden ? 'table-row' : 'none';
-        verMais.querySelector('.ver-mais').textContent = isHidden ? 'Fechar' : 'Ver Mais Informações';
-        verMais.classList.toggle('active', isHidden);
+        spacingRow.style.display = isHidden ? 'table-row' : 'none';
+        verMais.textContent = isHidden ? 'Fechar' : 'Ver Mais Informações';
+        verMaisRow.classList.toggle('active', isHidden);
         openRow = isHidden ? detailsRow : null;
     }
 
@@ -631,112 +830,134 @@
         const end = start + itemsPerPage;
         const paginatedData = filteredData.slice(start, end);
         
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = paginatedData.map(item => {
-            const isInvalid = typeof item.dados_pessoais_name === 'undefined' && typeof item.dados_pessoais === 'string';
-            const customLevel = item.nivel_personalizado ? `<br><small style="color: #64b5f6;">${item.nivel_personalizado.charAt(0).toUpperCase() + item.nivel_personalizado.slice(1)}</small>` : '';
-            const otherMusic = item.tipo_musica === 'outro' && item.tipo_musica_personalizado ? `<br><small style="color: #64b5f6;">${item.tipo_musica_personalizado.charAt(0).toUpperCase() + item.tipo_musica_personalizado.slice(1)}</small>` : '';
-            const levelMap = {
-                'zero': 'Zero',
-                'iniciante': 'Iniciante',
-                'intermediario': 'Intermediário'
-            };
-            const musicMap = {
-                'sertaneja': 'Sertaneja',
-                'brega': 'Brega',
-                'catolica': 'Católica',
-                'evangelica': 'Evangélica',
-                'outro': 'Outro'
-            };
-            const levelText = item.nivel_violao ? levelMap[item.nivel_violao] || item.nivel_violao.charAt(0).toUpperCase() + item.nivel_violao.slice(1) : '-';
-            const musicText = item.tipo_musica ? musicMap[item.tipo_musica] || item.tipo_musica.charAt(0).toUpperCase() + item.tipo_musica.slice(1) : '-';
-            let totalTime = '-';
-            let stepTimes = [];
-            if (item.step_times && typeof item.step_times === 'string') {
-                try {
-                    const parsedTimes = JSON.parse(item.step_times);
-                    if (parsedTimes && typeof parsedTimes === 'object' && !Array.isArray(parsedTimes)) {
-                        const times = Object.values(parsedTimes).filter(val => typeof val === 'number' && val >= 0 && !isNaN(val));
-                        totalTime = times.length > 0 ? formatTime(times.reduce((a, b) => a + b, 0)) : '-';
-                        stepTimes = Object.entries(parsedTimes)
-                            .filter(([_, value]) => typeof value === 'number' && value >= 0 && !isNaN(value))
-                            .map(([key, value]) => ({
-                                name: key.replace('tempo_etapa', 'Etapa ').replace(/_/g, ' '),
-                                time: formatTime(value),
-                                value: value
-                            }))
-                            .sort((a, b) => b.value - a.value);
-                    }
-                } catch (e) {
-                    // Silenciar erro, manter totalTime e stepTimes como padrão
-                }
-            }
+        // Recria toda a estrutura da tabela
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.innerHTML = `
+            <table id="responsesTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>WhatsApp</th>
+                        <th>Idade</th>
+                        <th>Nível no Violão</th>
+                        <th>Tipo de Música</th>
+                        <th>Objetivo no Violão</th>
+                        <th>Mais Informações</th>
+                        <th>Data</th>
+                        <th>Término dos 15 dias</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="responsesTableBody">
+                    ${paginatedData.map(item => {
+                        const isInvalid = typeof item.dados_pessoais_name === 'undefined' && typeof item.dados_pessoais === 'string';
+                        const customLevel = item.nivel_personalizado ? `<br><small style="color: #64b5f6;">${item.nivel_personalizado.charAt(0).toUpperCase() + item.nivel_personalizado.slice(1)}</small>` : '';
+                        const otherMusic = item.tipo_musica === 'outro' && item.tipo_musica_personalizado ? `<br><small style="color: #64b5f6;">${item.tipo_musica_personalizado.charAt(0).toUpperCase() + item.tipo_musica_personalizado.slice(1)}</small>` : '';
+                        
+                        const levelMap = {
+                            'zero': 'Zero',
+                            'iniciante': 'Iniciante',
+                            'intermediario': 'Intermediário'
+                        };
+                        const musicMap = {
+                            'sertaneja': 'Sertaneja',
+                            'brega': 'Brega',
+                            'catolica': 'Católica',
+                            'evangelica': 'Evangélica',
+                            'outro': 'Outro'
+                        };
+                        
+                        const levelText = item.nivel_violao ? levelMap[item.nivel_violao] || item.nivel_violao.charAt(0).toUpperCase() + item.nivel_violao.slice(1) : '-';
+                        const musicText = item.tipo_musica ? musicMap[item.tipo_musica] || item.tipo_musica.charAt(0).toUpperCase() + item.tipo_musica.slice(1) : '-';
+                        
+                        let totalTime = '-';
+                        let stepTimes = [];
+                        if (item.step_times && typeof item.step_times === 'string') {
+                            try {
+                                const parsedTimes = JSON.parse(item.step_times);
+                                if (parsedTimes && typeof parsedTimes === 'object' && !Array.isArray(parsedTimes)) {
+                                    const times = Object.values(parsedTimes).filter(val => typeof val === 'number' && val >= 0 && !isNaN(val));
+                                    totalTime = times.length > 0 ? formatTime(times.reduce((a, b) => a + b, 0)) : '-';
+                                    stepTimes = Object.entries(parsedTimes)
+                                        .filter(([_, value]) => typeof value === 'number' && value >= 0 && !isNaN(value))
+                                        .map(([key, value]) => ({
+                                            name: key.replace('tempo_etapa', 'Etapa ').replace(/_/g, ' '),
+                                            time: formatTime(value),
+                                            value: value
+                                        }))
+                                        .sort((a, b) => b.value - a.value);
+                                }
+                            } catch (e) {
+                                // Silenciar erro
+                            }
+                        }
 
-            return `
-                <tr class="response-group student-row" style="animation: fadeIn 0.5s ease-in;">
-                    <td><strong>${isInvalid ? '-' : (item.nome || '-')}</strong></td>
-                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${item.whatsapp.replace(/\D/g, '')}" style="color: #64b5f6; text-decoration: none;" target="_self">${formatWhatsApp(item.whatsapp)}</a><button class="copy-btn" onclick="copyToClipboard('+55${item.whatsapp.replace(/\D/g, '')}')">📋</button>` : '-')}</td>
-                    <td>${isInvalid ? '-' : (item.idade || '-')} anos</td>
-                    <td>${isInvalid ? '-' : levelText}${customLevel}</td>
-                    <td>${isInvalid ? '-' : musicText}${otherMusic}</td>
-                    <td>${isInvalid ? '-' : (item.objetivo_violao ? (item.objetivo_violao === 'outro' && item.objetivo_personalizado ? item.objetivo_personalizado.charAt(0).toUpperCase() + item.objetivo_personalizado.slice(1) : item.objetivo_violao.charAt(0).toUpperCase() + item.objetivo_violao.slice(1)) : '-')}</td>
-                    <td>${item.mais_informacoes === 'sim' ? `Sim<br><small style="color: #64b5f6; font-size: 16px;">${item.texto_extra ? item.texto_extra.charAt(0).toUpperCase() + item.texto_extra.slice(1) : '-'}</small>` : (item.mais_informacoes === 'nao' ? 'Não' : item.mais_informacoes || '-')}</td>
-                    <td>${item.data_inscricao ? new Date(item.data_inscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td>
-                    <td>${item.data_inscricao ? `${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}<button class="copy-btn" onclick="copyToClipboard('${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}')">📋</button>` : '-'}</td>
-                    <td><button class="delete-btn" onclick="deleteResponse('${item.documentId}')">🗑️</button></td>
-                </tr>
-                <tr class="response-group ver-mais-row" onclick="toggleDetails('${item.documentId}')">
-                    <td colspan="11" class="ver-mais">Ver Mais Informações</td>
-                </tr>
-                <tr class="spacer-row"><td colspan="11"></td></tr>
-                <tr class="details-row" id="details-${item.documentId}">
-                    <td colspan="11">
-                        <table class="details-table">
-                            <thead>
-                                <tr>
-                                    <th>Sabe Acorde</th>
-                                    <th>Sabe Afinar</th>
-                                    <th>Sabe Ritmo</th>
-                                    <th>Sabe Música</th>
-                                    <th>Ritmos</th>
-                                    <th>Objetivo</th>
-                                    <th>Dificuldade</th>
-                                    <th>Videochamada</th>
-                                    <th>Objetivo da Semana</th>
-                                    <th>Disponibilidade de Treino</th>
+                        return `
+                            <tbody class="student-group">
+                                <tr class="student-row" style="animation: fadeIn 0.5s ease-in;">
+                                    <td><strong>${isInvalid ? '-' : (item.nome || '-')}</strong></td>
+                                    <td>${isInvalid ? '-' : (item.whatsapp ? `<a href="whatsapp://send?phone=+55${item.whatsapp.replace(/\D/g, '')}" style="color: #64b5f6; text-decoration: none;" target="_self">${formatWhatsApp(item.whatsapp)}</a><button class="copy-btn" onclick="copyToClipboard('+55${item.whatsapp.replace(/\D/g, '')}')">📋</button>` : '-')}</td>
+                                    <td>${isInvalid ? '-' : (item.idade || '-')} anos</td>
+                                    <td>${isInvalid ? '-' : levelText}${customLevel}</td>
+                                    <td>${isInvalid ? '-' : musicText}${otherMusic}</td>
+                                    <td>${isInvalid ? '-' : formatObjetivo(item.objetivo_violao, item.objetivo_personalizado)}</td>
+                                    <td>${item.mais_informacoes === 'sim' ? `${item.texto_extra ? `<span style="color: #64b5f6; font-size: 16px;">${item.texto_extra.charAt(0).toUpperCase() + item.texto_extra.slice(1)}</span>` : 'Sim'}` : (item.mais_informacoes === 'nao' ? 'Não' : item.mais_informacoes || '-')}</td>
+                                    <td>${item.data_inscricao ? new Date(item.data_inscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td>
+                                    <td>${item.data_inscricao ? `${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}<button class="copy-btn" onclick="copyToClipboard('${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}')">📋</button>` : '-'}</td>
+                                    <td><button class="delete-btn" onclick="deleteResponse('${item.documentId}')">🗑️</button></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>${item.sabe_acorde === 'Sim' && item.acorde_personalizado ? item.acorde_personalizado : item.sabe_acorde || '-'}</td>
-                                    <td>${item.sabe_afinar || '-'}</td>
-                                    <td>${item.sabe_ritmo || '-'}</td>
-                                    <td>${item.sabe_musica === 'Sim' && item.musica ? item.musica : item.sabe_musica || '-'}</td>
-                                    <td>${item.ritmos ? item.ritmos + (item.ritmo_personalizado ? `, ${item.ritmo_personalizado}` : '') : (item.ritmo_personalizado || '-')}</td>
-                                    <td>${item.objetivo_personalizado || '-'}</td>
-                                    <td>${item.dificuldade_violao || '-'}</td>
-                                    <td>${item.videochamada || '-'}</td>
-                                    <td>${item.objetivo_semana || '-'}</td>
-                                    <td>${item.disponibilidade_treino || '-'}</td>
+                                <tr class="ver-mais-row" onclick="toggleDetails('${item.documentId}')">
+                                    <td colspan="10" class="ver-mais">Ver Mais Informações</td>
+                                </tr>
+                                <tr class="spacing-row" style="height: 20px;">
+                                    <td colspan="10" style="background: transparent; border: none; padding: 0;"></td>
+                                </tr>
+                                <tr class="details-row" id="details-${item.documentId}">
+                                    <td colspan="10" style="width: 100%; padding: 0;">
+                                        <table class="details-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sabe Acorde</th>
+                                                    <th>Sabe Afinar</th>
+                                                    <th>Sabe Ritmo</th>
+                                                    <th>Sabe Música</th>
+                                                    <th>Dificuldade</th>
+                                                    <th>Videochamada</th>
+                                                    <th>Objetivo da Semana</th>
+                                                    <th>Disponibilidade de Treino</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>${item.sabe_acorde === 'sim' && item.acorde_personalizado ? `<span style="color: #888; font-size: inherit;">Acordes que sabe:</span><br><span style="color: #64b5f6;">${item.acorde_personalizado}</span>` : formatSimNao(item.sabe_acorde)}</td>
+                                                    <td>${formatSimNao(item.sabe_afinar)}</td>
+                                                    <td>${formatSabeRitmo(item.sabe_ritmo, item.ritmos, item.ritmo_personalizado)}</td>
+                                                    <td>${item.sabe_musica === 'sim' && item.musicas ? `<span style="color: #64b5f6; font-size: 17px;">${item.musicas}</span>` : formatSimNao(item.sabe_musica)}</td>
+                                                    <td>${item.dificuldade_violao ? `<span style="color: #64b5f6; font-size: 16px;">${item.dificuldade_violao}</span>` : '-'}</td>
+                                                    <td>${formatSimNao(item.videochamada)}</td>
+                                                    <td>${item.objetivo_semana ? `<span style="color: #64b5f6; font-size: 16px;">${item.objetivo_semana}</span>` : '-'}</td>
+                                                    <td>${formatSimNao(item.disponibilidade_treino)}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="ver-tempos" onclick="toggleTempos('${item.documentId}')">Ver Tempos</div>
+                                        <div class="tempos-container" id="tempos-${item.documentId}">
+                                            <div class="tempo-box total">Tempo Total: ${totalTime}</div>
+                                            ${stepTimes.map(step => `<div class="tempo-box">${step.name}: ${step.time}</div>`).join('')}
+                                            <div class="tempo-box id">ID: ${item.documentId}</div>
+                                            <div class="tempo-box created">Criado Em: ${item.createdAt ? new Date(item.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
-                        </table>
-                        <div class="ver-tempos" onclick="toggleTempos('${item.documentId}')">Ver Tempos</div>
-                        <div class="tempos-container" id="tempos-${item.documentId}">
-                            <div class="tempo-box total">Tempo Total: ${totalTime}</div>
-                            ${stepTimes.map(step => `<div class="tempo-box">${step.name}: ${step.time}</div>`).join('')}
-                            <div class="tempo-box id">ID: ${item.documentId}</div>
-                            <div class="tempo-box created">Criado Em: ${item.createdAt ? new Date(item.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="spacer-row"><td colspan="11"></td></tr>
-            `;
-        }).join('');
+                            `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
 
         document.getElementById('prevPage').disabled = currentPage === 1;
         document.getElementById('nextPage').disabled = end >= allData.length;
-
     }
 
     async function deleteResponse(id) {
