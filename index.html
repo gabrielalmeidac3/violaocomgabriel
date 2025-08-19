@@ -812,7 +812,7 @@
     </div>
 
     <script>
-        const ENABLE_DELAY = 1; // 1 = delay ativado, 0 = delay desativado
+        const ENABLE_DELAY = 0; // 1 = delay ativado, 0 = delay desativado
         
         const steps = Array.from(document.querySelectorAll('.step')).map(step => step.dataset.name);
         const stepNames = steps; // Alias para compatibilidade
@@ -2029,24 +2029,130 @@
             }
         }
 
-        // Enviar dados ao Firebase
-        let isSubmitting = false;
-        async function sendToFirebase() {
-            if (isSubmitting) return;
-            isSubmitting = true;
-            
-            let formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
-            if (Object.keys(formData).length === 0) {
-                console.log('Nenhum dado para enviar');
-                isSubmitting = false;
-                return;
+        // Sistema de envio mais robusto para Firebase
+        class FormSubmissionManager {
+            constructor() {
+                this.maxRetries = 3;
+                this.retryDelay = 2000; // 2 segundos
+                this.isSubmitting = false;
+                this.apiUrl = 'https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes';
             }
 
-            try {
-                const counter = await getNextCounter();
-                const documentId = `15diasgratis_${counter}`;
-                const dataToSend = {
-                    documentId: documentId,
+            // Enviar com sistema de retry
+            async sendToFirebaseWithRetry() {
+                if (this.isSubmitting) {
+                    console.log('Envio já em andamento...');
+                    return { success: false, error: 'Envio em andamento' };
+                }
+
+                this.isSubmitting = true;
+                let lastError = null;
+
+                for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+                    try {
+                        console.log(`Tentativa ${attempt}/${this.maxRetries} de envio...`);
+                        
+                        const result = await this.attemptSubmission();
+                        
+                        if (result.success) {
+                            console.log('✅ Dados enviados com sucesso!');
+                            this.clearFormData();
+                            this.isSubmitting = false;
+                            return result;
+                        }
+                        
+                        lastError = result.error;
+                        console.warn(`❌ Tentativa ${attempt} falhou:`, result.error);
+                        
+                    } catch (error) {
+                        lastError = error.message;
+                        console.error(`❌ Erro na tentativa ${attempt}:`, error);
+                    }
+
+                    // Aguardar antes da próxima tentativa (exceto na última)
+                    if (attempt < this.maxRetries) {
+                        console.log(`⏳ Aguardando ${this.retryDelay}ms antes da próxima tentativa...`);
+                        await this.delay(this.retryDelay);
+                        this.retryDelay *= 1.5; // Aumenta o delay progressivamente
+                    }
+                }
+
+                this.isSubmitting = false;
+                console.error('❌ Todas as tentativas falharam. Dados mantidos no storage.');
+                
+                // Salvar tentativa falhada para retry posterior
+                this.saveFailedSubmission();
+                
+                return { 
+                    success: false, 
+                    error: `Falha após ${this.maxRetries} tentativas: ${lastError}`,
+                    canRetry: true
+                };
+            }
+
+            // Tentativa individual de envio
+            async attemptSubmission() {
+                const formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
+                
+                if (Object.keys(formData).length === 0) {
+                    throw new Error('Nenhum dado para enviar');
+                }
+
+          
+
+                const counter = await this.getNextCounterWithRetry();
+                const dataToSend = this.prepareDataForSubmission(formData, counter);
+
+                const response = await fetch(this.apiUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text().catch(() => 'Erro desconhecido');
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Resposta de erro do servidor');
+                }
+
+                return result;
+            }
+
+            // Obter contador com retry
+            async getNextCounterWithRetry() {
+                for (let i = 0; i < 3; i++) {
+                    try {
+                        const response = await fetch(this.apiUrl);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        
+                        const result = await response.json();
+                        if (result.success && result.data) {
+                            const counters = result.data
+                                .filter(doc => doc.documentId?.startsWith('15diasgratis_'))
+                                .map(doc => parseInt(doc.documentId.replace('15diasgratis_', '')))
+                                .filter(n => !isNaN(n));
+                            
+                            return counters.length > 0 ? Math.max(...counters) + 1 : 1;
+                        }
+                    } catch (error) {
+                        console.warn(`Erro ao obter contador (tentativa ${i + 1}):`, error);
+                        if (i === 2) return Date.now(); // Fallback com timestamp
+                    }
+                }
+                return 1;
+            }
+
+            // Preparar dados para envio
+            prepareDataForSubmission(formData, counter) {
+                return {
+                    documentId: `15diasgratis_${counter}`,
                     step_times: JSON.stringify(stepTimes),
                     numero_inscricao: counter.toString(),
                     nome: formData.dados_pessoais?.nome || '',
@@ -2076,24 +2182,112 @@
                     data_inscricao: new Date().toISOString(),
                     tipo: "inscricao"
                 };
+            }
 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataToSend, null, 2)
-                });
-                const result = await response.json();
-                if (result.success) {
-                    sessionStorage.removeItem('formData');
-                    console.log('Dados enviados com sucesso:', dataToSend);
-                    sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
-                } else {
-                    console.error('Erro ao enviar:', result.error);
+            // Salvar tentativa falhada para retry posterior
+            saveFailedSubmission() {
+                const failedData = {
+                    formData: sessionStorage.getItem('formData'),
+                    stepTimes: sessionStorage.getItem('stepTimes'),
+                    timestamp: Date.now(),
+                    attempts: (JSON.parse(localStorage.getItem('failedSubmission') || '{}').attempts || 0) + 1
+                };
+                
+                localStorage.setItem('failedSubmission', JSON.stringify(failedData));
+                console.log('💾 Dados salvos para retry posterior');
+            }
+
+            // Tentar reenviar dados salvos
+            async retryFailedSubmissions() {
+                const failedData = localStorage.getItem('failedSubmission');
+                if (!failedData) return;
+
+                try {
+                    const data = JSON.parse(failedData);
+                    console.log('🔄 Tentando reenviar dados salvos...');
+                    
+                    // Restaurar dados temporariamente
+                    if (data.formData) sessionStorage.setItem('formData', data.formData);
+                    if (data.stepTimes) sessionStorage.setItem('stepTimes', data.stepTimes);
+                    
+                    const result = await this.sendToFirebaseWithRetry();
+                    
+                    if (result.success) {
+                        localStorage.removeItem('failedSubmission');
+                        console.log('✅ Dados anteriores reenviados com sucesso!');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao reenviar dados salvos:', error);
                 }
-            } catch (error) {
-                console.error('Erro ao enviar:', error);
-            } finally {
-                isSubmitting = false;
+            }
+
+            // Limpar dados após sucesso
+            clearFormData() {
+                sessionStorage.removeItem('formData');
+                localStorage.removeItem('failedSubmission');
+                console.log('🧹 Dados limpos após envio bem-sucedido');
+            }
+
+            // Utility: delay
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // Verificar se há dados pendentes
+            hasPendingData() {
+                return sessionStorage.getItem('formData') || localStorage.getItem('failedSubmission');
+            }
+
+            // Status da conexão
+            isOnline() {
+                return navigator.onLine;
+            }
+        }
+
+        // Instanciar o gerenciador
+        const submissionManager = new FormSubmissionManager();
+
+        // Função principal para substituir a original
+        async function sendToFirebase() {
+            const result = await submissionManager.sendToFirebaseWithRetry();
+            
+            if (!result.success) {
+                // Aqui você pode mostrar uma mensagem para o usuário
+                console.error('Falha no envio:', result.error);
+                // Opcional: mostrar toast/modal de erro
+            }
+            
+            return result;
+        }
+
+        // Tentar reenviar dados ao carregar a página
+        window.addEventListener('load', () => {
+            if (submissionManager.hasPendingData()) {
+                setTimeout(() => {
+                    submissionManager.retryFailedSubmissions();
+                }, 2000);
+            }
+        });
+
+        // Tentar reenviar quando voltar online
+        window.addEventListener('online', () => {
+            console.log('🌐 Conexão restaurada, tentando reenviar dados...');
+            if (submissionManager.hasPendingData()) {
+                setTimeout(() => {
+                    submissionManager.retryFailedSubmissions();
+                }, 1000);
+            }
+        });
+
+        // Capturar função de tempo da etapa final
+        function captureStep19Time() {
+            if (stepStartTime && currentStep === 'cadastro_final') {
+                const endTime = Date.now();
+                const timeSpent = USE_MILLISECONDS ? (endTime - stepStartTime) : Math.round((endTime - stepStartTime) / 1000);
+                stepTimes[`tempo_${currentStep}`] = timeSpent;
+                sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+                console.log(`Tempo Etapa cadastro_final capturado: ${timeSpent}${USE_MILLISECONDS ? 'ms' : 's'}`);
             }
         }
 
@@ -2104,6 +2298,24 @@
         }
 
         // Iniciar sessionStorage
+        // Tentar reenviar dados ao carregar a página
+        window.addEventListener('load', () => {
+            if (submissionManager.hasPendingData()) {
+                setTimeout(() => {
+                    submissionManager.retryFailedSubmissions();
+                }, 2000);
+            }
+        });
+
+        // Tentar reenviar quando voltar online
+        window.addEventListener('online', () => {
+            console.log('🌐 Conexão restaurada, tentando reenviar dados...');
+            if (submissionManager.hasPendingData()) {
+                setTimeout(() => {
+                    submissionManager.retryFailedSubmissions();
+                }, 1000);
+            }
+        });
         initSession();
     </script>
 
