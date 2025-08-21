@@ -797,10 +797,20 @@
             Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br><br>
                 Pode cancelar quando quiser.<br>
             </p>
-            <button class="btn btn-green" data-btn="cadastro_final" onclick="captureStep19Time(); saveStepTimes(); sendToFirebase(); window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank')">
+            <button class="btn btn-green" data-btn="cadastro_final" onclick="processarInscricaoCompleta()">
                 🎸 Quero meus 15 dias grátis
             </button>
             <div class="countdown" data-countdown="cadastro_final"></div>
+            <p id="aguardeMsg" style="display:none; font-weight:bold; color:#ff6b35;"></p>
+
+            <div id="finalSuccess" style="display:none; text-align:center;">
+                <p style="color:#4caf50; font-size:18px; font-weight:bold; margin-bottom:20px;">
+                    ✅ Inscrição finalizada com sucesso!
+                </p>
+                <button class="btn btn-green" onclick="window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank')">
+                    📱 WhatsApp
+                </button>
+            </div>
         
     </div>
 
@@ -811,10 +821,101 @@
         </div>
     </div>
 
+
+
+
+   <script>
+(function() {
+    console.log("=== Script de remoção de delay iniciado ===");
+
+    let visitedSteps = JSON.parse(localStorage.getItem("visitedSteps") || "[]");
+
+    console.log("Etapas já salvas:", visitedSteps);
+
+    let currentStep = null;
+    let stepEnterTime = null;
+
+    function markStepCompleted(stepName) {
+        if (!visitedSteps.includes(stepName)) {
+            visitedSteps.push(stepName);
+            localStorage.setItem("visitedSteps", JSON.stringify(visitedSteps));
+            console.log(`✔ Etapa marcada como concluída: ${stepName}`);
+        } else {
+            console.log(`ℹ Etapa ${stepName} já estava marcada como concluída`);
+        }
+    }
+
+    function handleStep(activeStep) {
+        const stepName = activeStep.dataset.name;
+        if (stepName === currentStep) return; // evita logs repetidos
+
+        // Se saiu de outra etapa → calcular tempo gasto
+        if (currentStep && stepEnterTime) {
+            const tempo = ((Date.now() - stepEnterTime) / 1000).toFixed(1);
+            console.log(`⏱ Tempo gasto na etapa ${currentStep}: ${tempo}s`);
+        }
+
+        // Atualiza etapa atual
+        currentStep = stepName;
+        stepEnterTime = Date.now();
+        console.log(`➡ Entrou na etapa: ${stepName}`);
+
+        const btn = activeStep.querySelector(`[data-btn="${stepName}"]`);
+        const countdown = activeStep.querySelector(`[data-countdown="${stepName}"]`);
+
+        if (!btn) {
+            console.log(`(Sem botão de ação encontrado na etapa ${stepName})`);
+            return;
+        }
+
+        if (visitedSteps.includes(stepName)) {
+            btn.disabled = false;
+            if (stepName !== 'cadastro_final') {
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+            }
+            if (countdown) countdown.textContent = '';
+            console.log(`⏩ Delay removido da etapa ${stepName}, botão já liberado.`);
+        } else {
+            console.log(`⏳ Etapa ${stepName} ainda não visitada. Delay normal será aplicado.`);
+        }
+
+        btn.addEventListener("click", () => {
+            const tempo = ((Date.now() - stepEnterTime) / 1000).toFixed(1);
+            console.log(`🖱 Clique no botão da etapa ${stepName} após ${tempo}s`);
+            markStepCompleted(stepName);
+        }, { once: true });
+    }
+
+    const observer = new MutationObserver(() => {
+        const activeStep = document.querySelector(".step.active");
+        if (activeStep) handleStep(activeStep);
+    });
+
+    observer.observe(document.querySelector("body"), { subtree: true, attributes: true, attributeFilter: ["class"] });
+
+})();
+</script>
+
+        
+
+
+
+
+
+
+
     <script>
+
+  
+
+        function isStepVisited(stepName) {
+            const visitedSteps = JSON.parse(localStorage.getItem("visitedSteps") || "[]");
+            return visitedSteps.includes(stepName);
+        }
         const ENABLE_DELAY = 1; // 1 = delay ativado, 0 = delay desativado
         
         const steps = Array.from(document.querySelectorAll('.step')).map(step => step.dataset.name);
+        
         const stepNames = steps; // Alias para compatibilidade
         let currentStep = steps[0]; // Inicia com o data-name da primeira etapa
         let stepTimes = {};
@@ -826,9 +927,11 @@
         const USE_MILLISECONDS = 1; // 1 = milissegundos, 0 = segundos
 
         const DELAY_FAQ = 3; // Delay para FAQs e etapas finais (etapas 16-19)
-        const DELAY_VIDEO_EXPLICACAO = 78; // Etapa 1
-        const DELAY_VIDEO_INICIAL = 18; // Etapa 2
+        const DELAY_VIDEO_EXPLICACAO = 18; // Etapa 1
+        const DELAY_VIDEO_INICIAL = 78; // Etapa 2
         const DELAY_DEPOIMENTOS = 60; // Etapa 3
+
+        
 
         function formatTimeSpent(startTime, endTime) {
             const timeDiff = endTime - startTime;
@@ -856,12 +959,13 @@
         });
 
         // Carrega dados do sessionStorage, se existirem, e mescla com valores padrão
-        if (sessionStorage.getItem('stepTimes')) {
-            const savedTimes = JSON.parse(sessionStorage.getItem('stepTimes'));
+        if (localStorage.getItem('stepTimes')) {
+            const savedTimes = JSON.parse(localStorage.getItem('stepTimes'));
             stepTimes = { ...stepTimes, ...savedTimes };
         } else {
-            sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+            localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
         }
+
 
         function autoTest() {
             if (!AUTO_TEST) return;
@@ -1007,45 +1111,52 @@
 
         
         function getStepFromURL() {
-            if (!steps || steps.length === 0) {
-                console.error('Erro: steps não inicializado');
-                return;
+        if (!steps || steps.length === 0) {
+            console.error('Erro: steps não inicializado');
+            return;
+        }
+        const stepIndex = parseInt(window.location.hash.replace('#', '')) || 0;
+        if (stepIndex >= 0 && stepIndex < totalSteps) {
+            currentStep = stepNames[stepIndex];
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
+            updateStepIndicator();
+            // Se a etapa já foi visitada, esconde a mensagem .small-text
+            if (isStepVisited(currentStep)) {
+                const stepEl = document.querySelector(`.step[data-name="${currentStep}"]`);
+                const msg = stepEl ? stepEl.querySelector('.small-text') : null;
+                if (msg) msg.style.display = 'none';
             }
-            const stepIndex = parseInt(window.location.hash.replace('#', '')) || 0;
-            if (stepIndex >= 0 && stepIndex < totalSteps) {
-                currentStep = stepNames[stepIndex];
-                document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-                document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
-                updateStepIndicator();
-                stepStartTime = Date.now();
-                const setupFunctions = {
-                    'video_explicacao': setupVideoDelayNew,
-                    'video_inicial': setupVideoDelay,
-                    'depoimentos': setupVideoDelay2,
-                    'dados_pessoais': setupFormDelay,
-                    'nivel_violao': setupLevelForm,
-                    'tipo_musica': setupMusicForm,
-                    'sabe_acorde': setupChordForm,
-                    'sabe_afinar': setupTuneForm,
-                    'sabe_ritmo': setupRhythmForm,
-                    'sabe_musica': setupSongForm,
-                    'objetivo_violao': setupGoalForm,
-                    'dificuldade_violao': setupDifficultyForm,
-                    'videochamada': setupCallForm,
-                    'disponibilidade_treino': setupTrainingForm,
-                    'objetivo_semana': setupWeeklyGoalForm,
-                    'informacoes_extras': setupExtraForm15
-                };
-                if (setupFunctions[currentStep]) {
-                    setupFunctions[currentStep]();
-                } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
-                    setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
-                } else if (currentStep === 'cadastro_final') {
-                    const btn = document.querySelector(`[data-btn="${currentStep}"]`);
-                    if (btn) btn.disabled = false;
-                }
+
+            stepStartTime = Date.now();
+            const setupFunctions = {
+                'video_explicacao': setupVideoDelayNew,
+                'video_inicial': setupVideoDelay,
+                'depoimentos': setupVideoDelay2,
+                'dados_pessoais': setupFormDelay,
+                'nivel_violao': () => { setupLevelForm(); checkForm(); },
+                'tipo_musica': () => { setupMusicForm(); checkForm(); },
+                'sabe_acorde': () => { setupChordForm(); checkForm(); },
+                'sabe_afinar': () => { setupTuneForm(); checkForm(); },
+                'sabe_ritmo': () => { setupRhythmForm(); checkForm(); },
+                'sabe_musica': () => { setupSongForm(); checkForm(); },
+                'objetivo_violao': () => { setupGoalForm(); checkForm(); },
+                'dificuldade_violao': () => { setupDifficultyForm(); checkForm(); },
+                'videochamada': () => { setupCallForm(); checkForm(); },
+                'disponibilidade_treino': () => { setupTrainingForm(); checkForm(); },
+                'objetivo_semana': () => { setupWeeklyGoalForm(); checkForm(); },
+                'informacoes_extras': () => { setupExtraForm15(); checkForm(); }
+            };
+            if (setupFunctions[currentStep]) {
+                setupFunctions[currentStep]();
+            } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
+                setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
+            } else if (currentStep === 'cadastro_final') {
+                const btn = document.querySelector(`[data-btn="${currentStep}"]`);
+                if (btn) btn.disabled = false;
             }
         }
+    }
 
         function nextStep() {
             document.querySelectorAll('video').forEach(video => {
@@ -1064,7 +1175,8 @@
 
             let nextStepIndex = stepNames.indexOf(currentStep) + 1;
             if (stepNames[nextStepIndex] === 'sabe_musica') {
-                const formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
+                const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+
                 const sabeAcorde = formData.sabe_acorde?.sabeAcorde || 'nao';
                 const sabeRitmo = formData.sabe_ritmo?.sabeRitmo || 'nao';
                 if (sabeAcorde !== 'sim' || sabeRitmo !== 'sim') {
@@ -1078,6 +1190,12 @@
 
             document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
             updateStepIndicator();
+            // Se a etapa já foi visitada, esconde a mensagem .small-text
+            if (isStepVisited(currentStep) && currentStep !== 'cadastro_final') {
+                const stepEl = document.querySelector(`.step[data-name="${currentStep}"]`);
+                const msg = stepEl ? stepEl.querySelector('.small-text') : null;
+                if (msg) msg.style.display = 'none';
+            }
 
             const setupFunctions = {
                 'video_explicacao': setupVideoDelayNew,
@@ -1112,6 +1230,17 @@
                     }
                 } else {
                     console.error(`Erro: Botão btn_${currentStep} não encontrado`);
+                }
+            }
+            if (isStepVisited(currentStep) && currentStep !== 'cadastro_final') {
+                const btn = document.querySelector(`[data-btn="${currentStep}"]`);
+                const countdown = document.querySelector(`[data-countdown="${currentStep}"]`);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                }
+                if (countdown) {
+                    countdown.textContent = '';
                 }
             }
 
@@ -1174,6 +1303,12 @@
             const countdown = document.querySelector('[data-countdown="video_inicial"]');
             const video = document.querySelector('[data-video="video_inicial"]');
             const step = document.querySelector('.step[data-name="video_inicial"]');
+            if (isStepVisited('video_inicial')) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
             let timeLeft = DELAY_VIDEO_INICIAL;
             
             if (!ENABLE_DELAY) {
@@ -1211,6 +1346,12 @@
             const countdown = document.querySelector('[data-countdown="video_explicacao"]');
             const video = document.querySelector('.step[data-name="video_explicacao"] video');
             const step = document.querySelector('.step[data-name="video_explicacao"]');
+            if (isStepVisited('video_explicacao')) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
             let timeLeft = DELAY_VIDEO_EXPLICACAO;
             
             if (!ENABLE_DELAY) {
@@ -1252,6 +1393,12 @@
             const countdown = document.querySelector('[data-countdown="depoimentos"]');
             const video = document.querySelector('[data-video="depoimentos"]');
             const step = document.querySelector('.step[data-name="depoimentos"]');
+            if (isStepVisited('depoimentos')) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
             let timeLeft = DELAY_DEPOIMENTOS;
             
             if (!ENABLE_DELAY) {
@@ -1296,7 +1443,12 @@
                 console.error(`Erro: Elemento ${countdownId} não encontrado`);
                 return;
             }
-            
+            if (isStepVisited(stepName)) {
+                btn.disabled = false;
+                countdown.textContent = '';
+                btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+                return;
+            }
             let timeLeft = DELAY_FAQ;
             
             if (!ENABLE_DELAY) {
@@ -1384,8 +1536,15 @@
             const form = document.querySelector('[data-form="dados_pessoais"]');
             const inputs = form.querySelectorAll('input');
             
+          
             btn.disabled = true;
-            
+            // Chamar validação inicial para dados restaurados
+            if (typeof validateForm === "function") {
+                validateForm();
+            } else if (typeof checkForm === "function") {
+                checkForm();
+            }
+
             function validateForm() {
                 const name = document.getElementById('nome').value.trim();
                 const whatsapp = document.getElementById('whatsapp').value.trim();
@@ -1443,7 +1602,8 @@
             const customLevel = document.getElementById('nivelPersonalizado');
             const customLevelText = document.getElementById('textoNivelPersonalizado');
             const radios = form.querySelectorAll('input[name="nivel"]');
-            
+           
+
             btn.disabled = true;
             
             function checkForm() {
@@ -1481,6 +1641,13 @@
                 saveToSession('nivel_violao', levelData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            const selectedLevel = form.querySelector('input[name="nivel"]:checked');
+            if (selectedLevel) {
+            customLevelText.style.display = selectedLevel.value === 'personalizado' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function setupMusicForm() {
@@ -1490,6 +1657,7 @@
             const radios = form.querySelectorAll('input[name="musica"]');
             const otherMusic = document.getElementById('outraMusica');
             const otherMusicText = document.getElementById('textoOutraMusica');
+          
             
             btn.disabled = true;
             
@@ -1527,6 +1695,13 @@
                 saveToSession('tipo_musica', musicData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            const selectedMusic = form.querySelector('input[name="musica"]:checked');
+            if (selectedMusic) {
+            otherMusicText.style.display = selectedMusic.value === 'outro' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function toggleVideo(videoName) {
@@ -1572,7 +1747,7 @@
             const radios = form.querySelectorAll('input[name="extra"]');
             const extraYes = document.getElementById('extraSim');
             const extraText = document.getElementById('textoExtra');
-            
+          
             btn.disabled = true;
             
             function checkForm() {
@@ -1608,6 +1783,13 @@
                 saveToSession('informacoes_extras', extraData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            const selectedExtra = form.querySelector('input[name="extra"]:checked');
+            if (selectedExtra) {
+            extraText.style.display = selectedExtra.value === 'sim' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function setupChordForm() {
@@ -1620,7 +1802,7 @@
             const textoAcordePersonalizado = document.getElementById('textoAcordePersonalizado');
             const radios = form.querySelectorAll('input[name="sabeAcorde"]');
             const tipoAcordeRadios = form.querySelectorAll('input[name="tipoAcorde"]');
-
+           
             btn.disabled = true;
 
             function checkForm() {
@@ -1663,6 +1845,14 @@
                 saveToSession('sabe_acorde', chordData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            acordesOptions.style.display = sabeAcordeSim.checked ? 'block' : 'none';
+            const selectedTipo = form.querySelector('input[name="tipoAcorde"]:checked');
+            if (selectedTipo) {
+            textoAcordePersonalizado.style.display = selectedTipo.value === 'personalizado' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function setupTuneForm() {
@@ -1670,7 +1860,7 @@
             const countdown = document.querySelector('[data-countdown="sabe_afinar"]');
             const form = document.querySelector('[data-form="sabe_afinar"]');
             const radios = form.querySelectorAll('input[name="sabeAfinar"]');
-
+           
             btn.disabled = true;
 
             function checkForm() {
@@ -1694,6 +1884,8 @@
                 saveToSession('sabe_afinar', tuneData);
                 nextStep();
             });
+            // 🔑 Inicializa validação com dados restaurados
+            checkForm();
         }
 
         function setupRhythmForm() {
@@ -1707,7 +1899,7 @@
             const radios = form.querySelectorAll('input[name="sabeRitmo"]');
             const checkboxes = form.querySelectorAll('input[name="ritmo"]');
             const ritmoPersonalizadoRadio = form.querySelector('input[name="ritmoPersonalizado"]');
-
+           
             btn.disabled = true;
 
             function checkForm() {
@@ -1761,6 +1953,11 @@
                 saveToSession('sabe_ritmo', rhythmData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            ritmosOptions.style.display = sabeRitmoSim.checked ? 'block' : 'none';
+            textoRitmoPersonalizado.style.display = ritmoPersonalizado.checked ? 'block' : 'none';
+            checkForm();
+
         }
 
         function setupSongForm() {
@@ -1770,7 +1967,7 @@
             const sabeMusicaSim = form.querySelector('input[value="sim"]');
             const textoMusica = document.getElementById('textoMusica');
             const radios = form.querySelectorAll('input[name="sabeMusica"]');
-
+           
             btn.disabled = true;
 
             function checkForm() {
@@ -1806,6 +2003,13 @@
                 saveToSession('sabe_musica', songData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            const selectedSabeMusica = form.querySelector('input[name="sabeMusica"]:checked');
+            if (selectedSabeMusica) {
+            textoMusica.style.display = selectedSabeMusica.value === 'sim' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function setupGoalForm() {
@@ -1815,7 +2019,7 @@
             const objetivoOutro = document.getElementById('objetivoOutro');
             const textoObjetivo = document.getElementById('textoObjetivo');
             const radios = form.querySelectorAll('input[name="objetivo"]');
-
+         
             btn.disabled = true;
 
             function checkForm() {
@@ -1851,6 +2055,13 @@
                 saveToSession('objetivo_violao', goalData);
                 nextStep();
             });
+            // 🔑 Inicializa visibilidade e validação com dados restaurados
+            const selectedGoal = form.querySelector('input[name="objetivo"]:checked');
+            if (selectedGoal) {
+            textoObjetivo.style.display = selectedGoal.value === 'outro' ? 'block' : 'none';
+            }
+            checkForm();
+
         }
 
         function setupDifficultyForm() {
@@ -1858,7 +2069,7 @@
             const countdown = document.querySelector('[data-countdown="dificuldade_violao"]');
             const form = document.querySelector('[data-form="dificuldade_violao"]');
             const textoDificuldade = document.getElementById('textoDificuldade');
-
+          
             btn.disabled = true;
 
             function checkForm() {
@@ -1886,6 +2097,9 @@
                 saveToSession('dificuldade_violao', difficultyData);
                 nextStep();
             });
+            // 🔑 Inicializa validação com dados restaurados
+            checkForm();
+
         }
 
         function setupCallForm() {
@@ -1893,7 +2107,7 @@
             const countdown = document.querySelector('[data-countdown="videochamada"]');
             const form = document.querySelector('[data-form="videochamada"]');
             const radios = form.querySelectorAll('input[name="videochamada"]');
-
+           
             btn.disabled = true;
 
             function checkForm() {
@@ -1917,6 +2131,9 @@
                 saveToSession('videochamada', callData);
                 nextStep();
             });
+            // 🔑 Inicializa validação com dados restaurados
+            checkForm();
+
         }
 
         function setupTrainingForm() {
@@ -1924,7 +2141,7 @@
             const countdown = document.querySelector('[data-countdown="disponibilidade_treino"]');
             const form = document.querySelector('[data-form="disponibilidade_treino"]');
             const radios = form.querySelectorAll('input[name="disponibilidade"]');
-
+         
             btn.disabled = true;
 
             function checkForm() {
@@ -1948,6 +2165,9 @@
                 saveToSession('disponibilidade_treino', trainingData);
                 nextStep();
             });
+            // 🔑 Inicializa validação com dados restaurados
+            checkForm();
+
         }
 
         function setupWeeklyGoalForm() {
@@ -1955,7 +2175,7 @@
             const countdown = document.querySelector('[data-countdown="objetivo_semana"]');
             const form = document.querySelector('[data-form="objetivo_semana"]');
             const textoObjetivoSemana = document.getElementById('textoObjetivoSemana');
-
+          
             btn.disabled = true;
 
             function checkForm() {
@@ -1983,6 +2203,9 @@
                 saveToSession('objetivo_semana', weeklyGoalData);
                 nextStep();
             });
+            // 🔑 Inicializa validação com dados restaurados
+            checkForm();
+
         }
 
     </script>
@@ -1992,8 +2215,8 @@
 
         // Inicializar sessionStorage
         function initSession() {
-            if (!sessionStorage.getItem('formData')) {
-                sessionStorage.setItem('formData', JSON.stringify({}));
+            if (!localStorage.getItem('formData')) {
+                localStorage.setItem('formData', JSON.stringify({}));
             }
         }
         
@@ -2003,31 +2226,14 @@
             return div.innerHTML;
         }
 
-        // Salvar dados na sessionStorage
+        // Salvar dados no localStorage
         function saveToSession(key, value) {
-            let formData = JSON.parse(sessionStorage.getItem('formData'));
+            let formData = JSON.parse(localStorage.getItem('formData')) || {};
             formData[key] = value;
-            sessionStorage.setItem('formData', JSON.stringify(formData));
+            localStorage.setItem('formData', JSON.stringify(formData));
         }
 
-        // Obter o próximo contador do Firebase
-        async function getNextCounter() {
-            try {
-                const response = await fetch(API_URL);
-                const result = await response.json();
-                if (result.success && result.data) {
-                    const counters = result.data
-                        .filter(doc => doc.documentId && doc.documentId.startsWith('15diasgratis_'))
-                        .map(doc => parseInt(doc.documentId.replace('15diasgratis_', '')))
-                        .filter(n => !isNaN(n));
-                    return counters.length > 0 ? Math.max(...counters) + 1 : 1;
-                }
-                return 1;
-            } catch (error) {
-                console.error('Erro ao obter contador:', error);
-                return 1;
-            }
-        }
+
 
         // Sistema de envio mais robusto para Firebase
         class FormSubmissionManager {
@@ -2092,7 +2298,8 @@
 
             // Tentativa individual de envio
             async attemptSubmission() {
-                const formData = JSON.parse(sessionStorage.getItem('formData') || '{}');
+                const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+
                 
                 if (Object.keys(formData).length === 0) {
                     throw new Error('Nenhum dado para enviar');
@@ -2151,10 +2358,11 @@
 
             // Preparar dados para envio
             prepareDataForSubmission(formData, counter) {
+                const timestamp = Date.now();
                 return {
-                    documentId: `15diasgratis_${counter}`,
+                    documentId: `15diasgratis_${counter}_${timestamp}`,
                     step_times: JSON.stringify(stepTimes),
-                    numero_inscricao: counter.toString(),
+                    
                     nome: formData.dados_pessoais?.nome || '',
                     whatsapp: formData.dados_pessoais?.whatsapp || '',
                     idade: formData.dados_pessoais?.idade || '',
@@ -2187,8 +2395,8 @@
             // Salvar tentativa falhada para retry posterior
             saveFailedSubmission() {
                 const failedData = {
-                    formData: sessionStorage.getItem('formData'),
-                    stepTimes: sessionStorage.getItem('stepTimes'),
+                    formData: localStorage.getItem('formData'),
+                    stepTimes: localStorage.getItem('stepTimes'),
                     timestamp: Date.now(),
                     attempts: (JSON.parse(localStorage.getItem('failedSubmission') || '{}').attempts || 0) + 1
                 };
@@ -2225,6 +2433,7 @@
             // Limpar dados após sucesso
             clearFormData() {
                 sessionStorage.removeItem('formData');
+                sessionStorage.removeItem('stepTimes');
                 localStorage.removeItem('failedSubmission');
                 console.log('🧹 Dados limpos após envio bem-sucedido');
             }
@@ -2236,7 +2445,7 @@
 
             // Verificar se há dados pendentes
             hasPendingData() {
-                return sessionStorage.getItem('formData') || localStorage.getItem('failedSubmission');
+                return localStorage.getItem('formData') || localStorage.getItem('failedSubmission');
             }
 
             // Status da conexão
@@ -2251,18 +2460,204 @@
         // Função principal para substituir a original
         async function sendToFirebase() {
             const result = await submissionManager.sendToFirebaseWithRetry();
-            
-            if (!result.success) {
-                // Aqui você pode mostrar uma mensagem para o usuário
-                console.error('Falha no envio:', result.error);
-                // Opcional: mostrar toast/modal de erro
-            }
-            
-            return result;
+            return result.success;
         }
 
+        // Restaurar dados do formulário
+        function restoreFormData() {
+            const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+
+
+
+        // Restaurar dados pessoais
+        if (formData.dados_pessoais) {
+            const data = formData.dados_pessoais;
+            if (data.nome) document.getElementById('nome').value = data.nome;
+            if (data.whatsapp) document.getElementById('whatsapp').value = data.whatsapp;
+            if (data.idade) document.getElementById('idade').value = data.idade;
+            const inputs = document.querySelectorAll('[data-form="dados_pessoais"] input');
+            inputs.forEach(input => input.dispatchEvent(new Event('input', { bubbles: true })));
+        }
+
+        // Restaurar nível do violão
+        if (formData.nivel_violao) {
+            const radio = document.querySelector(`input[name="nivel"][value="${formData.nivel_violao.nivel}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.nivel_violao.nivel === 'personalizado') {
+                    const textarea = document.getElementById('textoNivelPersonalizado');
+                    textarea.style.display = 'block';
+                    textarea.value = formData.nivel_violao.nivel_personalizado || '';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+
+        // Restaurar tipo de música
+        if (formData.tipo_musica) {
+            const radio = document.querySelector(`input[name="musica"][value="${formData.tipo_musica.musica}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.tipo_musica.musica === 'outro') {
+                    const textarea = document.getElementById('textoOutraMusica');
+                    textarea.style.display = 'block';
+                    textarea.value = formData.tipo_musica.musica_personalizada || '';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+
+        // Restaurar acordes
+        if (formData.sabe_acorde) {
+            const radio = document.querySelector(`input[name="sabeAcorde"][value="${formData.sabe_acorde.sabeAcorde}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.sabe_acorde.sabeAcorde === 'sim') {
+                    document.getElementById('acordesOptions').style.display = 'block';
+                    if (formData.sabe_acorde.tipoAcorde) {
+                        const tipoRadio = document.querySelector(`input[name="tipoAcorde"][value="${formData.sabe_acorde.tipoAcorde}"]`);
+                        if (tipoRadio) {
+                            tipoRadio.checked = true;
+                            tipoRadio.dispatchEvent(new Event('change', { bubbles: true }));
+                            if (formData.sabe_acorde.tipoAcorde === 'personalizado') {
+                                const textarea = document.getElementById('textoAcordePersonalizado');
+                                textarea.style.display = 'block';
+                                textarea.value = formData.sabe_acorde.acordePersonalizado || '';
+                                textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Restaurar afinar
+        if (formData.sabe_afinar) {
+            const radio = document.querySelector(`input[name="sabeAfinar"][value="${formData.sabe_afinar.sabeAfinar}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        // Restaurar ritmos
+        if (formData.sabe_ritmo) {
+            const radio = document.querySelector(`input[name="sabeRitmo"][value="${formData.sabe_ritmo.sabeRitmo}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.sabe_ritmo.sabeRitmo === 'sim') {
+                    document.getElementById('ritmosOptions').style.display = 'block';
+                    if (formData.sabe_ritmo.ritmos) {
+                        formData.sabe_ritmo.ritmos.forEach(ritmo => {
+                            const checkbox = document.querySelector(`input[name="ritmo"][value="${ritmo}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        });
+                    }
+                    if (formData.sabe_ritmo.ritmoPersonalizado) {
+                        const ritmoPersonalizado = document.getElementById('ritmoPersonalizado');
+                        if (ritmoPersonalizado) {
+                            ritmoPersonalizado.checked = true;
+                            ritmoPersonalizado.dispatchEvent(new Event('change', { bubbles: true }));
+                            const textarea = document.getElementById('textoRitmoPersonalizado');
+                            textarea.style.display = 'block';
+                            textarea.value = formData.sabe_ritmo.ritmoPersonalizado;
+                            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Restaurar música completa
+        if (formData.sabe_musica) {
+            const radio = document.querySelector(`input[name="sabeMusica"][value="${formData.sabe_musica.sabeMusica}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.sabe_musica.sabeMusica === 'sim') {
+                    const textarea = document.getElementById('textoMusica');
+                    textarea.style.display = 'block';
+                    textarea.value = formData.sabe_musica.musicas || '';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+
+        // Restaurar objetivo
+        if (formData.objetivo_violao) {
+            const radio = document.querySelector(`input[name="objetivo"][value="${formData.objetivo_violao.objetivo}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.objetivo_violao.objetivo === 'outro') {
+                    const textarea = document.getElementById('textoObjetivo');
+                    textarea.style.display = 'block';
+                    textarea.value = formData.objetivo_violao.objetivoPersonalizado || '';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+
+        // Restaurar dificuldade
+        if (formData.dificuldade_violao && formData.dificuldade_violao.dificuldade) {
+            const textarea = document.getElementById('textoDificuldade');
+            textarea.value = formData.dificuldade_violao.dificuldade;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        // Restaurar videochamada
+        if (formData.videochamada) {
+            const radio = document.querySelector(`input[name="videochamada"][value="${formData.videochamada.videochamada}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        // Restaurar disponibilidade treino
+        if (formData.disponibilidade_treino) {
+            const radio = document.querySelector(`input[name="disponibilidade"][value="${formData.disponibilidade_treino.disponibilidade}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        // Restaurar objetivo semana
+        if (formData.objetivo_semana && formData.objetivo_semana.objetivoSemana) {
+            const textarea = document.getElementById('textoObjetivoSemana');
+            textarea.value = formData.objetivo_semana.objetivoSemana;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        // Restaurar informações extras
+        if (formData.informacoes_extras) {
+            const radio = document.querySelector(`input[name="extra"][value="${formData.informacoes_extras.resposta}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                if (formData.informacoes_extras.resposta === 'sim') {
+                    const textarea = document.getElementById('textoExtra');
+                    textarea.style.display = 'block';
+                    textarea.value = formData.informacoes_extras.texto_extra || '';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        }
+    }
+
+    
+        // Iniciar sessionStorage
         // Tentar reenviar dados ao carregar a página
         window.addEventListener('load', () => {
+            restoreFormData(); // Restaurar dados salvos
             if (submissionManager.hasPendingData()) {
                 setTimeout(() => {
                     submissionManager.retryFailedSubmissions();
@@ -2286,9 +2681,82 @@
                 const endTime = Date.now();
                 const timeSpent = USE_MILLISECONDS ? (endTime - stepStartTime) : Math.round((endTime - stepStartTime) / 1000);
                 stepTimes[`tempo_${currentStep}`] = timeSpent;
-                sessionStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+                localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
+
                 console.log(`Tempo Etapa cadastro_final capturado: ${timeSpent}${USE_MILLISECONDS ? 'ms' : 's'}`);
             }
+        }
+
+        async function processarInscricaoCompleta() {
+            
+            const btn = document.querySelector('[data-btn="cadastro_final"]');
+            const aguardeMsg = document.getElementById('aguardeMsg');
+            const finalSuccess = document.getElementById('finalSuccess');
+            
+            // Esconder botão e mostrar mensagem de aguarde
+            btn.style.display = 'none';
+            aguardeMsg.style.display = 'block';
+            let restante = 7;
+            aguardeMsg.textContent = `⏳ Finalizando sua inscrição... você será direcionado ao WhatsApp em ${restante} segundos ou menos.`;
+            const interval = setInterval(() => {
+                restante--;
+                if (restante > 0) {
+                    aguardeMsg.textContent = `⏳ Finalizando sua inscrição... você será direcionado ao WhatsApp em ${restante} segundos ou menos.`;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1000);
+
+            
+            // Capturar tempo e salvar
+            captureStep19Time();
+            saveStepTimes();
+            
+            // Enviar para Firebase e aguardar confirmação
+            const enviadoComSucesso = await sendToFirebase();
+
+            if (enviadoComSucesso) {
+                localStorage.removeItem("formData");
+                localStorage.removeItem("stepTimes");
+                localStorage.removeItem("visitedSteps");
+
+                
+
+
+                // Esconder mensagem de aguarde e mostrar sucesso
+                aguardeMsg.style.display = 'none';
+                clearInterval(interval);
+                
+
+                finalSuccess.style.display = 'block';
+                
+                // Redirecionar para WhatsApp
+                window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank');
+            } else {
+                aguardeMsg.style.display = 'none';
+                clearInterval(interval);
+
+                btn.style.display = 'none';
+
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('botoes-falha');
+
+                wrapper.innerHTML = `
+                <p style="color:#c00; font-weight:bold; margin-bottom:15px;">❌ houve uma falha na sua inscrição.</p>
+                
+                <button style="width:100%; margin-bottom:10px; padding:12px; border:none; border-radius:8px; color:white; font-size:16px; cursor:pointer; background:linear-gradient(45deg,#ff6b35,#f7931e);" onclick="location.reload()">
+                    Tentar novamente
+                </button>
+
+                <button style="width:100%; padding:12px; border:none; border-radius:8px; color:white; font-size:16px; cursor:pointer; background:linear-gradient(45deg,#28a745,#34d058);" onclick="window.open('https://wa.me/5595984224764?text=Oi,%20minha%20inscrição%20deu%20erro','_blank')">
+                    Conversar com Gabriel Almeida
+                </button>
+                `;
+
+                btn.parentElement.appendChild(wrapper);
+            }
+
+
         }
 
         // Salvar tempos na sessionStorage
@@ -2319,6 +2787,11 @@
         initSession();
     </script>
 
-</body>
 
+    
+    
+    
+    
+
+</body>
 </html>
