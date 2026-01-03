@@ -70,35 +70,71 @@
 
     <!-- Aula 0 -->
     <section>
-      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 0 - A primeira coisa que você deve aprender no violão</h2>
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 0 - Ainda não tem um violão?</h2>
+      <p class="mb-2">Veja como escolher um violão ideal para iniciantes:</p>
       <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/o0O-R8AkYf8" title="Aula 0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/unHdc8Hw4j0" title="Como escolher um violão" allowfullscreen></iframe>
       </div>
     </section>
 
     <!-- Aula 1 -->
     <section>
-      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 1 - Como deixar o som do acorde bonito</h2>
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/GIahyfWAPkU" title="Aula 1" allowfullscreen></iframe>
-      </div>
-    </section>
-
-
-    <!-- Aula afinação -->
-    <section>
-      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 2 - Como Afinar o Violão</h2>
-
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 1 - Como Afinar o Violão</h2>
       <div class="video-wrapper">
         <iframe src="https://www.youtube.com/embed/ibNwTwoRtIw" title="Aula 0" allowfullscreen></iframe>
       </div>
     </section>
 
-    <!-- Imagens com acordes -->
-    <section class="space-y-6">
+    <!-- Toggle button for tuning details -->
+    <div id="toggle-tuning-container" class="sticky top-0 bg-black z-10 p-4">
+      <button id="toggle-tuning" class="bg-[#059de3] text-white px-4 py-2 rounded">
+        Detalhes sobre afinação
+      </button>
+    </div>
+
+    <!-- Detalhes sobre afinação - hidden by default -->
+    <section id="tuning-section" class="space-y-6 hidden">
+      <img src="afi.webp" alt="Detalhes sobre afinação" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
+      <div class="text-center">
+        <button id="toggle-apps" class="bg-[#059de3] text-white px-4 py-2 rounded mb-4">
+          Baixar afinador no celular
+        </button>
+        <div id="apps-section" class="hidden space-y-2">
+          <a href="https://play.google.com/store/apps/details?id=com.studiosol.afinadorlite&hl=pt_BR" target="_blank" class="block bg-green-600 text-white px-4 py-2 rounded text-center">Baixar para Android</a>
+          <a href="https://apps.apple.com/br/app/afinador-cifra-club/id480625281" target="_blank" class="block bg-blue-600 text-white px-4 py-2 rounded text-center">Baixar para iPhone</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aula 2 -->
+    <section>
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 2 - Como segurar o violão?</h2>
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/ePa5F8LhqfQ" title="Como segurar o violão" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Aula 3 -->
+    <section>
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Aula 3 - A primeira coisa que você deve aprender no violão</h2>
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/o0O-R8AkYf8" title="Aula 0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Toggle button for images -->
+    <div id="toggle-container" class="sticky top-0 bg-black z-10 p-4">
+      <button id="toggle-images" class="flex items-center space-x-2 bg-[#059de3] text-white px-4 py-2 rounded">
+        <span id="toggle-text">Ver desenhos dos acordes</span>
+        <img src="A.png" alt="Ícone" class="w-6 h-6">
+      </button>
+    </div>
+
+    <!-- Imagens com acordes - hidden by default -->
+    <section id="images-section" class="space-y-6 hidden">
       <img src="ACORDES.jpg" alt="Acordes" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
       <img src="Diagrama-de-Acordes.png" alt="Diagrama de Acordes" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
-      
+
       <div>
         <img src="A.png" alt="Acorde A" class="w-full rounded-xl border border-[#059de3] max-h-[80vh] object-contain">
         <p class="mt-2 text-center text-gray-300 text-lg font-semibold">Como se lê esse acorde: Lá maior</p>
@@ -115,20 +151,11 @@
       </div>
     </section>
 
-    <!-- Como escolher um violão -->
+    <!-- Próxima aula -->
     <section>
-      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Ainda não tem um violão?</h2>
-      <p class="mb-2">Veja como escolher um violão ideal para iniciantes:</p>
+      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Como deixar o som do acorde bonito</h2>
       <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/unHdc8Hw4j0" title="Como escolher um violão" allowfullscreen></iframe>
-      </div>
-    </section>
-
-    <!-- Como segurar o violão -->
-    <section>
-      <h2 class="text-2xl font-semibold border-l-4 border-[#059de3] pl-3 mb-2">Como segurar o violão?</h2>
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/ePa5F8LhqfQ" title="Como segurar o violão" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/GIahyfWAPkU" title="Aula 1" allowfullscreen></iframe>
       </div>
     </section>
 
@@ -168,13 +195,46 @@
     function voltarPaginaGeral() {
         const urlParams = new URLSearchParams(window.location.search);
         const from = urlParams.get('from');
-        
+
         if (from === 'geral2') {
             window.location.href = 'https://gabrielalmeidac3.github.io/musicas_violao/fechado_geral2.html';
         } else {
             window.location.href = 'https://gabrielalmeidac3.github.io/musicas_violao/fechado_geral_protegido_site.html';
         }
     }
+
+    document.getElementById('toggle-images').addEventListener('click', function() {
+      const imagesSection = document.getElementById('images-section');
+      const toggleText = document.getElementById('toggle-text');
+      if (imagesSection.classList.contains('hidden')) {
+        imagesSection.classList.remove('hidden');
+        toggleText.textContent = 'Fechar imagens';
+      } else {
+        imagesSection.classList.add('hidden');
+        toggleText.textContent = 'Ver desenhos dos acordes';
+      }
+    });
+
+    document.getElementById('toggle-tuning').addEventListener('click', function() {
+      const tuningSection = document.getElementById('tuning-section');
+      const toggleButton = document.getElementById('toggle-tuning');
+      if (tuningSection.classList.contains('hidden')) {
+        tuningSection.classList.remove('hidden');
+        toggleButton.textContent = 'Fechar detalhes sobre afinação';
+      } else {
+        tuningSection.classList.add('hidden');
+        toggleButton.textContent = 'Detalhes sobre afinação';
+      }
+    });
+
+    document.getElementById('toggle-apps').addEventListener('click', function() {
+      const appsSection = document.getElementById('apps-section');
+      if (appsSection.classList.contains('hidden')) {
+        appsSection.classList.remove('hidden');
+      } else {
+        appsSection.classList.add('hidden');
+      }
+    });
     </script>
 
 </body>
