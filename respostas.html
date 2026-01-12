@@ -210,6 +210,22 @@
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
         }
+        .copy-access-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+        .copy-access-btn:hover {
+            background: linear-gradient(45deg, #66bb6a, #4caf50);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
         .ver-mais-row {
             cursor: pointer;
         }
@@ -254,18 +270,27 @@
             max-width: 100% !important;
             padding: 15px !important;
         }
-        .details-row td > .details-table {
-            padding: 0 !important;
+        .table-wrapper {
+            margin-top: 0;
+            overflow-x: auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            border: 0.1875rem solid rgb(41, 152, 255);
+            border-radius: 0.625rem;
+            background: rgba(255, 255, 255, 0.02);
         }
         .details-table {
-            width: 100% !important;
+            width: auto;
+            min-width: 100%;
             margin: 0 !important;
-            table-layout: fixed !important;
             box-sizing: border-box;
-            border: 2px solid rgb(41, 152, 255);
             border-collapse: separate;
             border-spacing: 0;
+            font-size: 0.875rem; /* Base font size for table */
+            border-radius: 0.5rem;
+            overflow: hidden;
         }
+
 
         .details-table th,
         .details-table td {
@@ -369,16 +394,78 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            background: rgba(76, 175, 80, 0.9);
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
             opacity: 0;
             transition: opacity 0.3s ease;
             z-index: 1000;
+            font-size: 14px;
         }
         .notification.show {
             opacity: 1;
+        }
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-content h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .modal-btn.yes {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+        }
+        .modal-btn.yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        .modal-btn.no {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+        }
+        .modal-btn.no:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -608,6 +695,17 @@
             <div class="level-card" style="background: linear-gradient(135deg, rgba(100, 181, 246, 0.2), rgba(100, 181, 246, 0.1)); border-radius: 10px; padding: 15px; text-align: center; min-width: 200px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;">
                 <p style="color: #2196f3; font-size: 18px; margin: 0 0 5px 0; font-weight: bold;">Intermediário</p>
                 <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 5px;">Toca pelo menos uma música inteira com segurança</p>
+            </div>
+        </div>
+
+        <!-- Modal para gerar acesso -->
+        <div class="modal-overlay" id="accessModal">
+            <div class="modal-content">
+                <h3 id="modalQuestion">Gerar acesso do(a) aluno(a) [Nome]?</h3>
+                <div class="modal-buttons">
+                    <button class="modal-btn yes" id="confirmGenerate">Sim</button>
+                    <button class="modal-btn no" id="cancelGenerate">Não</button>
+                </div>
             </div>
         </div>
 
@@ -904,42 +1002,49 @@
                                     <td>${item.mais_informacoes === 'sim' ? `${item.texto_extra ? `<span style="color: #64b5f6; font-size: 16px;">${item.texto_extra.charAt(0).toUpperCase() + item.texto_extra.slice(1)}</span>` : 'Sim'}` : (item.mais_informacoes === 'nao' ? 'Não' : item.mais_informacoes || '-')}</td>
                                     <td>${item.data_inscricao ? new Date(item.data_inscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td>
                                     <td>${item.data_inscricao ? `${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}<button class="copy-btn" onclick="copyToClipboard('${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}')">📋</button>` : '-'}</td>
-                                    <td><button class="delete-btn" onclick="deleteResponse('${item.documentId}')">🗑️</button></td>
+                                    <td>
+                                        <button class="copy-access-btn" onclick="copyAccessData(this, '${item.nome}', '${item.whatsapp}')" title="Copiar acesso curso">📋 Acesso curso</button><br>
+                                        <button class="delete-btn" onclick="deleteResponse('${item.id}')">🗑️ Excluir</button>
+                                    </td>
                                 </tr>
                                 <tr class="ver-mais-row" onclick="toggleDetails('${item.documentId}')">
-                                    <td colspan="10" class="ver-mais">Ver Mais Informações</td>
+                                    <td colspan="11" class="ver-mais">Ver Mais Informações</td>
                                 </tr>
                                 <tr class="spacing-row" style="height: 20px;">
-                                    <td colspan="10" style="background: transparent; border: none; padding: 0;"></td>
+                                    <td colspan="11" style="background: transparent; border: none; padding: 0;"></td>
                                 </tr>
                                 <tr class="details-row" id="details-${item.documentId}">
-                                    <td colspan="10" style="width: 100%; padding: 0;">
-                                        <table class="details-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Sabe Acorde</th>
-                                                    <th>Sabe Afinar</th>
-                                                    <th>Sabe Ritmo</th>
-                                                    <th>Sabe Música</th>
-                                                    <th>Dificuldade</th>
-                                                    <th>Videochamada</th>
-                                                    <th>Objetivo da Semana</th>
-                                                    <th>Disponibilidade de Treino</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>${item.sabe_acorde === 'sim' && item.acorde_personalizado ? `<span style="color: #888; font-size: inherit;">Acordes que sabe:</span><br><span style="color: #64b5f6;">${item.acorde_personalizado}</span>` : formatSimNao(item.sabe_acorde)}</td>
-                                                    <td>${formatSimNao(item.sabe_afinar)}</td>
-                                                    <td>${formatSabeRitmo(item.sabe_ritmo, item.ritmos, item.ritmo_personalizado)}</td>
-                                                    <td>${item.sabe_musica === 'sim' && item.musicas ? `<span style="color: #64b5f6; font-size: 17px;">${item.musicas}</span>` : formatSimNao(item.sabe_musica)}</td>
-                                                    <td>${item.dificuldade_violao ? `<span style="color: #64b5f6; font-size: 16px;">${item.dificuldade_violao}</span>` : '-'}</td>
-                                                    <td>${formatSimNao(item.videochamada)}</td>
-                                                    <td>${item.objetivo_semana ? `<span style="color: #64b5f6; font-size: 16px;">${item.objetivo_semana}</span>` : '-'}</td>
-                                                    <td>${formatSimNao(item.disponibilidade_treino)}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <td colspan="11" style="width: 100%; padding: 0;">
+                                        <div class="table-wrapper">
+                                            <table class="details-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sabe Acorde</th>
+                                                        <th>Sabe Afinar</th>
+                                                        <th>Sabe Ritmo</th>
+                                                        <th>Sabe Música</th>
+                                                        <th>Dificuldade</th>
+                                                        <th>Videochamada</th>
+                                                        <th>Objetivo da Semana</th>
+                                                        <th>Disponibilidade de Treino</th>
+                                                        <th>Dia Apresentação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>${item.sabe_acorde === 'sim' && item.acorde_personalizado ? `<span style="color: #888; font-size: inherit;">Acordes que sabe:</span><br><span style="color: #64b5f6;">${item.acorde_personalizado}</span>` : formatSimNao(item.sabe_acorde)}</td>
+                                                        <td>${formatSimNao(item.sabe_afinar)}</td>
+                                                        <td>${formatSabeRitmo(item.sabe_ritmo, item.ritmos, item.ritmo_personalizado)}</td>
+                                                        <td>${item.sabe_musica === 'sim' && item.musicas ? `<span style="color: #64b5f6; font-size: 17px;">${item.musicas}</span>` : formatSimNao(item.sabe_musica)}</td>
+                                                        <td>${item.dificuldade_violao ? `<span style="color: #64b5f6; font-size: 16px;">${item.dificuldade_violao}</span>` : '-'}</td>
+                                                        <td>${formatSimNao(item.videochamada)}</td>
+                                                        <td>${item.objetivo_semana ? `<span style="color: #64b5f6; font-size: 16px;">${item.objetivo_semana}</span>` : '-'}</td>
+                                                        <td>${formatSimNao(item.disponibilidade_treino)}</td>
+                                                        <td>${item.dia_melhor_envio ? item.dia_melhor_envio.charAt(0).toUpperCase() + item.dia_melhor_envio.slice(1) : '-'}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                         <div class="ver-tempos" onclick="toggleTempos('${item.documentId}')">Ver Tempos</div>
                                         <div class="tempos-container" id="tempos-${item.documentId}">
                                             <div class="tempo-box total">Tempo Total: ${totalTime}</div>
@@ -960,43 +1065,184 @@
         document.getElementById('nextPage').disabled = end >= allData.length;
     }
 
+
+
     async function deleteResponse(id) {
-        if (!confirm("Tem certeza que deseja apagar este registro?")) {
+        console.log(`🗑️ Iniciando exclusão do registro ID: ${id}`);
+
+        // Debug: verificar se o ID está correto
+        if (!id || id === 'undefined') {
+            console.error('❌ ERRO: ID do registro é undefined ou inválido!');
+            console.log('🔍 Verificando dados disponíveis para debug...');
+
+            // Mostrar primeiros registros para ver campos de ID disponíveis
+            allData.slice(0, 3).forEach((item, index) => {
+                console.log(`📋 Registro ${index + 1}:`, {
+                    nome: item.nome,
+                    whatsapp: item.whatsapp,
+                    documentId: item.documentId,
+                    _id: item._id,
+                    id: item.id,
+                    todosCampos: Object.keys(item)
+                });
+            });
+
+            alert('Erro: ID do registro não encontrado. Verifique o console para detalhes.');
             return;
         }
+
+        if (!confirm("Tem certeza que deseja apagar este registro?")) {
+            console.log('❌ Usuário cancelou a exclusão');
+            return;
+        }
+
+        console.log(`✅ Confirmação recebida, removendo da lista local...`);
+
         try {
             // Remove da tela imediatamente
-            allData = allData.filter(item => item.documentId !== id);
+            const initialLength = allData.length;
+            allData = allData.filter(item => item.id !== id);
+            const finalLength = allData.length;
+
+            console.log(`📊 Lista local atualizada: ${initialLength} → ${finalLength} registros`);
+
             displayData();
+
+            console.log(`🌐 Enviando requisição DELETE para: ${API_URL}/${id}?method=1`);
+
             // Faz a requisição em background
-            await fetch(`${API_URL}/${id}?method=1`, {
+            const response = await fetch(`${API_URL}/${id}?method=1`, {
                 method: 'DELETE'
             });
+
+            console.log(`📡 Resposta HTTP: ${response.status} ${response.statusText}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.text();
+            console.log(`📄 Resposta do servidor:`, result);
+
+            console.log(`✅ Exclusão concluída com sucesso`);
+
         } catch (error) {
-            console.error('Erro ao apagar:', error);
+            console.error('❌ Erro ao apagar:', error);
+            console.log('🔄 Revertendo remoção da lista local...');
+
             // Reverte a remoção caso a requisição falhe
             await loadData();
+
+            console.log('✅ Lista local revertida');
         }
+    }
+
+    function showNotification(message, isError = false) {
+        // Remove existing notification
+        const existing = document.querySelector('.notification');
+        if (existing) {
+            existing.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = 'notification' + (isError ? ' error' : '');
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }, 100);
     }
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = 'Copiado com sucesso';
-            document.body.appendChild(notification);
-            setTimeout(() => {
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 300);
-                }, 2000);
-            }, 100);
+            showNotification('Copiado com sucesso');
         }).catch(err => {
             console.error('Erro ao copiar:', err);
+            showNotification('Erro ao copiar');
         });
+    }
+
+    async function copyAccessData(button, name, whatsapp) {
+        showNotification('Buscando acesso...');
+        const senha = await getPasswordByPhone(whatsapp);
+        if (senha === 'XXXX') {
+            // Mostrar modal para gerar acesso
+            showGenerateAccessModal(name, whatsapp);
+        } else {
+            const text = `Acesso ao Curso "Do Zero ao Repertório" da Comunidade Violão Depois dos 40
+
+Aluno: ${name}
+
+Telefone: ${whatsapp}
+Senha: ${senha}`;
+            copyToClipboard(text);
+        }
+    }
+
+    function showGenerateAccessModal(name, whatsapp) {
+        const modal = document.getElementById('accessModal');
+        const question = document.getElementById('modalQuestion');
+        const confirmBtn = document.getElementById('confirmGenerate');
+        const cancelBtn = document.getElementById('cancelGenerate');
+
+        question.textContent = `Gerar acesso do aluno ${name}?`;
+        modal.style.display = 'flex';
+
+        // Focar no botão Sim
+        setTimeout(() => confirmBtn.focus(), 100);
+
+        // Remover listeners anteriores
+        const newConfirm = confirmBtn.cloneNode(true);
+        const newCancel = cancelBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+        // Adicionar novos listeners
+        newConfirm.addEventListener('click', async () => {
+            modal.style.display = 'none';
+            await generateAndCopyAccess(name, whatsapp);
+        });
+
+        newCancel.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Fechar modal ao clicar fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Fechar com ESC
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                modal.style.display = 'none';
+                document.removeEventListener('keydown', escHandler);
+            }
+        });
+    }
+
+    async function generateAndCopyAccess(name, whatsapp) {
+        try {
+            // Usar a função centralizada do salvar_acesso_curso.js
+            const result = await generateAndSaveAccess(name, whatsapp);
+
+            if (result && result.success && result.accessText) {
+                copyToClipboard(result.accessText);
+            } else {
+                throw new Error(result?.error || 'Erro ao gerar acesso');
+            }
+        } catch (error) {
+            console.error('Erro ao gerar acesso:', error);
+            showNotification('Erro ao gerar acesso: ' + error.message, true);
+        }
     }
 
     let debounceTimeout;
@@ -1022,5 +1268,8 @@
         document.getElementById('responsesTable').scrollIntoView({ behavior: 'smooth' });
     });
     </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="script/salvar_acesso_curso.js"></script>
 </body>
 </html>

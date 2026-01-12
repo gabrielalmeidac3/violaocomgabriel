@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baixar Contatos WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(100, 181, 246, 0.3);
+        }
+
+        .description {
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(45deg, #66bb6a, #4caf50);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status.show {
+            opacity: 1;
+        }
+
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid #81c784;
+        }
+
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #e57373;
+            border: 1px solid #e57373;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #64b5f6;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .download-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Baixar Contatos WhatsApp</h1>
+        <p class="description">
+            Clique no botão abaixo para baixar todos os contatos no formato:<br>
+            <strong>Nome / https://wa.me/55xxxxxxxxxxx</strong>
+        </p>
+        <button class="download-btn" id="downloadBtn">
+            <span id="buttonText">Baixar Contatos</span>
+            <span class="loading" id="loadingSpinner" style="display: none;"></span>
+        </button>
+        <button class="download-btn" id="downloadNumbersBtn" style="margin-top: 15px; background: linear-gradient(45deg, #2196f3, #64b5f6); box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);">
+            <span id="buttonTextNumbers">Baixar Números</span>
+            <span class="loading" id="loadingSpinnerNumbers" style="display: none;"></span>
+        </button>
+        <div class="status" id="statusMessage"></div>
+        <div class="status" id="statusMessageNumbers"></div>
+    </div>
+
+    <script>
+        // Função para processar números de WhatsApp
+        function processarNumeros(data) {
+            const numeros = data.data.map(contato => {
+                let whatsapp = contato.whatsapp || '';
+                // Formatar número de WhatsApp
+                whatsapp = whatsapp.replace(/\D/g, '');
+                if (whatsapp.length === 10) {
+                    whatsapp = `9${whatsapp}`;
+                }
+                return whatsapp;
+            }).filter(Boolean);
+
+            // Remover duplicatas e adicionar +55
+            const numerosUnicos = [...new Set(numeros)];
+            return numerosUnicos.map(numero => `+55${numero}`);
+        }
+
+        // Função para baixar arquivo
+        function baixarArquivo(conteudo, nomeArquivo) {
+            const blob = new Blob([conteudo], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nomeArquivo;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', async function() {
+            const button = document.getElementById('downloadBtn');
+            const buttonText = document.getElementById('buttonText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const statusMessage = document.getElementById('statusMessage');
+
+            // Mostrar loading
+            button.disabled = true;
+            buttonText.textContent = 'Processando...';
+            loadingSpinner.style.display = 'inline-block';
+            statusMessage.className = 'status';
+            statusMessage.textContent = '';
+
+            try {
+                // Fazer requisição para a API
+                const response = await fetch('https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes');
+
+                if (!response.ok) {
+                    throw new Error(`Erro ao acessar API: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success || !Array.isArray(data.data)) {
+                    throw new Error('Formato de resposta inválido');
+                }
+
+                // Processar os contatos
+                const contatos = data.data.map(contato => {
+                    const nome = contato.nome?.trim() || '';
+                    let whatsapp = contato.whatsapp || '';
+
+                    // Formatar número de WhatsApp
+                    whatsapp = whatsapp.replace(/\D/g, '');
+                    if (whatsapp.length === 10) {
+                        whatsapp = `9${whatsapp}`;
+                    }
+
+                    if (nome && whatsapp) {
+                        return `${nome} / https://wa.me/55${whatsapp}`;
+                    }
+                    return null;
+                }).filter(Boolean);
+
+                if (contatos.length === 0) {
+                    throw new Error('Nenhum contato válido encontrado');
+                }
+
+                // Criar o conteúdo do arquivo
+                const conteudo = contatos.join('\n');
+
+                // Baixar arquivo
+                baixarArquivo(conteudo, 'contatos_whatsapp.txt');
+
+                // Mostrar sucesso
+                statusMessage.className = 'status success show';
+                statusMessage.textContent = `Sucesso! ${contatos.length} contatos baixados.`;
+
+            } catch (error) {
+                console.error('Erro:', error);
+                statusMessage.className = 'status error show';
+                statusMessage.textContent = `Erro: ${error.message}`;
+            } finally {
+                // Resetar botão
+                button.disabled = false;
+                buttonText.textContent = 'Baixar Contatos';
+                loadingSpinner.style.display = 'none';
+            }
+        });
+
+        document.getElementById('downloadNumbersBtn').addEventListener('click', async function() {
+            const button = document.getElementById('downloadNumbersBtn');
+            const buttonText = document.getElementById('buttonTextNumbers');
+            const loadingSpinner = document.getElementById('loadingSpinnerNumbers');
+            const statusMessage = document.getElementById('statusMessageNumbers');
+
+            // Mostrar loading
+            button.disabled = true;
+            buttonText.textContent = 'Processando...';
+            loadingSpinner.style.display = 'inline-block';
+            statusMessage.className = 'status';
+            statusMessage.textContent = '';
+
+            try {
+                // Fazer requisição para a API
+                const response = await fetch('https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes');
+
+                if (!response.ok) {
+                    throw new Error(`Erro ao acessar API: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success || !Array.isArray(data.data)) {
+                    throw new Error('Formato de resposta inválido');
+                }
+
+                // Processar os números
+                const numeros = processarNumeros(data);
+
+                if (numeros.length === 0) {
+                    throw new Error('Nenhum número válido encontrado');
+                }
+
+                // Criar o conteúdo do arquivo (apenas números)
+                const conteudo = numeros.join('\n');
+
+                // Baixar arquivo com quantidade no nome
+                baixarArquivo(conteudo, `${numeros.length}_numeros_whatsapp.txt`);
+
+                // Mostrar sucesso
+                statusMessage.className = 'status success show';
+                statusMessage.textContent = `Sucesso! ${numeros.length} números baixados.`;
+
+            } catch (error) {
+                console.error('Erro:', error);
+                statusMessage.className = 'status error show';
+                statusMessage.textContent = `Erro: ${error.message}`;
+            } finally {
+                // Resetar botão
+                button.disabled = false;
+                buttonText.textContent = 'Baixar Números';
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

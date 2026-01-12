@@ -166,7 +166,7 @@ if (stepIndex >= 0 && stepIndex < totalSteps) {
         'videochamada': setupCallForm,
         'disponibilidade_treino': setupTrainingForm,
         'objetivo_semana': setupWeeklyGoalForm,
-        'informacoes_extras': setupExtraForm15
+        'dia_melhor_envio': setupDiaMelhorEnvioForm
 
     };
     if (setupFunctions[currentStep]) {
@@ -192,7 +192,6 @@ function nextStep() {
             stepTimes[`tempo_${currentStep}`] = timeSpent; // só salva na primeira vez
         }        
         localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
-        console.log(`Tempo Etapa ${currentStep} capturado: ${timeSpent}${USE_MILLISECONDS ? 'ms' : 's'}`);
     }
     if (currentStep !== 'cadastro_final') {
         const nextStepIndex = stepNames.indexOf(currentStep) + 1;
@@ -208,7 +207,6 @@ function nextStep() {
             }
         }
 
-        console.log(`Próxima etapa a ser salva: ${nextStep}`);
         submissionManager.saveIncompleteSubmission(nextStep, stepTimes);
         // Esconder etapa atual e mostrar próxima
         const currentElement = document.querySelector(`[data-name="${currentStep}"]`);
@@ -238,7 +236,7 @@ function nextStep() {
                 'videochamada': setupCallForm,
                 'disponibilidade_treino': setupTrainingForm,
                 'objetivo_semana': setupWeeklyGoalForm,
-                'informacoes_extras': setupExtraForm15
+                'dia_melhor_envio': setupDiaMelhorEnvioForm
             };
             if (setupFunctions[nextStep]) {
                 setupFunctions[nextStep]();
@@ -777,57 +775,7 @@ function toggleVideo(videoName) {
     }
 }
 
-function setupExtraForm15() {
-    const btn = document.querySelector('[data-btn="informacoes_extras"]');
-    const countdown = document.querySelector('[data-countdown="informacoes_extras"]');
-    const form = document.querySelector('[data-form="informacoes_extras"]');
-    const radios = form.querySelectorAll('input[name="extra"]');
-    const extraYes = document.getElementById('extraSim');
-    const extraText = document.getElementById('textoExtra');
-  
-    btn.disabled = true;
-    
-    function checkForm() {
-        const isSelected = Array.from(radios).some(radio => radio.checked);
-        const isYesValid = !extraYes.checked || (extraYes.checked && extraText.value.trim() !== '');
-        if (isSelected && isYesValid) {
-            btn.disabled = false;
-            countdown.textContent = '';
-            btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
-        } else {
-            btn.disabled = true;
-            countdown.textContent = extraYes.checked ? 'Escreva sua informação' : 'Selecione uma opção';
-        }
-    }
-    
-    radios.forEach(radio => radio.addEventListener('change', () => {
-        extraText.style.display = radio.value === 'sim' ? 'block' : 'none';
-        checkForm();
-    }));
-    
-    extraText.addEventListener('input', () => {
-        extraText.style.height = 'auto';
-        extraText.style.height = `${extraText.scrollHeight}px`;
-        checkForm();
-    });
-    scrollTextareaToTop(extraText);
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const extraData = {
-            resposta: form.querySelector('input[name="extra"]:checked').value,
-            texto_extra: extraYes.checked ? sanitizeInput(extraText.value) : ''
-        };
-        saveToSession('informacoes_extras', extraData);
-        nextStep();
-    });
-    // 🔑 Inicializa visibilidade e validação com dados restaurados
-    const selectedExtra = form.querySelector('input[name="extra"]:checked');
-    if (selectedExtra) {
-    extraText.style.display = selectedExtra.value === 'sim' ? 'block' : 'none';
-    }
-    checkForm();
 
-}
 
 function setupChordForm() {
     const btn = document.querySelector('[data-btn="sabe_acorde"]');
@@ -1212,7 +1160,7 @@ function setupWeeklyGoalForm() {
     const countdown = document.querySelector('[data-countdown="objetivo_semana"]');
     const form = document.querySelector('[data-form="objetivo_semana"]');
     const textoObjetivoSemana = document.getElementById('textoObjetivoSemana');
-  
+
     btn.disabled = true;
 
     function checkForm() {
@@ -1238,6 +1186,40 @@ function setupWeeklyGoalForm() {
             objetivoSemana: sanitizeInput(textoObjetivoSemana.value)
         };
         saveToSession('objetivo_semana', weeklyGoalData);
+        nextStep();
+    });
+    // 🔑 Inicializa validação com dados restaurados
+    checkForm();
+
+}
+
+function setupDiaMelhorEnvioForm() {
+    const btn = document.querySelector('[data-btn="dia_melhor_envio"]');
+    const countdown = document.querySelector('[data-countdown="dia_melhor_envio"]');
+    const form = document.querySelector('[data-form="dia_melhor_envio"]');
+    const radios = form.querySelectorAll('input[name="diaEnvio"]');
+
+    btn.disabled = true;
+
+    function checkForm() {
+        if (Array.from(radios).some(radio => radio.checked)) {
+            btn.disabled = false;
+            countdown.textContent = '';
+            btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+        } else {
+            btn.disabled = true;
+            countdown.textContent = 'Selecione uma opção';
+        }
+    }
+
+    radios.forEach(radio => radio.addEventListener('change', checkForm));
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const diaEnvioData = {
+            diaEnvio: form.querySelector('input[name="diaEnvio"]:checked').value
+        };
+        saveToSession('dia_melhor_envio', diaEnvioData);
         nextStep();
     });
     // 🔑 Inicializa validação com dados restaurados

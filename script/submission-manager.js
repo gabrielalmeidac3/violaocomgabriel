@@ -200,9 +200,8 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
                     dificuldade_violao: formData.dificuldade_violao?.dificuldade || '',
                     videochamada: formData.videochamada?.videochamada || '',
                     objetivo_semana: formData.objetivo_semana?.objetivoSemana || '',
+                    dia_melhor_envio: formData.dia_melhor_envio?.diaEnvio || '',
                     disponibilidade_treino: formData.disponibilidade_treino?.disponibilidade || '',
-                    mais_informacoes: formData.informacoes_extras?.resposta || '',
-                    texto_extra: formData.informacoes_extras?.texto_extra || '',
                     data_inscricao: new Date().toISOString(),
                     tipo: "inscricao"
                 };
@@ -522,18 +521,12 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
             textarea.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
-        // Restaurar informações extras
-        if (formData.informacoes_extras) {
-            const radio = document.querySelector(`input[name="extra"][value="${formData.informacoes_extras.resposta}"]`);
+        // Restaurar dia melhor envio
+        if (formData.dia_melhor_envio) {
+            const radio = document.querySelector(`input[name="diaEnvio"][value="${formData.dia_melhor_envio.diaEnvio}"]`);
             if (radio) {
                 radio.checked = true;
                 radio.dispatchEvent(new Event('change', { bubbles: true }));
-                if (formData.informacoes_extras.resposta === 'sim') {
-                    const textarea = document.getElementById('textoExtra');
-                    textarea.style.display = 'block';
-                    textarea.value = formData.informacoes_extras.texto_extra || '';
-                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                }
             }
         }
     }
@@ -568,13 +561,12 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
                 stepTimes[`tempo_${currentStep}`] = timeSpent;
                 localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
 
-                console.log(`Tempo Etapa cadastro_final capturado: ${timeSpent}${USE_MILLISECONDS ? 'ms' : 's'}`);
+
             }
         }
 
         function saveStepTimes() {
-            localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
-            console.log('⏱ Tempos das etapas salvos no localStorage:', stepTimes);
+        localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
         }
 
         async function processarInscricaoCompleta() {
@@ -601,7 +593,17 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
             // Capturar tempo e salvar
             captureStep19Time();
             saveStepTimes();
-            
+
+            // Salvar acesso ao curso
+            const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+            const nome = formData.dados_pessoais?.nome || '';
+            const whatsapp = formData.dados_pessoais?.whatsapp || '';
+            if (nome && whatsapp) {
+                const accessData = await salvarAcessoDoCurso(whatsapp, nome);
+                formData.senha_acesso = accessData.senha;
+                localStorage.setItem('formData', JSON.stringify(formData));
+            }
+
             // Enviar para Firebase e aguardar confirmação
             const enviadoComSucesso = await sendToFirebase();
 

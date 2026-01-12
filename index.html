@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Violão Depois dos 40 - 15 dias Grátis</title>
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Salvar Acesso -->
+    <script src="script/salvar_acesso_curso.js"></script>
     <style>
         
         * {
@@ -709,11 +714,28 @@
 
         <!-- Etapa 13: Participação na videochamada -->
         <div class="step" data-name="videochamada" data-delay="0">
-            <h2>Você vai poder participar da videochamada segunda 20h?</h2>
+            <h2>Você vai poder participar das Videochamadas de segunda a sexta?</h2>
             <img style="margin-bottom: 30px" src="images/videochamada20h.jpg" alt="Videochamada" class="intro-image" onerror="this.style.display='none'">
-            <form data-form="videochamada" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
-                <label><input type="radio" name="videochamada" value="sim" required> Posso participar segunda 20h da videochamada</label>
-                <label><input type="radio" name="videochamada" value="nao"> Não posso no horário, então vou mandar minha dúvida ou progresso no grupo</label>
+            <div style="width: 100%; background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 10px;">Horários:</h3>
+                <div style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; width: 100%;">
+                        <div style="background: rgba(91, 73, 55, 0.8); padding: 10px; border-radius: 8px; flex: 1; margin-right: 10px;">Segunda a quarta</div>
+                        <div style="background: rgba(68, 109, 69, 0.8); padding: 10px; border-radius: 8px; flex: 0 0 auto; margin-left: 10px;">20h</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; width: 100%;">
+                        <div style="background: rgba(91, 73, 55, 0.8); padding: 10px; border-radius: 8px; flex: 1; margin-right: 10px;">Quinta</div>
+                        <div style="background: rgba(68, 109, 69, 0.8); padding: 10px; border-radius: 8px; flex: 0 0 auto; margin-left: 10px;">16h</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <div style="background: rgba(91, 73, 55, 0.8); padding: 10px; border-radius: 8px; flex: 1; margin-right: 10px;">Sexta</div>
+                        <div style="background: rgba(68, 109, 69, 0.8); padding: 10px; border-radius: 8px; flex: 0 0 auto; margin-left: 10px;">18h</div>
+                    </div>
+                </div>
+            </div>
+            <form data-form="videochamada" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="videochamada" value="sim" required> Posso participar pelo menos uma vez na semana</label>
+                <label><input type="radio" name="videochamada" value="nao"> Não posso participar das videochamadas, então vou participar só do grupo mandando áudio ou vídeo pra análise e acompanhando os materiais gravados</label>
                 <p class="small-text">Selecione uma opção para continuar</p>
                 <button type="submit" class="btn btn-orange" data-btn="videochamada" disabled>Continuar</button>
             </form>
@@ -745,23 +767,26 @@
             <div class="countdown" data-countdown="objetivo_semana"></div>
         </div>
 
-        <!-- Etapa 7: Informações adicionais antes da inscrição -->
-        <div class="step" data-name="informacoes_extras" data-delay="0">
-            <h2>Quer me informar mais alguma coisa antes de se inscrever?</h2>
-            <img style="margin-bottom: 30px" src="images/informar.png" alt="Informações adicionais" class="smaller-image" onerror="this.style.display='none'">
-            <form data-form="informacoes_extras" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
-                <label><input type="radio" name="extra" value="nao" required> Não</label>
-                <label><input type="radio" name="extra" value="sim" id="extraSim"> Sim</label>
-                <textarea id="textoExtra" style="display: none; width: 100%; padding: 10px; border-radius: 5px; border: none; resize: none; min-height: 50px;" placeholder="Insira informações adicionais"></textarea>
+        <!-- Etapa 15: Dia melhor para envio -->
+        <div class="step" data-name="dia_melhor_envio" data-delay="0">
+            <h2>Qual dia é melhor pra você mandar vídeo ou áudio pra eu analisar?</h2>
+            <img style="margin-bottom: 30px" src="images/gra.png" alt="Dia melhor para envio" class="smaller-image" onerror="this.style.display='none'">
+            <form data-form="dia_melhor_envio" style="max-width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <label><input type="radio" name="diaEnvio" value="domingo" required> Domingo</label>
+                <label><input type="radio" name="diaEnvio" value="segunda"> Segunda</label>
+                <label><input type="radio" name="diaEnvio" value="terca"> Terça</label>
+                <label><input type="radio" name="diaEnvio" value="quarta"> Quarta</label>
+                <label><input type="radio" name="diaEnvio" value="quinta"> Quinta</label>
                 <p class="small-text">Selecione uma opção para continuar</p>
-                <button type="submit" class="btn btn-orange" data-btn="informacoes_extras" disabled>Continuar</button>
+                <button type="submit" class="btn btn-orange" data-btn="dia_melhor_envio" disabled>Continuar</button>
             </form>
-            <div class="countdown" data-countdown="informacoes_extras"></div>
+            <div class="countdown" data-countdown="dia_melhor_envio"></div>
         </div>
 
-        
 
-        <!-- Etapa 8: Perguntas Frequentes (Parte 1) -->
+
+
+        <!-- Etapa 8: Perguntas Frequentes -->
         <div class="step" data-name="faq_parte1">
             <h2>❓ Perguntas Frequentes</h2>
             <div class="faq">
@@ -773,28 +798,14 @@
                     <div class="faq-question">Funciona para iniciantes?</div>
                     <div class="faq-answer">Sim, o acompanhamento é para iniciantes do zero ou que ainda não tocam músicas com facilidade.</div>
                 </div>
-            </div>
-            <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" data-btn="faq_parte1" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" data-countdown="faq_parte1"></div>
-        </div>
-
-        <!-- Etapa 9: Perguntas Frequentes (Parte 2) -->
-        <div class="step" data-name="faq_parte2">
-            <h2>❓ Perguntas Frequentes</h2>
-            <div class="faq">
-                <div class="faq-item">
-                    <div class="faq-question">Qual o dia e horário das videochamadas?</div>
-                    <div class="faq-answer">Toda segunda-feira 20h.</div>
-                </div>
                 <div class="faq-item">
                     <div class="faq-question">É obrigatório participar da videochamada?</div>
                     <div class="faq-answer">Não!<br><br>Eu consigo acompanhar você no grupo e tirar tuas dúvidas. E existe o curso gravado também.</div>
                 </div>
             </div>
             <p class="small-text">Se tiver entendido, pressione continuar</p>
-            <button class="btn btn-orange" data-btn="faq_parte2" disabled onclick="nextStep()">Continuar</button>
-            <div class="countdown" data-countdown="faq_parte2"></div>
+            <button class="btn btn-orange" data-btn="faq_parte1" disabled onclick="nextStep()">Continuar</button>
+            <div class="countdown" data-countdown="faq_parte1"></div>
         </div>
 
         <!-- Etapa 10: Resumo dos Benefícios -->

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Criar Resposta Fictícia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn {
+            padding: 20px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        .notification.show {
+            opacity: 1;
+        }
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-content h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .modal-btn.yes {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+        }
+        .modal-btn.yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        .modal-btn.no {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+        }
+        .modal-btn.no:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste - Criar Resposta Fictícia</h1>
+        <p style="margin-bottom: 30px; color: rgba(255,255,255,0.8);">
+            Clique no botão abaixo para criar uma resposta fictícia completa no sistema de inscrições dos 15 dias grátis.
+        </p>
+        <button class="btn" id="createTestResponse" onclick="createTestResponse()">Criar Resposta Fictícia Completa</button>
+        <div id="responseLog" style="margin-top: 30px; text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; font-family: monospace; font-size: 12px; color: #64b5f6; white-space: pre-wrap;"></div>
+    </div>
+
+    <!-- Modal para gerar acesso -->
+    <div class="modal-overlay" id="accessModal">
+        <div class="modal-content">
+            <h3 id="modalQuestion">Gerar acesso do aluno [Nome]?</h3>
+            <div class="modal-buttons">
+                <button class="modal-btn yes" id="confirmGenerate">Sim</button>
+                <button class="modal-btn no" id="cancelGenerate">Não</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Instância será criada após os scripts carregarem
+
+    function gerarNomeAleatorio() {
+        const primeirosNomes = ['João', 'Maria', 'Pedro', 'Ana', 'Carlos', 'Beatriz', 'Lucas', 'Julia', 'Fernando', 'Carla', 'Roberto', 'Sofia', 'Miguel', 'Isabela', 'Rafael', 'Gabriela', 'Daniel', 'Amanda', 'Gustavo', 'Larissa'];
+        const sobrenomes = ['Silva', 'Santos', 'Oliveira', 'Pereira', 'Rodrigues', 'Almeida', 'Nascimento', 'Lima', 'Araújo', 'Fernandes', 'Carvalho', 'Gomes', 'Martins', 'Rocha', 'Ribeiro', 'Alves', 'Monteiro', 'Mendes', 'Barbosa', 'Pinto'];
+
+        const primeiroNome = primeirosNomes[Math.floor(Math.random() * primeirosNomes.length)];
+        const sobrenome1 = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+        const sobrenome2 = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+
+        return `${primeiroNome} ${sobrenome1} ${sobrenome2}`;
+    }
+
+    function gerarWhatsAppAleatorio() {
+        // Gera DDD entre 11-99, mas evitando alguns inválidos
+        const dddsValidos = [11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 24, 27, 28, 31, 32, 33, 34, 35, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48, 49, 51, 53, 54, 55, 61, 62, 63, 64, 65, 66, 67, 68, 69, 71, 73, 74, 75, 77, 79, 81, 82, 83, 84, 85, 86, 87, 88, 89, 91, 92, 93, 94, 95, 96, 97, 98, 99];
+        const ddd = dddsValidos[Math.floor(Math.random() * dddsValidos.length)];
+
+        // Gera número de 8 dígitos (sem o 9 inicial se necessário)
+        let numero = '';
+        if (ddd >= 11 && ddd <= 19) { // SP e região
+            numero = '9' + Math.floor(10000000 + Math.random() * 90000000).toString();
+        } else {
+            numero = Math.floor(10000000 + Math.random() * 90000000).toString();
+        }
+
+        return `${ddd}${numero}`;
+    }
+
+    async function getNextCounter() {
+        // Usar a função do submission-manager.js através da instância local
+        return await testSubmissionManager.getNextCounterWithRetry();
+    }
+
+    async function createTestResponse() {
+        const button = document.getElementById('createTestResponse');
+        const logDiv = document.getElementById('responseLog');
+        button.disabled = true;
+        button.textContent = 'Criando...';
+        logDiv.textContent = 'Iniciando criação da resposta fictícia...\n';
+
+        // Gerar dados aleatórios
+        const nomeAleatorio = gerarNomeAleatorio();
+        const whatsappAleatorio = gerarWhatsAppAleatorio();
+
+        logDiv.textContent += `Nome gerado: ${nomeAleatorio}\n`;
+        logDiv.textContent += `WhatsApp gerado: ${whatsappAleatorio}\n\n`;
+
+        // Preparar dados no formato que o submissionManager espera
+        const formData = {
+            dados_pessoais: {
+                nome: nomeAleatorio,
+                whatsapp: whatsappAleatorio,
+                idade: '45'
+            },
+            nivel_violao: {
+                nivel: 'iniciante',
+                nivel_personalizado: ''
+            },
+            tipo_musica: {
+                musica: 'sertaneja',
+                musica_personalizada: ''
+            },
+            sabe_acorde: {
+                sabeAcorde: 'sim',
+                tipoAcorde: 'personalizado',
+                acordePersonalizado: 'A, E, D, F'
+            },
+            sabe_afinar: {
+                sabeAfinar: 'nao'
+            },
+            sabe_ritmo: {
+                sabeRitmo: 'sim',
+                ritmos: ['rock', 'guarania', 'poprock'],
+                ritmoPersonalizado: ''
+            },
+            sabe_musica: {
+                sabeMusica: 'sim',
+                musicas: 'Garçom - Reginaldo Rossi'
+            },
+            objetivo_violao: {
+                objetivo: 'amigos',
+                objetivoPersonalizado: ''
+            },
+            dificuldade_violao: {
+                dificuldade: 'Não consigo fazer acordes com pestana'
+            },
+            videochamada: {
+                videochamada: 'sim'
+            },
+            disponibilidade_treino: {
+                disponibilidade: 'sim'
+            },
+            objetivo_semana: {
+                objetivoSemana: 'Aprender a tocar uma música completa'
+            },
+            dia_melhor_envio: {
+                diaEnvio: 'segunda'
+            },
+            mais_informacoes: 'sim',
+            texto_extra: 'Tenho violão há 2 anos mas nunca pratiquei direito'
+        };
+
+        // Simular localStorage para o submissionManager
+        localStorage.setItem('formData', JSON.stringify(formData));
+        localStorage.setItem('stepTimes', JSON.stringify({}));
+
+        logDiv.textContent += 'Dados preparados no localStorage...\n';
+
+        try {
+            // Usar EXATAMENTE a mesma função do index.html
+            logDiv.textContent += 'Usando submissionManager.sendToFirebaseWithRetry()...\n';
+            const result = await testSubmissionManager.sendToFirebaseWithRetry();
+
+            if (result.success) {
+                logDiv.textContent += '✅ Sucesso! Resposta criada usando a mesma função do site principal.\n';
+                showNotification('Resposta fictícia criada com sucesso!', false);
+
+                // Gerar acesso automaticamente para o aluno criado
+                logDiv.textContent += '\n🔐 Gerando acesso automaticamente...\n';
+                setTimeout(async () => {
+                    await generateAndCopyAccess(nomeAleatorio, whatsappAleatorio);
+                    logDiv.textContent += '🎉 Processo completo! Acesso gerado e copiado.\n';
+                }, 500);
+
+            } else {
+                throw new Error(result.error || 'Erro desconhecido');
+            }
+
+        } catch (error) {
+            logDiv.textContent += '❌ Erro: ' + error.message + '\n';
+            console.error('Erro ao criar resposta fictícia:', error);
+            showNotification('Erro ao criar resposta fictícia: ' + error.message, true);
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Criar Resposta Fictícia';
+        }
+    }
+
+    function showNotification(message, isError = false) {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+
+        const notification = document.createElement('div');
+        notification.className = 'notification' + (isError ? ' error' : '');
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }, 100);
+    }
+
+    async function generateAndCopyAccess(name, whatsapp) {
+        try {
+            // Usar a função centralizada do salvar_acesso_curso.js
+            const result = await generateAndSaveAccess(name, whatsapp);
+
+            if (result && result.success && result.accessText) {
+                copyToClipboard(result.accessText);
+            } else {
+                throw new Error(result?.error || 'Erro ao gerar acesso');
+            }
+        } catch (error) {
+            console.error('Erro ao gerar acesso:', error);
+            showNotification('Erro ao gerar acesso: ' + error.message, true);
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('Copiado com sucesso');
+        }).catch(err => {
+            console.error('Erro ao copiar:', err);
+            showNotification('Erro ao copiar');
+        });
+    }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="script/salvar_acesso_curso.js"></script>
+    <script src="script/submission-manager.js"></script>
+    <script>
+    // Criar instância após todos os scripts carregarem
+    const testSubmissionManager = new FormSubmissionManager();
+    </script>
+</body>
+</html>

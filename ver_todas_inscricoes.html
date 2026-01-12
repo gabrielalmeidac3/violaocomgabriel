@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Ver Todas as Inscrições</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #64b5f6;
+        }
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .delete-btn {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        .delete-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(255, 71, 87, 0.4);
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        .notification.show {
+            opacity: 1;
+        }
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+        }
+        .id-cell {
+            font-family: monospace;
+            font-size: 11px;
+            color: #64b5f6;
+        }
+        .actions-cell {
+            white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            table, th, td {
+                font-size: 11px;
+                padding: 6px 4px;
+            }
+            .stat-card {
+                min-width: 120px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste - Todas as Inscrições (Coleção Completa)</h1>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalRecords">0</div>
+                <div class="stat-label">Total de Registros</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="visibleRecords">0</div>
+                <div class="stat-label">Visíveis no Site</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="hiddenRecords">0</div>
+                <div class="stat-label">Não Visíveis</div>
+            </div>
+        </div>
+
+        <button onclick="loadAllRecords()" style="background: linear-gradient(45deg, #2196f3, #21cbf3); border: none; padding: 15px 30px; border-radius: 25px; color: white; cursor: pointer; font-size: 16px; margin-bottom: 20px;">Carregar Todos os Registros</button>
+
+        <div class="table-container">
+            <table id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>WhatsApp</th>
+                        <th>Idade</th>
+                        <th>Data Inscrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                            Clique em "Carregar Todos os Registros" para ver os dados
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+    const API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev/inscricoes';
+
+    async function loadAllRecords() {
+        try {
+            showNotification('Carregando registros...');
+
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+
+            const text = await response.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                throw new Error('Dados recebidos não são JSON válido');
+            }
+
+            const allRecords = result.success && Array.isArray(result.data) ? result.data : [];
+
+            // Simular verificação de quais são visíveis no site respostas
+            // (Na prática, isso seria determinado pelas regras do site respostas)
+            const visibleRecords = allRecords.filter(record => {
+                // Simular que registros com dados completos são visíveis
+                return record.nome && record.whatsapp && record.idade;
+            });
+
+            const hiddenRecords = allRecords.filter(record => {
+                return !(record.nome && record.whatsapp && record.idade);
+            });
+
+            updateStats(allRecords.length, visibleRecords.length, hiddenRecords.length);
+            displayRecords(allRecords);
+
+            showNotification(`Carregados ${allRecords.length} registros`, false);
+
+        } catch (error) {
+            console.error('Erro ao carregar registros:', error);
+            showNotification('Erro ao carregar registros: ' + error.message, true);
+        }
+    }
+
+    function updateStats(total, visible, hidden) {
+        document.getElementById('totalRecords').textContent = total;
+        document.getElementById('visibleRecords').textContent = visible;
+        document.getElementById('hiddenRecords').textContent = hidden;
+    }
+
+    function displayRecords(records) {
+        const tbody = document.getElementById('recordsTableBody');
+
+        if (records.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                        Nenhum registro encontrado
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = records.map(record => {
+            const isVisible = record.nome && record.whatsapp && record.idade;
+            const dataInscricao = record.data_inscricao ?
+                new Date(record.data_inscricao).toLocaleString('pt-BR', {
+                    dateStyle: 'short',
+                    timeStyle: 'short'
+                }) : '-';
+
+            return `
+                <tr style="${!isVisible ? 'opacity: 0.6;' : ''}">
+                    <td class="id-cell">${record.id || record._id || 'N/A'}</td>
+                    <td>${record.nome || '-'}</td>
+                    <td>${record.whatsapp || '-'}</td>
+                    <td>${record.idade ? record.idade + ' anos' : '-'}</td>
+                    <td>${dataInscricao}</td>
+                    <td class="actions-cell">
+                        <button class="delete-btn" onclick="deleteRecord('${record.id || record._id}')">
+                            🗑️ Excluir Permanentemente
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function deleteRecord(id) {
+        if (!id || id === 'N/A') {
+            showNotification('ID do registro inválido', true);
+            return;
+        }
+
+        if (!confirm(`⚠️ ATENÇÃO: Isso vai EXCLUIR PERMANENTEMENTE o registro ${id}!\n\nTem certeza absoluta?`)) {
+            return;
+        }
+
+        try {
+            showNotification('Excluindo registro...');
+
+            const response = await fetch(`${API_URL}/${id}?method=1`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+
+            const result = await response.text();
+            console.log('Resposta da exclusão:', result);
+
+            showNotification('Registro excluído permanentemente!', false);
+
+            // Recarregar a lista
+            setTimeout(() => {
+                loadAllRecords();
+            }, 1000);
+
+        } catch (error) {
+            console.error('Erro ao excluir:', error);
+            showNotification('Erro ao excluir: ' + error.message, true);
+        }
+    }
+
+    function showNotification(message, isError = false) {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+
+        const notification = document.createElement('div');
+        notification.className = 'notification' + (isError ? ' error' : '');
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }, 100);
+    }
+    </script>
+</body>
+</html>
