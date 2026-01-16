@@ -181,6 +181,13 @@ if (stepIndex >= 0 && stepIndex < totalSteps) {
 }
 
 function nextStep() {
+    // Track Facebook Pixel event for first continue button
+    if (currentStep === 'inicio') {
+        if (typeof fbq !== 'undefined') {
+            fbq('trackCustom', 'apertou_primeiro_continuar');
+        }
+    }
+
     document.querySelectorAll('video').forEach(video => {
         video.pause();
         video.currentTime = 0;
@@ -190,7 +197,7 @@ function nextStep() {
         const timeSpent = formatTimeSpent(stepStartTime, endTime);
         if (!stepTimes[`tempo_${currentStep}`] || stepTimes[`tempo_${currentStep}`] === 0) {
             stepTimes[`tempo_${currentStep}`] = timeSpent; // só salva na primeira vez
-        }        
+        }
         localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
     }
     if (currentStep !== 'cadastro_final') {
@@ -620,6 +627,10 @@ function setupFormDelay() {
     
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        // Track Facebook Pixel event for name and phone submission
+        if (typeof fbq !== 'undefined') {
+            fbq('trackCustom', 'colocou_nome_telefone');
+        }
         const formData = {
             nome: document.getElementById('nome').value,
             whatsapp: document.getElementById('whatsapp').value,

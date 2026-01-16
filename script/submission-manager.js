@@ -570,7 +570,11 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
         }
 
         async function processarInscricaoCompleta() {
-            
+            // Track Facebook Pixel event for final subscription button
+            if (typeof fbq !== 'undefined') {
+                fbq('trackCustom', 'se_inscreveu_15d');
+            }
+
             const btn = document.querySelector('[data-btn="cadastro_final"]');
             const aguardeMsg = document.getElementById('aguardeMsg');
             const finalSuccess = document.getElementById('finalSuccess');
