@@ -202,6 +202,8 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
                     objetivo_semana: formData.objetivo_semana?.objetivoSemana || '',
                     dia_melhor_envio: formData.dia_melhor_envio?.diaEnvio || '',
                     disponibilidade_treino: formData.disponibilidade_treino?.disponibilidade || '',
+                    aceitou_mensalidade: formData.aceitou_mensalidade || '',
+                    valor_mensal: formData.valor_mensal || '',
                     data_inscricao: new Date().toISOString(),
                     tipo: "inscricao"
                 };
@@ -541,6 +543,27 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
                     submissionManager.retryFailedSubmissions();
                 }, 2000);
             }
+
+            // Manipular cliques da seção condicional
+            document.getElementById('simBtn').addEventListener('click', () => {
+                document.getElementById('simBtn').classList.add('selected');
+                document.getElementById('naoBtn').classList.remove('selected');
+                document.getElementById('simOption').style.display = 'block';
+                document.getElementById('naoOption').style.display = 'none';
+            });
+
+            document.getElementById('naoBtn').addEventListener('click', () => {
+                document.getElementById('naoBtn').classList.add('selected');
+                document.getElementById('simBtn').classList.remove('selected');
+                document.getElementById('naoOption').style.display = 'block';
+                document.getElementById('simOption').style.display = 'none';
+            });
+
+            // Habilitar botão quando valor for digitado
+            document.getElementById('valorMensal').addEventListener('input', () => {
+                const valor = document.getElementById('valorMensal').value.trim();
+                document.getElementById('btnQueroGratisNao').disabled = valor === '';
+            });
         });
 
         // Tentar reenviar quando voltar online
@@ -621,10 +644,14 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
                 // Esconder mensagem de aguarde e mostrar sucesso
                 aguardeMsg.style.display = 'none';
                 clearInterval(interval);
-                
+
+                // Esconder os botões condicionais e opções
+                document.getElementById('conditional').style.display = 'none';
+                document.getElementById('simOption').style.display = 'none';
+                document.getElementById('naoOption').style.display = 'none';
 
                 finalSuccess.style.display = 'block';
-                
+
                 // Redirecionar para WhatsApp
                 window.open('https://wa.me/5595984224764?text=Vi%20todos%20os%20detalhes%20e%20quero%20aproveitar%20os%2015%20dias%20gr%C3%A1tis', '_blank');
             } else {
@@ -654,25 +681,33 @@ const INCOMPLETE_API_URL = 'https://lively-hall-dce9.suportegabriel7.workers.dev
 
         }
 
-     
+        // Função para salvar aceitou mensalidade sim
+        function salvarAceitouSim() {
+            const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+            formData.aceitou_mensalidade = "sim";
+            localStorage.setItem('formData', JSON.stringify(formData));
+        }
 
-        // Iniciar sessionStorage
-        // Tentar reenviar dados ao carregar a página
-        window.addEventListener('load', () => {
-            if (submissionManager.hasPendingData()) {
-                setTimeout(() => {
-                    submissionManager.retryFailedSubmissions();
-                }, 2000);
+        // Função para salvar valor mensal
+        function salvarValorNao() {
+            const valor = document.getElementById('valorMensal').value;
+            if (valor) {
+                const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+                formData.aceitou_mensalidade = "nao";
+                formData.valor_mensal = valor;
+                localStorage.setItem('formData', JSON.stringify(formData));
             }
-        });
+        }
 
-        // Tentar reenviar quando voltar online
-        window.addEventListener('online', () => {
-            console.log('🌐 Conexão restaurada, tentando reenviar dados...');
-            if (submissionManager.hasPendingData()) {
-                setTimeout(() => {
-                    submissionManager.retryFailedSubmissions();
-                }, 1000);
+        // Função para enviar feedback do valor
+        function enviarFeedbackValor() {
+            const valor = document.getElementById('valorMensal').value;
+            if (valor) {
+                const mensagem = `Olá, terminei a inscrição nos 15 dias grátis. Sobre a mensalidade de R$100, o valor que eu poderia pagar é R$${valor}.`;
+                window.open(`https://wa.me/5595984224764?text=${encodeURIComponent(mensagem)}`, '_blank');
+            } else {
+                alert('Por favor, digite um valor.');
             }
-        });
+        }
+
         initSession();

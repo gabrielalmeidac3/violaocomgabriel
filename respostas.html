@@ -617,11 +617,46 @@
             background: transparent;
         }
 
+        .context-menu-trigger {
+            cursor: pointer;
+            font-size: 18px;
+            color: #64b5f6;
+            transition: transform 0.2s ease;
+        }
+        .context-menu-trigger:hover {
+            transform: scale(1.2);
+        }
 
-     
-      
+        .context-menu {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            min-width: 200px;
+        }
+        .context-menu-item {
+            padding: 8px 12px;
+            color: #ffffff;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        .context-menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .context-menu-item.delete {
+            color: #ff4757;
+        }
+        .context-menu-item.delete:hover {
+            background: rgba(255, 71, 87, 0.1);
+        }
 
-     
+
+
     </style>
 </head>
 <body>
@@ -663,10 +698,10 @@
                         <th>Tipo de Música</th>
                         <th>Objetivo no Violão</th>
                         <th>Mais Informações</th>
-                        
-                        <th>Data</th>
+
+                        <th>Acesso Curso</th>
                         <th>Término dos 15 dias</th>
-                        
+
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -839,6 +874,15 @@
         return valor.charAt(0).toUpperCase() + valor.slice(1);
     }
 
+    function formatAceitouMensalidade(aceitou, valor) {
+        if (!aceitou) return '-';
+        if (aceitou.toLowerCase() === 'sim') return 'Sim';
+        if ((aceitou.toLowerCase() === 'nao' || aceitou.toLowerCase() === 'não') && valor) {
+            return `Não<br><span style="color: #64b5f6;">Valor: R$ ${valor}</span>`;
+        }
+        return formatSimNao(aceitou);
+    }
+
     function formatWhatsApp(number) {
         if (!number) return '';
         let cleanNumber = number.replace(/\D/g, '');
@@ -911,6 +955,75 @@
         verTempos.classList.toggle('active', isHidden);
     }
 
+    function copyEndDate(name, dateStr) {
+        const decodedName = decodeURIComponent(name);
+        copyToClipboard(`Término dos 15 dias gratuitos, aluno(a): ${decodedName}\n${dateStr}`);
+    }
+
+    async function copyCombinedAccess(nomeParam, whatsappParam, dateStr) {
+        const nome = decodeURIComponent(nomeParam);
+        const whatsapp = decodeURIComponent(whatsappParam);
+        const senha = await getPasswordByPhone(whatsapp);
+        let text;
+        if (senha === 'XXXX') {
+            const result = await generateAndSaveAccess(nome, whatsapp);
+            if (result && result.success && result.accessText) {
+                text = result.accessText;
+            } else {
+                showNotification('Erro ao gerar acesso', true);
+                return;
+            }
+        } else {
+            text = `Acesso ao Curso "Do Zero ao Repertório" da Comunidade Violão Depois dos 40
+
+Aluno: ${nome}
+
+Telefone: ${whatsapp}
+Senha: ${senha}`;
+        }
+        text += `\n\nTérmino dos 15 dias gratuitos\n${dateStr}`;
+        copyToClipboard(text);
+    }
+
+    function showContextMenu(event, documentId, dataInscricao, id, nomeParam, whatsappParam) {
+        event.preventDefault();
+        // Remove existing menu
+        const existing = document.querySelector('.context-menu');
+        if (existing) existing.remove();
+        // Create menu
+        const menu = document.createElement('div');
+        menu.className = 'context-menu';
+        let left = event.pageX;
+        let top = event.pageY;
+        const menuWidth = 220;
+        const menuHeight = 120; // Increased for more items
+        if (left + menuWidth > window.innerWidth) {
+            left = window.innerWidth - menuWidth - 20;
+        }
+        if (top + menuHeight > window.innerHeight) {
+            top = event.pageY - menuHeight - 10;
+        }
+        menu.style.left = left + 'px';
+        menu.style.top = top + 'px';
+        const nome = decodeURIComponent(nomeParam);
+        const whatsapp = decodeURIComponent(whatsappParam);
+        const dateStr = new Date(new Date(dataInscricao).setDate(new Date(dataInscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '');
+        menu.innerHTML = `
+            <div class="context-menu-item">Data de inscrição: ${new Date(dataInscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</div>
+            <div class="context-menu-item" onclick="copyCombinedAccess('${encodeURIComponent(nome)}', '${encodeURIComponent(whatsapp)}', '${dateStr}'); event.target.closest('.context-menu').remove();">Copiar acesso ao curso e término dos 15 dias juntos</div>
+            <div class="context-menu-item delete" onclick="event.target.closest('.context-menu').remove(); deleteResponse('${id}')">Excluir</div>
+        `;
+        document.body.appendChild(menu);
+        // Close on click outside
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeMenu);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeMenu), 0);
+    }
+
     function displayData() {
         allData.sort((a, b) => new Date(b.data_inscricao) - new Date(a.data_inscricao));
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -941,7 +1054,7 @@
                         <th>Tipo de Música</th>
                         <th>Objetivo no Violão</th>
                         <th>Mais Informações</th>
-                        <th>Data</th>
+                        <th>Acesso Curso</th>
                         <th>Término dos 15 dias</th>
                         <th>Ações</th>
                     </tr>
@@ -967,7 +1080,11 @@
                         
                         const levelText = item.nivel_violao ? levelMap[item.nivel_violao] || item.nivel_violao.charAt(0).toUpperCase() + item.nivel_violao.slice(1) : '-';
                         const musicText = item.tipo_musica ? musicMap[item.tipo_musica] || item.tipo_musica.charAt(0).toUpperCase() + item.tipo_musica.slice(1) : '-';
-                        
+
+                        const escapedName = encodeURIComponent(item.nome);
+                        const escapedWhatsapp = encodeURIComponent(item.whatsapp);
+                        const dateStr = new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '');
+
                         let totalTime = '-';
                         let stepTimes = [];
                         if (item.step_times && typeof item.step_times === 'string') {
@@ -1000,21 +1117,18 @@
                                     <td>${isInvalid ? '-' : musicText}${otherMusic}</td>
                                     <td>${isInvalid ? '-' : formatObjetivo(item.objetivo_violao, item.objetivo_personalizado)}</td>
                                     <td>${item.mais_informacoes === 'sim' ? `${item.texto_extra ? `<span style="color: #64b5f6; font-size: 16px;">${item.texto_extra.charAt(0).toUpperCase() + item.texto_extra.slice(1)}</span>` : 'Sim'}` : (item.mais_informacoes === 'nao' ? 'Não' : item.mais_informacoes || '-')}</td>
-                                    <td>${item.data_inscricao ? new Date(item.data_inscricao).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td>
-                                    <td>${item.data_inscricao ? `${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}<button class="copy-btn" onclick="copyToClipboard('${new Date(new Date(item.data_inscricao).setDate(new Date(item.data_inscricao).getDate() + 15)).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: '2-digit' }).replace(/de /g, '')}')">📋</button>` : '-'}</td>
-                                    <td>
-                                        <button class="copy-access-btn" onclick="copyAccessData(this, '${item.nome}', '${item.whatsapp}')" title="Copiar acesso curso">📋 Acesso curso</button><br>
-                                        <button class="delete-btn" onclick="deleteResponse('${item.id}')">🗑️ Excluir</button>
-                                    </td>
+                                    <td><button class="copy-access-btn" onclick="copyAccessData(this, '${item.nome}', '${item.whatsapp}')" title="Copiar acesso curso">📋 Acesso curso</button></td>
+                                    <td>${item.data_inscricao ? `<span style="cursor: pointer;" onclick='copyEndDate("${escapedName}", "${dateStr}")'>${dateStr}</span><button class="copy-btn" onclick='copyEndDate("${escapedName}", "${dateStr}")'>📋</button>` : '-'}</td>
+                                    <td><span class="context-menu-trigger" onclick="showContextMenu(event, '${item.documentId}', '${item.data_inscricao}', '${item.id}', '${escapedName}', '${escapedWhatsapp}')">...</span></td>
                                 </tr>
                                 <tr class="ver-mais-row" onclick="toggleDetails('${item.documentId}')">
-                                    <td colspan="11" class="ver-mais">Ver Mais Informações</td>
+                                    <td colspan="10" class="ver-mais">Ver Mais Informações</td>
                                 </tr>
                                 <tr class="spacing-row" style="height: 20px;">
-                                    <td colspan="11" style="background: transparent; border: none; padding: 0;"></td>
+                                    <td colspan="10" style="background: transparent; border: none; padding: 0;"></td>
                                 </tr>
                                 <tr class="details-row" id="details-${item.documentId}">
-                                    <td colspan="11" style="width: 100%; padding: 0;">
+                                    <td colspan="10" style="width: 100%; padding: 0;">
                                         <div class="table-wrapper">
                                             <table class="details-table">
                                                 <thead>
@@ -1028,6 +1142,7 @@
                                                         <th>Objetivo da Semana</th>
                                                         <th>Disponibilidade de Treino</th>
                                                         <th>Dia Apresentação</th>
+                                                        <th>Aceitou Mensalidade</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1041,6 +1156,7 @@
                                                         <td>${item.objetivo_semana ? `<span style="color: #64b5f6; font-size: 16px;">${item.objetivo_semana}</span>` : '-'}</td>
                                                         <td>${formatSimNao(item.disponibilidade_treino)}</td>
                                                         <td>${item.dia_melhor_envio ? item.dia_melhor_envio.charAt(0).toUpperCase() + item.dia_melhor_envio.slice(1) : '-'}</td>
+                                                        <td>${formatAceitouMensalidade(item.aceitou_mensalidade, item.valor_mensal)}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

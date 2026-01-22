@@ -240,12 +240,21 @@
             color: white;
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
             font-size: 20px;
-            animation: pulse 2s infinite;
         }
 
         .btn-green:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-conditional {
+            min-width: 120px;
+        }
+
+        .btn.selected {
+            border: 3px solid white !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+            animation: pulse 2s infinite;
         }
 
         .btn-blue {
@@ -277,6 +286,7 @@
         }
 
         
+
         
 
         .step#step9 h3 {
@@ -367,7 +377,7 @@
 
         
 
-
+        
 
         .small-text {
             font-size: 12px;
@@ -852,12 +862,34 @@
             <h1 class="final-title">🎉 Última Etapa!</h1>
             <h2>Você vai ganhar seus 15 dias grátis agora!</h2>
             <p class="intro-text">
-            Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br><br>
-                Pode cancelar quando quiser.<br>
+            Se gostar e quiser continuar,<br>o valor da mensalidade é: <br>R$100 por mês.<br>
+                <span style="font-size: 16px; margin-top: 5px; color: rgba(255,255,255,0.6); display: block;">Pode cancelar quando quiser.</span><br>
+                Este valor cabe no seu orçamento para participar da comunidade de violão?
             </p>
-            <button class="btn btn-green" data-btn="cadastro_final" onclick="processarInscricaoCompleta()">
-                🎸 Quero meus 15 dias grátis
-            </button>
+
+            <!-- Seção condicional para inscrição -->
+            <div id="conditional" style="display:flex; justify-content:center; align-items:center; margin-top:20px;">
+                <button class="btn btn-green btn-conditional" id="simBtn" style="margin-right:20px;">Sim</button>
+                <button class="btn btn-orange btn-conditional" id="naoBtn">Não</button>
+            </div>
+
+            <div id="simOption" style="display:none; text-align:center; margin-top:20px;">
+                <button class="btn btn-green" data-btn="cadastro_final" onclick="salvarAceitouSim(); processarInscricaoCompleta();">
+                    🎸 Quero meus 15 dias grátis
+                </button>
+            </div>
+
+            <div id="naoOption" style="display:none; text-align:center; margin-top:20px;">
+                <p style="font-size:16px; color:#e3f2fd; margin-bottom:15px;">
+                    Qual valor mensal você poderia pagar após os 15 dias grátis para continuar participando da comunidade de violão?
+                </p>
+                <input type="text" id="valorMensal" placeholder="Digite o valor em R$" pattern="[0-9]*" inputmode="numeric" style="width: 100%; max-width:300px; padding: 10px; border-radius: 5px; border: none; margin-bottom:10px; text-align:center; background-color: #4a4a4a; color: #fff;">
+                <br>
+                <button class="btn btn-green" id="btnQueroGratisNao" disabled onclick="salvarValorNao(); processarInscricaoCompleta();">
+                    🎸 Quero meus 15 dias grátis
+                </button>
+            </div>
+
             <div class="countdown" data-countdown="cadastro_final"></div>
             <p id="aguardeMsg" style="display:none; font-weight:bold; color:#ff6b35;"></p>
 
