@@ -1,9 +1,9 @@
-(function() {
-    
+(function () {
+
 
     let visitedSteps = JSON.parse(localStorage.getItem("visitedSteps") || "[]");
 
-    
+
 
     let currentStep = null;
     let stepEnterTime = null;
@@ -23,12 +23,12 @@
         if (stepName === currentStep) return;
         currentStep = stepName;
         stepStartTime = Date.now();
-        
+
 
         const btn = activeStep.querySelector(`[data-btn="${stepName}"]`);
         const countdown = activeStep.querySelector(`[data-countdown="${stepName}"]`);
 
-        
+
 
         if (visitedSteps.includes(stepName)) {
             btn.disabled = false;
@@ -38,12 +38,12 @@
             if (countdown) countdown.textContent = '';
             console.log(`⏩ Delay removido da etapa ${stepName}, botão já liberado.`);
         } else {
-            
+
         }
 
         btn.addEventListener("click", () => {
             const tempo = ((Date.now() - stepEnterTime) / 1000).toFixed(1);
-            
+
             markStepCompleted(stepName);
         }, { once: true });
     }
@@ -63,7 +63,9 @@ function isStepVisited(stepName) {
 }
 const ENABLE_DELAY = 1; // 1 = delay ativado, 0 = delay desativado
 
-const steps = Array.from(document.querySelectorAll('.step')).map(step => step.dataset.name);
+const steps = Array.from(document.querySelectorAll('.step'))
+    .map(step => step.dataset.name)
+    .filter(name => name !== 'objetivo_semana'); // Adicione aqui qualquer etapa que queira pular
 
 const stepNames = steps; // Alias para compatibilidade
 let currentStep = steps[0]; // Inicia com o data-name da primeira etapa
@@ -78,7 +80,7 @@ const USE_MILLISECONDS = 1; // 1 = milissegundos, 0 = segundos
 const DELAY_FAQ = 3; // Delay para FAQs e etapas finais (etapas 16-19)
 const DELAY_VIDEO_EXPLICACAO = 18; // Etapa 1
 const DELAY_VIDEO_INICIAL = 78; // Etapa 2
-const DELAY_DEPOIMENTOS = 60; // Etapa 3
+const DELAY_DEPOIMENTOS = 30; // Etapa 3
 
 
 
@@ -93,7 +95,7 @@ function captureStep19Time() {
         const timeSpent = formatTimeSpent(stepStartTime, endTime);
         if (!stepTimes[`tempo_${currentStep}`] || stepTimes[`tempo_${currentStep}`] === 0) {
             stepTimes[`tempo_${currentStep}`] = timeSpent;
-        }        
+        }
         localStorage.setItem('stepTimes', JSON.stringify(stepTimes));
         console.log(`Tempo Etapa cadastro_final capturado: ${timeSpent}${USE_MILLISECONDS ? 'ms' : 's'}`);
     }
@@ -130,54 +132,54 @@ function updateStepIndicator() {
 
 
 function getStepFromURL() {
-if (!steps || steps.length === 0) {
-    console.error('Erro: steps não inicializado');
-    return;
-}
-const stepIndex = parseInt(window.location.hash.replace('#', '')) || 0;
-if (stepIndex >= 0 && stepIndex < totalSteps) {
-    currentStep = stepNames[stepIndex];
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
-    updateStepIndicator();
-    // Se a etapa já foi visitada, esconde a mensagem .small-text
-    if (isStepVisited(currentStep)) {
-        const stepEl = document.querySelector(`.step[data-name="${currentStep}"]`);
-        const msg = stepEl ? stepEl.querySelector('.small-text') : null;
-        if (msg) msg.style.display = 'none';
+    if (!steps || steps.length === 0) {
+        console.error('Erro: steps não inicializado');
+        return;
     }
+    const stepIndex = parseInt(window.location.hash.replace('#', '')) || 0;
+    if (stepIndex >= 0 && stepIndex < totalSteps) {
+        currentStep = stepNames[stepIndex];
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.querySelector(`.step[data-name="${currentStep}"]`).classList.add('active');
+        updateStepIndicator();
+        // Se a etapa já foi visitada, esconde a mensagem .small-text
+        if (isStepVisited(currentStep)) {
+            const stepEl = document.querySelector(`.step[data-name="${currentStep}"]`);
+            const msg = stepEl ? stepEl.querySelector('.small-text') : null;
+            if (msg) msg.style.display = 'none';
+        }
 
-    
 
-    stepStartTime = Date.now();
-    const setupFunctions = {
-        'video_explicacao': setupVideoDelayNew,
-        'video_inicial': setupVideoDelay,
-        'depoimentos': setupVideoDelay2,
-        'dados_pessoais': setupFormDelay,
-        'nivel_violao': setupLevelForm,
-        'tipo_musica': setupMusicForm,
-        'sabe_acorde': setupChordForm,
-        'sabe_afinar': setupTuneForm,
-        'sabe_ritmo': setupRhythmForm,
-        'sabe_musica': setupSongForm,
-        'objetivo_violao': setupGoalForm,
-        'dificuldade_violao': setupDifficultyForm,
-        'videochamada': setupCallForm,
-        'disponibilidade_treino': setupTrainingForm,
-        'objetivo_semana': setupWeeklyGoalForm,
-        'dia_melhor_envio': setupDiaMelhorEnvioForm
 
-    };
-    if (setupFunctions[currentStep]) {
-        setupFunctions[currentStep]();
-    } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
-        setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
-    } else if (currentStep === 'cadastro_final') {
-        const btn = document.querySelector(`[data-btn="${currentStep}"]`);
-        if (btn) btn.disabled = false;
+        stepStartTime = Date.now();
+        const setupFunctions = {
+            'video_explicacao': setupVideoDelayNew,
+            'video_inicial': setupVideoDelay,
+            'depoimentos': setupVideoDelay2,
+            'dados_pessoais': setupFormDelay,
+            'nivel_violao': setupLevelForm,
+            'tipo_musica': setupMusicForm,
+            'sabe_acorde': setupChordForm,
+            'sabe_afinar': setupTuneForm,
+            'sabe_ritmo': setupRhythmForm,
+            'sabe_musica': setupSongForm,
+            'objetivo_violao': setupGoalForm,
+            'dificuldade_violao': setupDifficultyForm,
+            'videochamada': setupCallForm,
+            'disponibilidade_treino': setupTrainingForm,
+            'objetivo_semana': setupWeeklyGoalForm,
+            'dia_melhor_envio': setupDiaMelhorEnvioForm
+
+        };
+        if (setupFunctions[currentStep]) {
+            setupFunctions[currentStep]();
+        } else if (steps.indexOf(currentStep) >= steps.indexOf('faq_parte1') && steps.indexOf(currentStep) < totalSteps - 1) {
+            setupDelay(`btn_${currentStep}`, `countdown_${currentStep}`, currentStep);
+        } else if (currentStep === 'cadastro_final') {
+            const btn = document.querySelector(`[data-btn="${currentStep}"]`);
+            if (btn) btn.disabled = false;
+        }
     }
-}
 }
 
 function nextStep() {
@@ -270,7 +272,7 @@ function nextStep() {
                 // Verifica se o vídeo está dentro de um container escondido (display: none)
                 const parentContainer = activeVideo.closest('[data-video]');
                 const isHidden = parentContainer && window.getComputedStyle(parentContainer).display === 'none';
-                
+
                 if (!isHidden) {
                     setTimeout(() => activeVideo.play(), 100);
                 }
@@ -341,21 +343,21 @@ function setupVideoDelay() {
         return;
     }
     let timeLeft = DELAY_VIDEO_INICIAL;
-    
+
     if (!ENABLE_DELAY) {
         btn.disabled = false;
         countdown.textContent = '';
         btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
         return;
     }
-    
-    
+
+
     btn.disabled = true;
-    
+
     const timer = setInterval(() => {
         countdown.textContent = `Botão liberado em ${timeLeft}s`;
         timeLeft--;
-        
+
         if (timeLeft < 0) {
             clearInterval(timer);
             btn.disabled = false;
@@ -384,21 +386,21 @@ function setupVideoDelayNew() {
         return;
     }
     let timeLeft = DELAY_VIDEO_EXPLICACAO;
-    
+
     if (!ENABLE_DELAY) {
         btn.disabled = false;
         countdown.textContent = '';
         btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
         return;
     }
-    
-    
+
+
     btn.disabled = true;
-    
+
     const timer = setInterval(() => {
         countdown.textContent = `Botão liberado em ${timeLeft}s`;
         timeLeft--;
-        
+
         if (timeLeft < 0) {
             clearInterval(timer);
             btn.disabled = false;
@@ -406,14 +408,14 @@ function setupVideoDelayNew() {
             btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
         }
     }, 1000);
-    
+
     video.addEventListener('ended', () => {
         if (timeLeft > 5) {
             timeLeft = 5;
         }
     });
-    
-    video.addEventListener('play', function() {
+
+    video.addEventListener('play', function () {
         this.muted = false;
     });
 }
@@ -431,7 +433,7 @@ function setupVideoDelay2() {
         return;
     }
     let timeLeft = DELAY_DEPOIMENTOS;
-    
+
     if (!ENABLE_DELAY) {
         btn.disabled = false;
         countdown.textContent = '';
@@ -439,13 +441,13 @@ function setupVideoDelay2() {
         return;
     }
 
-    
+
     btn.disabled = true;
-    
+
     const timer = setInterval(() => {
         countdown.textContent = `Botão liberado em ${timeLeft}s`;
         timeLeft--;
-        
+
         if (timeLeft < 0) {
             clearInterval(timer);
             btn.disabled = false;
@@ -481,7 +483,7 @@ function setupDelay(buttonId, countdownId, stepName) {
         return;
     }
     let timeLeft = DELAY_FAQ;
-    
+
     if (!ENABLE_DELAY) {
         btn.disabled = false;
         countdown.textContent = '';
@@ -489,11 +491,11 @@ function setupDelay(buttonId, countdownId, stepName) {
         return;
     }
     btn.disabled = true;
-    
+
     const timer = setInterval(() => {
         countdown.textContent = `Botão liberado em ${timeLeft}s`;
         timeLeft--;
-        
+
         if (timeLeft < 0) {
             clearInterval(timer);
             btn.disabled = false;
@@ -507,14 +509,14 @@ function setupDelay(buttonId, countdownId, stepName) {
 updateStepIndicator();
 
 // Prevenir scroll horizontal
-document.addEventListener('touchmove', function(e) {
+document.addEventListener('touchmove', function (e) {
     if (e.touches.length > 1) {
         e.preventDefault();
     }
 }, { passive: false });
 
 // Scroll suave entre seções
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function () {
     window.scrollTo(0, 0);
 });
 
@@ -544,15 +546,15 @@ function updateFooterPosition() {
 window.addEventListener('load', updateFooterPosition);
 window.addEventListener('resize', updateFooterPosition);
 
-document.querySelector('[data-video="video_explicacao"]').addEventListener('play', function() {
+document.querySelector('[data-video="video_explicacao"]').addEventListener('play', function () {
     this.muted = false;
 });
 
-document.querySelector('[data-video="video_inicial"]').addEventListener('play', function() {
+document.querySelector('[data-video="video_inicial"]').addEventListener('play', function () {
     this.muted = false;
 });
 
-document.querySelector('[data-video="depoimentos"]').addEventListener('play', function() {
+document.querySelector('[data-video="depoimentos"]').addEventListener('play', function () {
     this.muted = false;
 });
 
@@ -565,8 +567,8 @@ function setupFormDelay() {
     const countdown = document.querySelector('[data-countdown="dados_pessoais"]');
     const form = document.querySelector('[data-form="dados_pessoais"]');
     const inputs = form.querySelectorAll('input');
-    
-  
+
+
     btn.disabled = true;
     // Chamar validação inicial para dados restaurados
     if (typeof validateForm === "function") {
@@ -583,48 +585,48 @@ function setupFormDelay() {
         const mensagemValidacao = document.getElementById('mensagemValidacao');
         const btn = document.querySelector('[data-btn="dados_pessoais"]');
 
-        
+
         const nameRegex = /^[A-Za-zÀ-ÿ\s]{3,}$/;
         const whatsappRegex = /^\d{10,11}$/;
-        
+
         let showError = false;
-        
+
         // Verifica se há números no nome (quando o campo não está vazio)
         if (name && !nameRegex.test(name)) {
             showError = true;
         }
-        
+
         // Verifica se o WhatsApp é inválido (quando o campo não está vazio)
         if (whatsapp && !whatsappRegex.test(whatsapp)) {
             showError = true;
         }
-        
+
         // Verifica se a idade é menor que 40 ou tem 3 dígitos (quando o campo não está vazio)
         if (!isNaN(age) && (age < 40 || age > 99)) {
 
             showError = true;
         }
-        
+
         const isValid = nameRegex.test(name) && whatsappRegex.test(whatsapp) && !isNaN(age) && age >= 40 && age <= 99;
 
-        
+
         btn.disabled = !isValid;
-        
+
         mensagemValidacao.classList.toggle('is-visible', showError);
 
 
 
 
 
-        
+
         if (isValid) {
             btn.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
         }
     }
-    
+
     inputs.forEach(input => input.addEventListener('input', validateForm));
     validateForm(); // Chama a validação inicial
-    
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         // Track Facebook Pixel event for name and phone submission
@@ -648,10 +650,10 @@ function setupLevelForm() {
     const customLevel = document.getElementById('nivelPersonalizado');
     const customLevelText = document.getElementById('textoNivelPersonalizado');
     const radios = form.querySelectorAll('input[name="nivel"]');
-   
+
 
     btn.disabled = true;
-    
+
     function checkForm() {
         const isSelected = Array.from(radios).some(radio => radio.checked);
         const isCustomValid = !customLevel.checked || (customLevel.checked && customLevelText.value.trim() !== '');
@@ -664,12 +666,12 @@ function setupLevelForm() {
             countdown.textContent = customLevel.checked ? 'Descreva seu nível' : 'Selecione uma opção';
         }
     }
-    
+
     radios.forEach(radio => radio.addEventListener('change', () => {
         customLevelText.style.display = radio.value === 'personalizado' ? 'block' : 'none';
         checkForm();
     }));
-    
+
     customLevelText.addEventListener('input', () => {
         customLevelText.style.height = 'auto';
         customLevelText.style.height = `${customLevelText.scrollHeight}px`;
@@ -677,7 +679,7 @@ function setupLevelForm() {
     });
 
     scrollTextareaToTop(customLevelText);
-    
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const levelData = {
@@ -690,7 +692,7 @@ function setupLevelForm() {
     // 🔑 Inicializa visibilidade e validação com dados restaurados
     const selectedLevel = form.querySelector('input[name="nivel"]:checked');
     if (selectedLevel) {
-    customLevelText.style.display = selectedLevel.value === 'personalizado' ? 'block' : 'none';
+        customLevelText.style.display = selectedLevel.value === 'personalizado' ? 'block' : 'none';
     }
     checkForm();
 
@@ -703,10 +705,10 @@ function setupMusicForm() {
     const radios = form.querySelectorAll('input[name="musica"]');
     const otherMusic = document.getElementById('outraMusica');
     const otherMusicText = document.getElementById('textoOutraMusica');
-  
-    
+
+
     btn.disabled = true;
-    
+
     function checkForm() {
         const isSelected = Array.from(radios).some(radio => radio.checked);
         const isOtherValid = !otherMusic.checked || (otherMusic.checked && otherMusicText.value.trim() !== '');
@@ -719,12 +721,12 @@ function setupMusicForm() {
             countdown.textContent = otherMusic.checked ? 'Especifique o tipo de música' : 'Selecione uma opção';
         }
     }
-    
+
     radios.forEach(radio => radio.addEventListener('change', () => {
         otherMusicText.style.display = radio.value === 'outro' ? 'block' : 'none';
         checkForm();
     }));
-    
+
     otherMusicText.addEventListener('input', checkForm);
 
     otherMusicText.addEventListener('input', () => {
@@ -744,7 +746,7 @@ function setupMusicForm() {
     // 🔑 Inicializa visibilidade e validação com dados restaurados
     const selectedMusic = form.querySelector('input[name="musica"]:checked');
     if (selectedMusic) {
-    otherMusicText.style.display = selectedMusic.value === 'outro' ? 'block' : 'none';
+        otherMusicText.style.display = selectedMusic.value === 'outro' ? 'block' : 'none';
     }
     checkForm();
 
@@ -756,7 +758,7 @@ function toggleVideo(videoName) {
         console.error(`Erro: Contêiner de vídeo ${videoName} não encontrado`);
         return;
     }
-    const label = Array.from(document.querySelectorAll('label')).find(l => 
+    const label = Array.from(document.querySelectorAll('label')).find(l =>
         l.querySelector(`button[onclick="toggleVideo('${videoName}')"]`)
     );
     if (!label || !label.querySelector('button')) {
@@ -798,7 +800,7 @@ function setupChordForm() {
     const textoAcordePersonalizado = document.getElementById('textoAcordePersonalizado');
     const radios = form.querySelectorAll('input[name="sabeAcorde"]');
     const tipoAcordeRadios = form.querySelectorAll('input[name="tipoAcorde"]');
-   
+
     btn.disabled = true;
 
     function checkForm() {
@@ -845,7 +847,7 @@ function setupChordForm() {
     acordesOptions.style.display = sabeAcordeSim.checked ? 'block' : 'none';
     const selectedTipo = form.querySelector('input[name="tipoAcorde"]:checked');
     if (selectedTipo) {
-    textoAcordePersonalizado.style.display = selectedTipo.value === 'personalizado' ? 'block' : 'none';
+        textoAcordePersonalizado.style.display = selectedTipo.value === 'personalizado' ? 'block' : 'none';
     }
     checkForm();
 
@@ -856,7 +858,7 @@ function setupTuneForm() {
     const countdown = document.querySelector('[data-countdown="sabe_afinar"]');
     const form = document.querySelector('[data-form="sabe_afinar"]');
     const radios = form.querySelectorAll('input[name="sabeAfinar"]');
-   
+
     btn.disabled = true;
 
     function checkForm() {
@@ -895,7 +897,7 @@ function setupRhythmForm() {
     const radios = form.querySelectorAll('input[name="sabeRitmo"]');
     const checkboxes = form.querySelectorAll('input[name="ritmo"]');
     const ritmoPersonalizadoRadio = form.querySelector('input[name="ritmoPersonalizado"]');
-   
+
     btn.disabled = true;
 
     function checkForm() {
@@ -963,7 +965,7 @@ function setupSongForm() {
     const sabeMusicaSim = form.querySelector('input[value="sim"]');
     const textoMusica = document.getElementById('textoMusica');
     const radios = form.querySelectorAll('input[name="sabeMusica"]');
-   
+
     btn.disabled = true;
 
     function checkForm() {
@@ -1002,7 +1004,7 @@ function setupSongForm() {
     // 🔑 Inicializa visibilidade e validação com dados restaurados
     const selectedSabeMusica = form.querySelector('input[name="sabeMusica"]:checked');
     if (selectedSabeMusica) {
-    textoMusica.style.display = selectedSabeMusica.value === 'sim' ? 'block' : 'none';
+        textoMusica.style.display = selectedSabeMusica.value === 'sim' ? 'block' : 'none';
     }
     checkForm();
 
@@ -1015,7 +1017,7 @@ function setupGoalForm() {
     const objetivoOutro = document.getElementById('objetivoOutro');
     const textoObjetivo = document.getElementById('textoObjetivo');
     const radios = form.querySelectorAll('input[name="objetivo"]');
- 
+
     btn.disabled = true;
 
     function checkForm() {
@@ -1054,7 +1056,7 @@ function setupGoalForm() {
     // 🔑 Inicializa visibilidade e validação com dados restaurados
     const selectedGoal = form.querySelector('input[name="objetivo"]:checked');
     if (selectedGoal) {
-    textoObjetivo.style.display = selectedGoal.value === 'outro' ? 'block' : 'none';
+        textoObjetivo.style.display = selectedGoal.value === 'outro' ? 'block' : 'none';
     }
     checkForm();
 
@@ -1065,7 +1067,7 @@ function setupDifficultyForm() {
     const countdown = document.querySelector('[data-countdown="dificuldade_violao"]');
     const form = document.querySelector('[data-form="dificuldade_violao"]');
     const textoDificuldade = document.getElementById('textoDificuldade');
-  
+
     btn.disabled = true;
 
     function checkForm() {
@@ -1103,7 +1105,7 @@ function setupCallForm() {
     const countdown = document.querySelector('[data-countdown="videochamada"]');
     const form = document.querySelector('[data-form="videochamada"]');
     const radios = form.querySelectorAll('input[name="videochamada"]');
-   
+
     btn.disabled = true;
 
     function checkForm() {
@@ -1137,7 +1139,7 @@ function setupTrainingForm() {
     const countdown = document.querySelector('[data-countdown="disponibilidade_treino"]');
     const form = document.querySelector('[data-form="disponibilidade_treino"]');
     const radios = form.querySelectorAll('input[name="disponibilidade"]');
- 
+
     btn.disabled = true;
 
     function checkForm() {
